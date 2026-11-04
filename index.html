@@ -1,0 +1,1326 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Bouchée : des vidéos de plats avec la recette au glissement et les ingrédients dans ton panier drive.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Bouchée</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : site vitrine. Héros en deux colonnes (texte | téléphone avec l'appli en direct), puis sections pleine largeur alternant fond neutre et bandes teintées des plats. */
+:root{
+  --bg:#eef2ec;
+  --surface:#ffffff;
+  --surface-2:#e3e9e1;
+  --line:#d1d9cf;
+  --fg:#17231b;
+  --muted:#56655b;
+  --paper:#fffdf5;
+  --paper-line:#ddd6c3;
+  --accent:#f4a422;
+  --accent-ink:#2a1a02;
+  --accent-text:#94570a;
+  --t-carbo:#f0d58a;
+  --t-shak:#f2ae9a;
+  --t-poke:#a6d4e2;
+  --t-curry:#efbf78;
+  --mix:60%;
+  --phone:#17231b;
+  --shadow:0 40px 70px -40px rgba(20,30,22,.6);
+  --font-d:'Bricolage Grotesque','Arial Narrow',system-ui,sans-serif;
+  --font-b:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-m:'DM Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1511;--surface:#18201a;--surface-2:#222c24;--line:#2d392f;--fg:#ebf0e7;--muted:#98a69b;
+  --paper:#1b231d;--paper-line:#38463b;--accent:#f6ac33;--accent-ink:#241602;--accent-text:#f6ac33;
+  --mix:16%;--phone:#000000;--shadow:0 40px 70px -40px rgba(0,0,0,.9);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1511;--surface:#18201a;--surface-2:#222c24;--line:#2d392f;--fg:#ebf0e7;--muted:#98a69b;
+  --paper:#1b231d;--paper-line:#38463b;--accent:#f6ac33;--accent-ink:#241602;--accent-text:#f6ac33;
+  --mix:16%;--phone:#000000;--shadow:0 40px 70px -40px rgba(0,0,0,.9);color-scheme:dark}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-b);font-size:16px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{max-width:1120px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* barre */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:color-mix(in oklab,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:16px;padding-block:12px}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none}
+.brand svg{width:28px;height:28px}
+.word{font-family:var(--font-d);font-weight:800;font-size:1.35rem;letter-spacing:-.035em;line-height:1}
+.links{margin-left:auto;display:flex;gap:22px;font-weight:600;font-size:.93rem}
+.links a{text-decoration:none;color:var(--muted)}
+.links a:hover{color:var(--fg)}
+.pill{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:10px 18px;background:var(--fg);color:var(--bg);font-weight:700;text-decoration:none;font-size:.93rem;white-space:nowrap}
+@media (max-width:760px){.links{display:none}.bar .pill{margin-left:auto}}
+
+/* héros */
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:56px;align-items:center;padding-block:56px 72px}
+@media (max-width:900px){.hero .wrap{grid-template-columns:minmax(0,1fr);gap:40px;padding-block:36px 56px}}
+.eyebrow{font:500 .78rem var(--font-m);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-text);margin:0}
+.hero h1{font-family:var(--font-d);font-weight:800;font-size:clamp(2.5rem,6.2vw,4.6rem);line-height:.96;letter-spacing:-.045em;margin:14px 0 0;text-wrap:balance}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 62%,color-mix(in oklab,var(--accent) 70%,transparent) 62%);padding-inline:.04em}
+.lede{font-size:1.15rem;color:var(--muted);max-width:44ch;margin:22px 0 0}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:14px;padding:14px 20px;font-weight:700;text-decoration:none;border:1px solid var(--line);background:var(--surface)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.swatches{display:flex;gap:10px;align-items:center;margin-top:34px;color:var(--muted);font-size:.88rem}
+.swatches i{width:26px;height:26px;border-radius:50%;border:2px solid var(--bg);margin-right:-18px;box-shadow:0 0 0 1px var(--line)}
+.swatches span{margin-left:22px}
+
+/* téléphone */
+.stage{display:grid;justify-items:center;gap:18px}
+.phone{position:relative;box-sizing:border-box;width:min(370px,100%);aspect-ratio:9/19;background:var(--phone);border-radius:52px;padding:11px;box-shadow:var(--shadow),inset 0 0 0 2px rgba(255,255,255,.08)}
+.phone::before{content:"";position:absolute;top:18px;left:50%;width:92px;height:26px;margin-left:-46px;border-radius:14px;background:#000;z-index:2;pointer-events:none}
+.screen{position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;background:var(--bg)}
+.screen iframe{position:absolute;top:40px;left:0;width:100%;height:calc(100% - 40px);border:0;display:block}
+.status{position:absolute;inset:0 0 auto;height:40px;display:flex;justify-content:space-between;align-items:center;padding:0 26px;font:600 .8rem var(--font-b);color:var(--fg)}
+.status i{display:inline-block;width:22px;height:11px;border:1.5px solid currentColor;border-radius:3px;position:relative}
+.status i::after{content:"";position:absolute;inset:1.5px 5px 1.5px 1.5px;background:currentColor;border-radius:1px}
+.screen .boot{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font:500 .8rem var(--font-m)}
+.try{display:grid;gap:10px;justify-items:center;width:min(420px,100%)}
+.try p{margin:0;font:500 .74rem var(--font-m);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.try-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.try button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:600;font-size:.88rem}
+.try button:hover{border-color:var(--fg)}
+
+/* sections */
+section.band{padding-block:84px}
+@media (max-width:700px){section.band{padding-block:60px}}
+.band h2{font-family:var(--font-d);font-weight:800;font-size:clamp(2rem,4.4vw,3.1rem);line-height:1;letter-spacing:-.04em;margin:10px 0 0;text-wrap:balance;max-width:20ch}
+.band .intro{color:var(--muted);font-size:1.08rem;max-width:56ch;margin:16px 0 0}
+
+/* comment ça marche : tickets */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:44px}
+@media (max-width:860px){.steps{grid-template-columns:minmax(0,1fr)}}
+.tk{position:relative;background:var(--paper);border-radius:20px;padding:22px 22px 24px 50px;display:grid;gap:10px;align-content:start;min-width:0;
+  -webkit-mask:radial-gradient(circle at 26px 0,#0000 8px,#000 8.5px) top/100% 51% no-repeat,radial-gradient(circle at 26px 100%,#0000 8px,#000 8.5px) bottom/100% 51% no-repeat;
+  mask:radial-gradient(circle at 26px 0,#0000 8px,#000 8.5px) top/100% 51% no-repeat,radial-gradient(circle at 26px 100%,#0000 8px,#000 8.5px) bottom/100% 51% no-repeat}
+.tk::before{content:"";position:absolute;left:25px;top:14px;bottom:14px;border-left:2px dashed var(--paper-line)}
+.tk .no{font:500 .76rem var(--font-m);letter-spacing:.12em;color:var(--accent-text);text-transform:uppercase}
+.tk h3{font-family:var(--font-d);font-weight:800;font-size:1.5rem;letter-spacing:-.03em;margin:0;line-height:1.05}
+.tk p{margin:0;color:var(--muted)}
+.tk .demo{margin-top:8px;border-top:2px dashed var(--paper-line);padding-top:12px;font:400 .84rem var(--font-m);display:grid;gap:6px}
+.tk .demo div{display:flex;align-items:baseline;gap:6px;min-width:0}
+.tk .demo .d{flex:1;min-width:10px;border-bottom:2px dotted var(--paper-line);transform:translateY(-4px)}
+.tk .demo .k{color:var(--muted)}
+.tint-carbo{background:color-mix(in oklab,var(--t-carbo) var(--mix),var(--bg))}
+.tint-poke{background:color-mix(in oklab,var(--t-poke) var(--mix),var(--bg))}
+.tint-shak{background:color-mix(in oklab,var(--t-shak) var(--mix),var(--bg))}
+
+/* mode cuisine */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:center}
+@media (max-width:860px){.split{grid-template-columns:minmax(0,1fr);gap:32px}}
+.feats{list-style:none;margin:28px 0 0;padding:0;display:grid;gap:0;border-top:1px solid color-mix(in oklab,var(--fg) 16%,transparent)}
+.feats li{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;padding:14px 0;border-bottom:1px solid color-mix(in oklab,var(--fg) 16%,transparent)}
+@media (max-width:520px){.feats li{grid-template-columns:minmax(0,1fr);gap:2px}}
+.feats b{font-weight:700}
+.feats span{color:var(--muted)}
+.cookcard{background:var(--bg);border-radius:28px;padding:22px;display:grid;gap:14px;box-shadow:var(--shadow);max-width:440px;justify-self:center;width:100%}
+.cookcard .segs{display:flex;gap:4px}
+.cookcard .segs i{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.cookcard .segs i.d{background:var(--fg)}
+.cookcard .segs i.c{background:var(--accent)}
+.cookcard .lab{font:500 .76rem var(--font-m);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text)}
+.cookcard .big{font-size:1.4rem;line-height:1.3;font-weight:600;margin:0}
+.cookcard .chips{display:flex;flex-wrap:wrap;gap:8px}
+.cookcard .chip{background:var(--surface-2);border-radius:10px;padding:6px 10px;font-weight:600;font-size:.88rem}
+.cookcard .chip b{font-family:var(--font-m);font-weight:500}
+.cookcard .timer{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 8px 8px 16px}
+.cookcard .timer b{font:500 1.2rem var(--font-m);font-variant-numeric:tabular-nums}
+.cookcard .timer button{border:0;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:8px 14px;font-weight:700}
+
+/* créateurs */
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:40px;border:1px solid var(--line);border-radius:22px;background:var(--surface);overflow:hidden}
+@media (max-width:860px){.flow{grid-template-columns:minmax(0,1fr)}}
+.flow div{padding:22px;display:grid;gap:6px;align-content:start;border-right:1px solid var(--line);min-width:0}
+.flow div:last-child{border-right:0}
+@media (max-width:860px){.flow div{border-right:0;border-bottom:1px solid var(--line)}.flow div:last-child{border-bottom:0}}
+.flow small{font:500 .74rem var(--font-m);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.flow b{font-family:var(--font-d);font-weight:800;font-size:1.25rem;letter-spacing:-.02em;line-height:1.1}
+.flow p{margin:0;color:var(--muted);font-size:.95rem}
+.tag{justify-self:start;font:500 .7rem var(--font-m);letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:var(--muted)}
+
+/* feuille de route */
+.road{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;margin-top:40px}
+@media (max-width:760px){.road{grid-template-columns:minmax(0,1fr)}}
+.col{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;display:grid;gap:12px;align-content:start}
+.col h3{margin:0;display:flex;align-items:center;gap:10px;font-family:var(--font-d);font-weight:800;font-size:1.3rem;letter-spacing:-.02em}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.dot.ok{background:#2f9a5f}
+.col ul{margin:0;padding:0;list-style:none;display:grid}
+.col li{padding:10px 0;border-bottom:1px solid var(--line);display:grid;gap:2px}
+.col li:last-child{border-bottom:0}
+.col li span{color:var(--muted);font-size:.92rem}
+
+footer{border-top:1px solid var(--line)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding-block:28px calc(28px + env(safe-area-inset-bottom,0px));color:var(--muted);font-size:.88rem}
+
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Bouchée, accueil">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><defs><mask id="bite-s"><rect width="32" height="32" fill="#fff"/><circle cx="29" cy="7" r="5" fill="#000"/><circle cx="31" cy="14" r="4" fill="#000"/><circle cx="24" cy="3" r="4" fill="#000"/></mask></defs><circle cx="16" cy="16" r="14" style="fill:var(--accent)" mask="url(#bite-s)"/></svg>
+      <span class="word">bouchée</span>
+    </a>
+    <nav class="links" aria-label="Sections">
+      <a href="#comment">Comment ça marche</a>
+      <a href="#cuisine">Mode cuisine</a>
+      <a href="#createurs">Créateurs</a>
+      <a href="#route">Feuille de route</a>
+    </nav>
+    <a class="pill" href="#demo">Essayer la démo</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Recettes en vidéo · courses en un geste</p>
+        <h1>Vois un plat. Glisse. <em>C’est dans ton panier.</em></h1>
+        <p class="lede">Bouchée est un fil de vidéos de cuisine où chaque plat cache sa recette complète. Un glissement vers la gauche, et les ingrédients qui te manquent partent dans ton panier drive.</p>
+        <div class="hero-cta">
+          <a class="btn primary" href="#demo">Essayer la démo</a>
+          <a class="btn" href="#comment">Comment ça marche</a>
+        </div>
+        <div class="swatches" aria-hidden="true"><i style="background:var(--t-carbo)"></i><i style="background:var(--t-shak)"></i><i style="background:var(--t-poke)"></i><i style="background:var(--t-curry)"></i><span>Chaque plat donne sa couleur au fil</span></div>
+      </div>
+      <div class="stage" id="demo">
+        <div class="phone"><div class="screen"><div class="status" aria-hidden="true"><span>19:30</span><i></i></div><span class="boot">Chargement de l’appli…</span><iframe id="app-frame" title="Démo interactive de l’appli Bouchée"></iframe></div></div>
+        <div class="try">
+          <p>Essaie directement</p>
+          <div class="try-row">
+            <button data-try="recipe">Ouvrir la recette</button>
+            <button data-try="cook">Mode cuisine</button>
+            <button data-try="cart">Ajouter et voir le panier</button>
+            <button data-try="next">Plat suivant</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band tint-carbo" id="comment">
+    <div class="wrap">
+      <p class="eyebrow">Comment ça marche</p>
+      <h2>Trois gestes entre l’envie et le frigo.</h2>
+      <p class="intro">Le fil donne envie, le ticket explique, le panier s’occupe des courses. Personne n’a besoin de recopier une liste d’ingrédients depuis une vidéo.</p>
+      <div class="steps">
+        <article class="tk">
+          <span class="no">Étape 01</span>
+          <h3>Regarde</h3>
+          <p>Un plat par écran. Le fond prend la couleur du plat, le temps et le prix par personne sont affichés dès la photo.</p>
+          <div class="demo"><div><span class="k">Carbonara</span><span class="d"></span><span>20 min</span></div><div><span class="k">Par personne</span><span class="d"></span><span>≈ 3,70 €</span></div></div>
+        </article>
+        <article class="tk">
+          <span class="no">Étape 02</span>
+          <h3>Glisse</h3>
+          <p>Le ticket de recette sort de derrière la photo. Tu règles le nombre de portions et tu coches ce que tu as déjà.</p>
+          <div class="demo"><div><span class="k">Spaghetti</span><span class="d"></span><span>200 g</span></div><div><span class="k">Pecorino</span><span class="d"></span><span>50 g</span></div></div>
+        </article>
+        <article class="tk">
+          <span class="no">Étape 03</span>
+          <h3>Commande</h3>
+          <p>Le reste part dans ton panier drive, regroupé par recette, avec le total estimé et un lien vers chaque produit.</p>
+          <div class="demo"><div><span class="k">5 articles</span><span class="d"></span><span>≈ 7,40 €</span></div><div><span class="k">Drive</span><span class="d"></span><span>Carrefour</span></div></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="cuisine">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Mode cuisine</p>
+        <h2>Les mains dans la pâte, le téléphone suit.</h2>
+        <p class="intro">Regarder une recette et la refaire sont deux choses différentes. En cuisine, l’appli passe en écran simplifié, une étape à la fois.</p>
+        <ul class="feats">
+          <li><b>Une étape par écran</b><span>Texte en grand et la séquence vidéo de l’étape au-dessus.</span></li>
+          <li><b>Ingrédients du moment</b><span>Seulement ce qu’il faut pour cette étape, aux bonnes quantités.</span></li>
+          <li><b>Minuteurs intégrés</b><span>Détectés dans le texte de l’étape. Plusieurs peuvent tourner en même temps.</span></li>
+          <li><b>Écran allumé</b><span>Le téléphone ne se met pas en veille pendant que tu cuisines.</span></li>
+        </ul>
+      </div>
+      <div class="cookcard" aria-label="Aperçu du mode cuisine">
+        <div class="segs"><i class="d"></i><i class="d"></i><i class="c"></i><i></i><i></i></div>
+        <span class="lab">Étape 3 sur 5 · Shakshuka</span>
+        <p class="big">Verser les tomates, laisser mijoter 10 min.</p>
+        <div class="chips"><span class="chip">Tomates concassées <b>400 g</b></span></div>
+        <div class="timer"><span>Minuteur · étape 3</span><b id="demo-timer">10:00</b><button id="demo-timer-btn">Lancer</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band tint-poke" id="createurs">
+    <div class="wrap">
+      <p class="eyebrow">Pour les créateurs</p>
+      <h2>Ta recette rapporte quand elle remplit un panier.</h2>
+      <p class="intro">Sur les autres réseaux, une vidéo de cuisine rapporte des vues. Ici, chaque panier passé depuis ta recette te reverse une part de la commission d’affiliation.</p>
+      <div class="flow">
+        <div><small>1 · Tu filmes</small><b>Ta vidéo, sans rien taper</b><p>La recette est extraite de la vidéo, tu n’as plus qu’à corriger.</p><span class="tag">Prévu</span></div>
+        <div><small>2 · On cuisine</small><b>Les gens refont ton plat</b><p>Le bouton « Poster ma version » relie leurs essais à ta recette.</p></div>
+        <div><small>3 · Ils commandent</small><b>Le panier part au drive</b><p>Le lien d’affiliation de l’enseigne suit chaque ingrédient.</p></div>
+        <div><small>4 · Tu touches</small><b>Une part de la commission</b><p>Calculée sur les paniers venus de ta recette.</p><span class="tag">Concept</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="route">
+    <div class="wrap">
+      <p class="eyebrow">Feuille de route</p>
+      <h2>Ce que fait déjà le prototype, et la suite.</h2>
+      <div class="road">
+        <div class="col">
+          <h3><span class="dot ok"></span>Dans la démo</h3>
+          <ul>
+            <li><b>Fil de plats</b><span>Défilement vertical, j’aime au double-tap, recettes gardées.</span></li>
+            <li><b>Ticket de recette</b><span>Portions réglables, quantités et prix recalculés.</span></li>
+            <li><b>Panier drive</b><span>Regroupé par recette, total estimé, liste copiable.</span></li>
+            <li><b>Mode cuisine</b><span>Étapes, minuteurs, écran allumé.</span></li>
+            <li><b>Filtres</b><span>Moins de 25 min, petit budget, végé.</span></li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3><span class="dot"></span>Ensuite</h3>
+          <ul>
+            <li><b>Recette extraite par IA</b><span>Transcription de la voix et reconnaissance des ingrédients à l’image.</span></li>
+            <li><b>Panier de la semaine</b><span>Plusieurs recettes, ingrédients fusionnés, un seul panier.</span></li>
+            <li><b>Plusieurs enseignes</b><span>Carrefour, Leclerc, Intermarché : l’utilisateur choisit son drive.</span></li>
+            <li><b>Commande à la voix</b><span>Dire « suivant » en mode cuisine.</span></li>
+            <li><b>Ce que j’ai dans mon frigo</b><span>Les recettes faisables avec ce que tu as déjà.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap"><span>Bouchée · prototype 2026</span><span>Prix indicatifs. Projet indépendant, sans lien avec Carrefour.</span></div>
+</footer>
+
+<template id="app-src">
+<title>Bouchée</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : fil vertical d'« assiettes » sur un fond teinté par le plat ; chaque assiette = carte photo + ticket de recette qui dépasse à droite ; dock flottant. */
+:root{
+  --bg:#eef2ec;
+  --surface:#ffffff;
+  --surface-2:#e3e9e1;
+  --line:#d1d9cf;
+  --fg:#17231b;
+  --muted:#56655b;
+  --paper:#fffdf5;
+  --paper-line:#ddd6c3;
+  --accent:#f4a422;          /* safran */
+  --accent-ink:#2a1a02;
+  --accent-text:#94570a;
+  --like:#e2492f;            /* tomate */
+  --ok:#2f9a5f;
+  --dock:#17231b;
+  --dock-fg:#eef2ec;
+  --mix:52%;
+  --glass:rgba(14,18,15,.48);
+  --on-media:#ffffff;
+  --shadow:0 22px 40px -22px rgba(20,30,22,.55);
+  --font-d:'Bricolage Grotesque','Arial Narrow',system-ui,sans-serif;
+  --font-b:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-m:'DM Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+  --tint:#e6dcc4;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1511;--surface:#18201a;--surface-2:#222c24;--line:#2d392f;--fg:#ebf0e7;--muted:#98a69b;
+  --paper:#1b231d;--paper-line:#38463b;--accent:#f6ac33;--accent-ink:#241602;--accent-text:#f6ac33;
+  --like:#ff6a52;--ok:#6fd39a;--dock:#ebf0e7;--dock-fg:#0f1511;--mix:15%;--shadow:0 22px 40px -22px rgba(0,0,0,.8);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1511;--surface:#18201a;--surface-2:#222c24;--line:#2d392f;--fg:#ebf0e7;--muted:#98a69b;
+  --paper:#1b231d;--paper-line:#38463b;--accent:#f6ac33;--accent-ink:#241602;--accent-text:#f6ac33;
+  --like:#ff6a52;--ok:#6fd39a;--dock:#ebf0e7;--dock-fg:#0f1511;--mix:15%;--shadow:0 22px 40px -22px rgba(0,0,0,.8);color-scheme:dark}
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;background:var(--bg);color:var(--fg);overflow:hidden}
+body{font-family:var(--font-b);font-size:15px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.app{height:100%;max-width:480px;margin-inline:auto;display:grid;grid-template-rows:auto minmax(0,1fr);position:relative;background:var(--bg);overflow:hidden}
+@media (min-width:481px){.app{border-inline:1px solid var(--line)}}
+
+/* en-tête */
+.top{display:grid;gap:10px;padding-block:12px 10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));min-width:0;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{width:30px;height:30px;flex:0 0 auto}
+.word{font-family:var(--font-d);font-weight:800;font-size:1.45rem;letter-spacing:-.035em;line-height:1}
+.brand small{margin-left:auto;color:var(--muted);font-weight:600;font-size:.85rem}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.chips::-webkit-scrollbar{display:none}
+.fchip{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 13px;font-weight:600;font-size:.86rem;white-space:nowrap}
+.fchip.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+
+/* fil */
+.feed{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;overscroll-behavior:contain}
+.feed::-webkit-scrollbar{display:none}
+.post{height:100%;scroll-snap-align:start;scroll-snap-stop:always;display:grid;grid-template-rows:minmax(0,1fr) auto;
+  padding-block:14px 92px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:color-mix(in oklab,var(--tint) var(--mix),var(--bg));transition:background .3s}
+.plate{position:relative;min-height:0}
+.track{display:flex;gap:6px;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+.track::-webkit-scrollbar{display:none}
+.pane{height:100%;position:relative;overflow:hidden}
+.media{flex:0 0 calc(100% - 34px);scroll-snap-align:start;border-radius:28px;background:#000;box-shadow:var(--shadow)}
+.media canvas,.media img,.media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.stats{position:absolute;top:12px;left:12px;right:12px;display:flex;gap:6px;flex-wrap:wrap}
+.stats span{background:var(--glass);color:var(--on-media);font:500 .74rem var(--font-m);padding:5px 10px;border-radius:999px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.progress{position:absolute;left:16px;right:16px;bottom:14px;height:3px;border-radius:2px;background:rgba(255,255,255,.28);overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--on-media)}
+.burst{position:absolute;left:50%;top:42%;width:110px;height:110px;margin:-55px 0 0 -55px;fill:var(--like);pointer-events:none;opacity:0}
+.burst.go{animation:pop .7s ease-out}
+@keyframes pop{0%{opacity:0;transform:scale(.4)}25%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:scale(1.4) translateY(-30px)}}
+
+/* ticket de recette */
+.ticket{flex:0 0 100%;scroll-snap-align:end;border-radius:22px;background:var(--paper);display:flex;box-shadow:var(--shadow);
+  -webkit-mask:radial-gradient(circle at 28px 0,#0000 8px,#000 8.5px) top/100% 51% no-repeat,radial-gradient(circle at 28px 100%,#0000 8px,#000 8.5px) bottom/100% 51% no-repeat;
+  mask:radial-gradient(circle at 28px 0,#0000 8px,#000 8.5px) top/100% 51% no-repeat,radial-gradient(circle at 28px 100%,#0000 8px,#000 8.5px) bottom/100% 51% no-repeat}
+.stub{flex:0 0 28px;border-right:2px dashed var(--paper-line);display:grid;place-items:center;cursor:pointer}
+.stub span{writing-mode:vertical-rl;transform:rotate(180deg);font:500 .68rem var(--font-m);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.r-inner{flex:1;min-width:0;overflow-y:auto;overscroll-behavior:contain;padding:16px 16px 0;display:grid;gap:14px;align-content:start}
+.t-head{display:flex;justify-content:space-between;align-items:center;gap:8px;font:500 .74rem var(--font-m);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.back{border:1px solid var(--paper-line);background:transparent;border-radius:999px;padding:5px 12px;font:600 .82rem var(--font-b);text-transform:none;letter-spacing:0;color:var(--fg)}
+.ticket h2{font-family:var(--font-d);font-weight:800;font-size:1.6rem;line-height:1.05;letter-spacing:-.03em;margin:0;text-wrap:balance}
+.note{margin:0;color:var(--muted);font-size:.92rem;max-width:60ch}
+.note b{color:var(--fg);font-weight:700}
+.facts{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border-radius:10px;padding:6px 10px;font-size:.86rem;font-weight:600}
+.chip.serv{padding:3px 4px 3px 10px}
+.chip.serv button{width:30px;height:30px;border-radius:8px;border:0;background:var(--paper);font-size:1.1rem;font-weight:700;line-height:1}
+.chip.serv output{min-width:2ch;text-align:center;font-family:var(--font-m);font-weight:500}
+.ticket h3{font:500 .74rem var(--font-m);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-text);margin:10px 0 0;padding-top:12px;border-top:2px dashed var(--paper-line)}
+.hint{margin:-8px 0 0;color:var(--muted);font-size:.84rem}
+.ing{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.ing label{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:baseline;gap:10px;padding:7px 0;cursor:pointer}
+.ing input{position:absolute;opacity:0;pointer-events:none}
+.box{width:18px;height:18px;border-radius:5px;border:2px solid var(--muted);display:grid;place-items:center;align-self:center}
+.box::after{content:"";width:9px;height:5px;border:solid var(--paper);border-width:0 0 2px 2px;transform:rotate(-45deg) translate(1px,-1px);opacity:0}
+.ing input:checked + .box{background:var(--ok);border-color:var(--ok)}
+.ing input:checked + .box::after{opacity:1}
+.ing input:focus-visible + .box{outline:2px solid var(--accent);outline-offset:2px}
+.ln{display:flex;align-items:baseline;gap:6px;min-width:0}
+.nm{min-width:0}
+.dots{flex:1 1 12px;min-width:12px;border-bottom:2px dotted var(--paper-line);transform:translateY(-4px)}
+.qty{font:500 .9rem var(--font-m);white-space:nowrap}
+.pr{font:400 .76rem var(--font-m);color:var(--muted);min-width:6.5ch;text-align:right}
+.ing input:checked ~ .ln .nm{color:var(--muted);text-decoration:line-through}
+.ing input:checked ~ .ln .qty,.ing input:checked ~ .pr{opacity:.4}
+.steps{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+.steps li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;max-width:62ch}
+.steps .n{font:500 .85rem var(--font-m);color:var(--accent-text);padding-top:1px}
+.cta-wrap{position:sticky;bottom:0;display:flex;gap:8px;padding-block:14px;background:linear-gradient(transparent,var(--paper) 30%);margin-top:4px}
+.cta{flex:1;min-width:0;border:0;border-radius:14px;padding:13px 14px;background:var(--accent);color:var(--accent-ink);font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.cta small{font:500 .82rem var(--font-m)}
+.cta:disabled{opacity:.5;cursor:default}
+.cook-btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;border:0;background:var(--fg);color:var(--bg);border-radius:14px;padding:0 14px;font-weight:700}
+.cook-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.legal{color:var(--muted);font-size:.76rem;margin:0;padding-bottom:22px}
+@media (max-width:380px){.cook-btn{font-size:0;gap:0;padding:0 13px}.cook-btn svg{width:21px;height:21px}}
+
+/* infos sous l'assiette */
+.info{display:grid;gap:6px;padding-top:12px;min-width:0}
+.who{display:flex;align-items:center;gap:8px;font-size:.84rem;color:var(--muted);min-width:0;white-space:nowrap;overflow:hidden}
+.avatar{width:24px;height:24px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;font:800 .75rem var(--font-d);background:var(--fg);color:var(--bg)}
+.handle{color:var(--fg);font-weight:700}
+.who .tags{overflow:hidden;text-overflow:ellipsis}
+.dish-title{font-family:var(--font-d);font-weight:800;font-size:1.5rem;line-height:1.05;letter-spacing:-.03em;margin:0;text-wrap:balance;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.acts{display:flex;align-items:center;gap:8px;margin-top:2px}
+.act{display:inline-flex;align-items:center;gap:6px;border:1px solid color-mix(in oklab,var(--fg) 16%,transparent);background:color-mix(in oklab,var(--surface) 55%,transparent);border-radius:999px;padding:7px 12px;font-weight:600;font-size:.86rem;font-variant-numeric:tabular-nums}
+.act svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.act.on.like{color:var(--like)} .act.on.like svg{fill:var(--like)}
+.act.on.save svg{fill:currentColor}
+.open{margin-left:auto;display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:9px 16px;background:var(--accent);color:var(--accent-ink);font-weight:700}
+.open svg{width:17px;height:17px;transition:transform .25s}
+.post.is-open .open svg{transform:rotate(180deg)}
+.post.is-open .open .a,.post:not(.is-open) .open .b{display:none}
+
+.none{height:100%;display:grid;place-items:center;text-align:center;color:var(--muted);padding-inline:32px}
+.none strong{display:block;color:var(--fg);font:800 1.3rem var(--font-d);margin-bottom:6px}
+
+/* dock */
+.dock{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:8;display:flex;align-items:center;gap:4px;
+  background:var(--dock);color:var(--dock-fg);border-radius:999px;padding:5px;box-shadow:0 14px 30px -12px rgba(0,0,0,.45)}
+.dk{display:inline-flex;align-items:center;gap:7px;border:0;background:transparent;border-radius:999px;padding:10px 15px;font-weight:700;font-size:.88rem}
+.dk svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dk.on{background:color-mix(in oklab,var(--dock-fg) 15%,transparent)}
+.dk.plus{width:46px;height:46px;padding:0;justify-content:center;background:var(--accent);color:var(--accent-ink)}
+.dk.plus svg{stroke-width:2.6}
+.badge{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--accent);color:var(--accent-ink);font:500 .74rem var(--font-m);display:grid;place-items:center}
+
+/* feuilles */
+.sheet{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.5);display:flex;align-items:flex-end}
+.panel{width:100%;max-height:90%;overflow-y:auto;overscroll-behavior:contain;background:var(--surface);border-radius:24px 24px 0 0;
+  padding-block:10px calc(20px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:14px;animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+.grab{width:40px;height:4px;border-radius:2px;background:var(--line);justify-self:center}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.panel-head h2{font-family:var(--font-d);font-weight:800;font-size:1.4rem;letter-spacing:-.03em;margin:0}
+.x{width:36px;height:36px;border-radius:50%;border:0;background:var(--surface-2);font-size:1.2rem;line-height:1}
+.group h3{margin:4px 0 6px;font:500 .74rem var(--font-m);text-transform:uppercase;letter-spacing:.12em;color:var(--accent-text)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.row .n{min-width:0}
+.row .n small{display:block;color:var(--muted);font-family:var(--font-m);font-size:.78rem}
+.row a{color:var(--fg);font-weight:700;font-size:.85rem;white-space:nowrap;text-underline-offset:3px}
+.row .rm{border:0;background:none;color:var(--muted);font-size:1.1rem;width:30px;height:30px}
+.total{display:flex;justify-content:space-between;align-items:baseline;font:500 1.05rem var(--font-m)}
+.total span:first-child{font:600 .9rem var(--font-b);color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:12px;padding:12px 14px;font-weight:700;flex:1 1 140px;text-align:center;color:var(--fg)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.empty{color:var(--muted);text-align:center;padding:28px 8px}
+.empty strong{display:block;color:var(--fg);font-family:var(--font-d);font-weight:800;font-size:1.15rem;margin-bottom:6px}
+textarea.copybox{width:100%;min-height:110px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px;font:.85rem var(--font-m)}
+form{display:grid;gap:12px}
+.field{display:grid;gap:6px}
+.field label{font-weight:700;font-size:.85rem}
+.field small{color:var(--muted)}
+.field input[type=text],.field input[type=number],.field textarea{width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit}
+.field textarea{min-height:96px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.drop{position:relative;border:2px dashed var(--line);border-radius:16px;min-height:120px;display:grid;place-items:center;text-align:center;color:var(--muted);overflow:hidden;padding:12px}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop img,.drop video{max-height:180px;border-radius:10px}
+.toast{position:absolute;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;background:var(--fg);color:var(--bg);font-weight:700;padding:10px 16px;border-radius:999px;font-size:.9rem;max-width:calc(100% - 32px);text-align:center}
+
+/* mode cuisine */
+.cook{position:absolute;inset:0;z-index:25;background:var(--bg);display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;padding-block:10px calc(12px + env(safe-area-inset-bottom,0px))}
+.cook-head{display:flex;align-items:center;gap:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.cook-head .t{flex:1;min-width:0}
+.cook-head .t b{display:block;font-family:var(--font-d);font-weight:800;font-size:1.05rem;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cook-head .t span{color:var(--muted);font:500 .78rem var(--font-m)}
+.awake{font:500 .7rem var(--font-m);color:var(--ok);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.segs{display:flex;gap:4px;padding-block:10px 0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.segs i{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.segs i.done{background:var(--fg)}
+.segs i.cur{background:var(--accent)}
+.cook-body{overflow-y:auto;overscroll-behavior:contain;display:grid;align-content:start;gap:16px;padding-block:14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));touch-action:pan-y}
+.clip{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:16/10;max-width:100%;background:#000}
+.clip canvas,.clip img,.clip video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.clip .lbl{position:absolute;left:10px;bottom:10px;background:var(--glass);color:var(--on-media);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-radius:8px;padding:4px 8px;font:500 .74rem var(--font-m)}
+.step-no{font:500 .78rem var(--font-m);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text);margin:0}
+.step-txt{font-size:1.45rem;line-height:1.3;font-weight:600;margin:0;text-wrap:pretty;max-width:30ch}
+.desc{margin:0}
+.need{display:flex;flex-wrap:wrap;gap:8px}
+.need .chip b{font-family:var(--font-m);font-weight:500}
+.timer-go{justify-self:start;display:inline-flex;align-items:center;gap:10px;border:0;border-radius:999px;padding:12px 18px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:1rem}
+.timer-go svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.finish{display:grid;gap:12px;justify-items:start}
+.finish h2{font-family:var(--font-d);font-weight:800;font-size:1.8rem;letter-spacing:-.03em;margin:0}
+.cook-foot{display:grid;gap:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.timers{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.timers:empty{display:none}
+.tm{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 6px 6px 12px;font:500 .95rem var(--font-m)}
+.tm small{color:var(--muted);font:600 .78rem var(--font-b)}
+.tm button{border:0;background:var(--surface-2);border-radius:999px;width:28px;height:28px;font-size:.85rem}
+.tm.paused{opacity:.6}
+.tm.ring{background:var(--like);border-color:var(--like);color:#fff;animation:ring .5s ease-in-out infinite alternate}
+.tm.ring small{color:#fff}
+@keyframes ring{to{transform:scale(1.05)}}
+.navbtns{display:grid;grid-template-columns:1fr 2fr;gap:10px}
+.navbtns button{border-radius:14px;padding:15px;font-weight:700;font-size:1rem;border:1px solid var(--line);background:var(--surface)}
+.navbtns .next{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.navbtns button:disabled{opacity:.35;cursor:default}
+
+@media (prefers-reduced-motion:reduce){
+  .panel,.burst.go,.tm.ring{animation:none}
+  .post,.open svg{transition:none}
+}
+</style>
+
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><defs><mask id="bite"><rect width="32" height="32" fill="#fff"/><circle cx="29" cy="7" r="5" fill="#000"/><circle cx="31" cy="14" r="4" fill="#000"/><circle cx="24" cy="3" r="4" fill="#000"/></mask></defs><circle cx="16" cy="16" r="14" style="fill:var(--accent)" mask="url(#bite)"/></svg>
+      <span class="word">bouchée</span>
+      <small>Ce soir, on mange quoi ?</small>
+    </div>
+    <div class="chips" role="group" aria-label="Filtres">
+      <button class="fchip on" data-f="all">Tout</button>
+      <button class="fchip" data-f="quick">Moins de 25 min</button>
+      <button class="fchip" data-f="budget">Moins de 2,50 € / pers.</button>
+      <button class="fchip" data-f="veg">Végé</button>
+    </div>
+  </header>
+
+  <main class="feed" id="feed" aria-label="Fil de plats">
+    <div class="none" id="none" hidden><div><strong>Rien pour ce filtre</strong>Essaie un autre filtre ou poste ta propre recette.</div></div>
+  </main>
+
+  <nav class="dock" aria-label="Navigation">
+    <button class="dk on" id="nav-home"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="4"/><path d="M9 8h6"/></svg>Fil</button>
+    <button class="dk plus" id="nav-post" aria-label="Poster un plat"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button class="dk" id="nav-cart"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 11.1a1 1 0 0 1-1 .9H7.2a1 1 0 0 1-1-.9z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Panier<span class="badge" id="badge" hidden>0</span></button>
+  </nav>
+
+  <div class="sheet" id="cart-sheet" hidden>
+    <div class="panel" role="dialog" aria-label="Panier drive">
+      <div class="grab"></div>
+      <div class="panel-head"><h2>Panier drive</h2><button class="x" data-close aria-label="Fermer">×</button></div>
+      <div id="cart-body"></div>
+    </div>
+  </div>
+
+  <div class="sheet" id="post-sheet" hidden>
+    <div class="panel" role="dialog" aria-label="Poster un plat">
+      <div class="grab"></div>
+      <div class="panel-head"><h2>Poster ton plat</h2><button class="x" data-close aria-label="Fermer">×</button></div>
+      <form id="post-form">
+        <div class="drop" id="drop"><input type="file" id="f-media" accept="image/*,video/*" aria-label="Photo ou vidéo"><span id="drop-label">Touche pour ajouter une photo ou une vidéo</span></div>
+        <div class="field"><label for="f-title">Nom du plat</label><input type="text" id="f-title" required value="Croque-monsieur au four"></div>
+        <div class="field"><label for="f-caption">Le mot du chef</label><input type="text" id="f-caption" value="Le goûter salé du dimanche soir."></div>
+        <div class="two">
+          <div class="field"><label for="f-time">Temps</label><input type="text" id="f-time" value="25 min"></div>
+          <div class="field"><label for="f-serv">Portions</label><input type="number" id="f-serv" min="1" max="20" value="2"></div>
+        </div>
+        <div class="field"><label for="f-ing">Ingrédients</label><small>Un par ligne : quantité, unité, nom</small>
+          <textarea id="f-ing">4 tranches pain de mie
+2 tranches jambon blanc
+100 g emmental râpé
+20 g beurre
+20 cl lait</textarea></div>
+        <div class="field"><label for="f-steps">Étapes</label><small>Une par ligne</small>
+          <textarea id="f-steps">Beurrer le pain de mie.
+Garnir de jambon et d'emmental, refermer.
+Napper de béchamel rapide au lait et parsemer de fromage.
+Enfourner 12 min à 200 °C.</textarea></div>
+        <button class="btn primary" type="submit">Publier</button>
+      </form>
+    </div>
+  </div>
+
+  <section class="cook" id="cook" hidden aria-label="Mode cuisine">
+    <div class="cook-head">
+      <button class="x" id="cook-close" aria-label="Quitter le mode cuisine">×</button>
+      <div class="t"><b id="cook-title"></b><span id="cook-count"></span></div>
+      <span class="awake" id="awake" hidden>Écran allumé</span>
+    </div>
+    <div class="segs" id="segs"></div>
+    <div class="cook-body" id="cook-body"></div>
+    <div class="cook-foot">
+      <div class="timers" id="timers"></div>
+      <div class="navbtns">
+        <button id="prev">Précédent</button>
+        <button id="next" class="next">Étape suivante</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="toast" id="toast" hidden></div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const TAU = Math.PI * 2;
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const eur = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+// Lien de recherche Carrefour. En prod : remplacer par le lien tracké du programme d'affiliation.
+const shopUrl = (q) => 'https://www.carrefour.fr/s?q=' + encodeURIComponent(q);
+
+/* ---------- données d'exemple ---------- */
+const POSTS = [
+  { id:'carbo', user:'@nonna.lucia', kind:'pasta', title:'Carbonara, la vraie (sans crème)', caption:'Le secret : on mélange hors du feu, sinon c’est une omelette.', tags:'#pâtes #italien #étudiant', likes:18400, time:'20 min', level:'Facile', servings:2, unit:'pers.',
+    bg:['#4a3020','#120b08'], plate:'#efe7da', food:['#e8c167','#b4523a','#272220'], seed:11,
+    ing:[{n:'Spaghetti',q:200,u:'g',p:.85},{n:'Guanciale ou pancetta',q:120,u:'g',p:3.4},{n:'Œufs (jaunes)',q:3,u:'',p:.95},{n:'Pecorino romano',q:50,u:'g',p:2.2},{n:'Poivre noir',q:null,u:'',p:0}],
+    steps:['Cuire les spaghetti dans une grande casserole d’eau salée.','Faire dorer le guanciale à sec dans une poêle.','Fouetter les jaunes avec le pecorino râpé et beaucoup de poivre.','Égoutter en gardant une louche d’eau de cuisson.','Hors du feu, mélanger pâtes, guanciale et crème d’œufs en ajoutant l’eau petit à petit jusqu’à ce que ce soit nappant.'] },
+  { id:'shak', user:'@matin.lent', kind:'pan', title:'Shakshuka du dimanche', caption:'Une poêle, zéro vaisselle. Le pain pour saucer est obligatoire.', tags:'#brunch #végé #onepan', likes:9120, time:'25 min', level:'Facile', servings:2, unit:'pers.',
+    bg:['#2f3a3f','#0b0f11'], plate:'#26262c', food:['#c8402a','#e9a23b','#4f8a3a'], seed:23,
+    ing:[{n:'Œufs',q:4,u:'',p:1.3},{n:'Tomates concassées',q:400,u:'g',p:1.1},{n:'Poivron rouge',q:1,u:'',p:.9},{n:'Oignon',q:1,u:'',p:.3},{n:'Ail',q:2,u:'gousses',p:.3},{n:'Cumin moulu',q:1,u:'c. à c.',p:.2},{n:'Paprika fumé',q:1,u:'c. à c.',p:.2},{n:'Coriandre fraîche',q:1,u:'botte',p:1},{n:'Pain pita',q:2,u:'',p:1.2}],
+    steps:['Faire revenir oignon et poivron émincés 5 min.','Ajouter l’ail, le cumin et le paprika, cuire 1 min.','Verser les tomates, laisser mijoter 10 min.','Creuser 4 puits, y casser les œufs, couvrir 6 à 8 min.','Parsemer de coriandre, servir avec la pita chaude.'] },
+  { id:'poke', user:'@bowl.club', kind:'bowl', title:'Poke bowl saumon mangue', caption:'Le bol qui ressemble à des vacances. Prépare le riz la veille.', tags:'#healthy #frais #mealprep', likes:25300, time:'30 min', level:'Facile', servings:2, unit:'bols',
+    bg:['#17354a','#06121b'], plate:'#203f52', food:['#f2784b','#9cc75a','#ffc23d','#7fbf4f'], seed:37,
+    ing:[{n:'Riz à sushi',q:150,u:'g',p:.7},{n:'Pavé de saumon frais',q:250,u:'g',p:6.5},{n:'Avocat',q:1,u:'',p:1.2},{n:'Mangue',q:1,u:'',p:1.8},{n:'Edamame surgelés',q:100,u:'g',p:1.1},{n:'Sauce soja',q:3,u:'c. à s.',p:.4},{n:'Vinaigre de riz',q:2,u:'c. à s.',p:.3},{n:'Graines de sésame',q:1,u:'c. à s.',p:.2}],
+    steps:['Rincer et cuire le riz, l’assaisonner au vinaigre de riz.','Couper le saumon en cubes, le mariner 10 min dans la sauce soja.','Trancher l’avocat, couper la mangue en dés.','Cuire les edamame 3 min à l’eau bouillante.','Dresser le riz, disposer chaque garniture par quartier, finir au sésame.'] },
+  { id:'curry', user:'@epices.etudiant', kind:'curry', title:'Curry de pois chiches coco', caption:'4 portions pour moins de 2 € chacune. Encore meilleur réchauffé.', tags:'#vegan #petitbudget #batchcooking', likes:12750, time:'35 min', level:'Facile', servings:4, unit:'pers.',
+    bg:['#4a2a14','#120905'], plate:'#2e2a26', food:['#e08a2c','#e3c48a','#2f6b2e','#5ea34a'], seed:41,
+    ing:[{n:'Pois chiches (boîte)',q:2,u:'',p:1.8},{n:'Lait de coco',q:400,u:'ml',p:1.6},{n:'Oignon',q:1,u:'',p:.3},{n:'Ail',q:3,u:'gousses',p:.4},{n:'Gingembre frais',q:20,u:'g',p:.4},{n:'Pâte de curry',q:2,u:'c. à s.',p:1.2},{n:'Épinards frais',q:150,u:'g',p:1.5},{n:'Riz basmati',q:300,u:'g',p:1.1}],
+    steps:['Lancer la cuisson du riz.','Faire revenir oignon, ail et gingembre 4 min.','Ajouter la pâte de curry et cuire 1 min en remuant.','Verser le lait de coco et les pois chiches égouttés, mijoter 15 min.','Ajouter les épinards hors du feu, servir sur le riz.'] },
+  { id:'cookie', user:'@four.a.minuit', kind:'cookie', title:'Cookies cœur coulant', caption:'Sors-les quand ils ont l’air pas assez cuits. Fais-moi confiance.', tags:'#dessert #chocolat #rapide', likes:41200, time:'27 min', level:'Facile', servings:12, unit:'cookies',
+    bg:['#5a3a24','#160d07'], plate:'#efe4cf', food:['#c48a4b','#3b2116'], seed:53,
+    ing:[{n:'Beurre doux',q:125,u:'g',p:1.4},{n:'Sucre roux',q:150,u:'g',p:.5},{n:'Œufs',q:1,u:'',p:.3},{n:'Farine',q:220,u:'g',p:.3},{n:'Levure chimique',q:1,u:'c. à c.',p:.1},{n:'Chocolat noir pâtissier',q:150,u:'g',p:1.9},{n:'Fleur de sel',q:1,u:'pincée',p:0}],
+    steps:['Préchauffer le four à 180 °C.','Fouetter le beurre mou avec le sucre, puis ajouter l’œuf.','Incorporer farine et levure, puis le chocolat haché.','Former 12 boules sur une plaque, espacées.','Cuire 10 à 12 min : les bords dorés, le centre encore mou. Fleur de sel en sortie de four.'] }
+];
+
+
+const META = {
+  carbo:{ tint:'#f0d58a', min:20, veg:false },
+  shak:{ tint:'#f2ae9a', min:25, veg:true },
+  poke:{ tint:'#a6d4e2', min:30, veg:false },
+  curry:{ tint:'#efbf78', min:35, veg:true },
+  cookie:{ tint:'#d9bc9b', min:27, veg:true }
+};
+POSTS.forEach((p, i) => Object.assign(p, META[p.id], { no: 41 + i }));
+let ticketNo = 41 + POSTS.length;
+const perServ = (p) => p.ing.reduce((a, i) => a + i.p, 0) / p.servings;
+
+/* ---------- état ---------- */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('bouchee.' + k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem('bouchee.' + k, JSON.stringify(v)); } catch {} }
+};
+let cart = store.get('cart', []);
+const liked = new Set(store.get('liked', []));
+const saved = new Set(store.get('saved', []));
+const byId = {};
+const st = {};
+
+/* ---------- utilitaires ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const kfmt = (n) => n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace('.', ',') + ' k' : String(n);
+function scaleQ(q, u, f) {
+  if (q == null) return null;
+  const x = q * f;
+  if (/^(g|ml)$/.test(u)) return Math.max(5, Math.round(x / 5) * 5);
+  if (u === '' || /tranche|gousse|botte|pincée/.test(u)) return Math.max(1, Math.round(x));
+  return Math.max(.5, Math.round(x * 2) / 2);
+}
+const qtxt = (q, u) => q == null ? 'à votre goût' : (String(q).replace('.', ',') + (u ? ' ' + u : ''));
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.hidden = false;
+  clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 2200);
+}
+
+/* ---------- rendu des posts ---------- */
+const ICON = {
+  heart:'<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
+  save:'<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg>',
+  arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  pot:'<svg viewBox="0 0 24 24"><path d="M4 10h16v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M2 10h20M9 6c0-1 1-1.5 1-2.5M14 6c0-1 1-1.5 1-2.5"/></svg>',
+  clock:'<svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>'
+};
+
+function postHTML(p) {
+  const media = p.media
+    ? (p.media.type === 'video'
+        ? `<video src="${p.media.url}" muted loop playsinline></video>`
+        : `<img src="${p.media.url}" alt="${esc(p.title)}">`)
+    : `<canvas aria-label="${esc(p.title)}" role="img"></canvas>`;
+  const ps = perServ(p);
+  const ingRows = p.ing.map((it, k) => `
+      <li><label><input type="checkbox" id="${p.id}-i${k}" data-k="${k}"><span class="box"></span>
+        <span class="ln"><span class="nm">${esc(it.n)}</span><span class="dots"></span><span class="qty" data-q="${k}"></span></span>
+        <span class="pr" data-p="${k}"></span></label></li>`).join('');
+  const L = liked.has(p.id), S = saved.has(p.id);
+  return `
+  <article class="post" data-id="${p.id}" style="--tint:${p.tint}">
+    <div class="plate"><div class="track">
+      <section class="pane media" aria-label="Vidéo du plat">
+        ${media}
+        <svg class="burst" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+        <div class="stats"><span>${esc(p.time)}</span>${ps ? `<span>≈ ${eur.format(ps)} / pers.</span>` : ''}${p.veg ? '<span>Végé</span>' : ''}</div>
+        <div class="progress"><i></i></div>
+      </section>
+      <section class="pane ticket" aria-label="Recette">
+        <div class="stub" data-act="toggle"><span>Recette · ${p.ing.length} ingrédients</span></div>
+        <div class="r-inner">
+          <div class="t-head"><span>Ticket n° ${String(p.no).padStart(3, '0')}</span><button class="back" data-act="back">← Photo</button></div>
+          <h2>${esc(p.title)}</h2>
+          ${p.caption ? `<p class="note"><b>Le mot de ${esc(p.user)}.</b> ${esc(p.caption)}</p>` : ''}
+          <div class="facts">
+            <span class="chip">${esc(p.time)}</span>
+            <span class="chip">${esc(p.level)}</span>
+            <span class="chip serv">Pour <button data-act="minus" aria-label="Moins de portions">−</button><output>${p.servings}</output>${esc(p.unit)} <button data-act="plus" aria-label="Plus de portions">+</button></span>
+          </div>
+          <h3>Ingrédients</h3>
+          <p class="hint">Coche ce que tu as déjà : ça ne partira pas dans le panier.</p>
+          <ul class="ing">${ingRows}</ul>
+          <div class="cta-wrap"><button class="cook-btn" data-act="cook" aria-label="Lancer le mode cuisine">${ICON.pot}Cuisiner</button><button class="cta" data-act="add"><span class="cta-l">Ajouter au panier</span><small class="cta-p"></small></button></div>
+          <h3>Étapes</h3>
+          <ol class="steps">${p.steps.map((s, k) => `<li><span class="n">${String(k + 1).padStart(2, '0')}</span><span>${esc(s)}</span></li>`).join('')}</ol>
+          <p class="legal">Prix estimés à titre indicatif, au prorata des quantités.</p>
+        </div>
+      </section>
+    </div></div>
+    <div class="info">
+      <div class="who"><span class="avatar" aria-hidden="true">${esc(p.user.replace('@', '').charAt(0).toUpperCase())}</span><span class="handle">${esc(p.user)}</span><span class="tags">${esc(p.tags)}</span></div>
+      <h1 class="dish-title">${esc(p.title)}</h1>
+      <div class="acts">
+        <button class="act like ${L ? 'on' : ''}" data-act="like" aria-pressed="${L}" aria-label="J'aime">${ICON.heart}<span class="lc">${kfmt(p.likes + (L ? 1 : 0))}</span></button>
+        <button class="act save ${S ? 'on' : ''}" data-act="save" aria-pressed="${S}">${ICON.save}<span class="sl">${S ? 'Gardée' : 'Garder'}</span></button>
+        <button class="open" data-act="toggle"><span class="a">Recette</span><span class="b">Photo</span>${ICON.arrow}</button>
+      </div>
+    </div>
+  </article>`;
+}
+
+function refreshRecipe(el) {
+  const p = byId[el.dataset.id], s = st[p.id], f = s.serv / p.servings;
+  $('output', el).textContent = s.serv;
+  let total = 0, count = 0;
+  p.ing.forEach((it, k) => {
+    const q = scaleQ(it.q, it.u, f);
+    el.querySelector(`[data-q="${k}"]`).textContent = qtxt(q, it.u);
+    const price = it.p * f;
+    el.querySelector(`[data-p="${k}"]`).textContent = it.p ? eur.format(price) : 'placard';
+    if (!s.have.has(k)) { total += price; count++; }
+  });
+  $('.cta', el).disabled = count === 0;
+  $('.cta-l', el).textContent = count ? `Ajouter ${count} au panier` : 'Tu as déjà tout';
+  $('.cta-p', el).textContent = count && total ? '≈ ' + eur.format(total) : '';
+}
+
+const feed = $('#feed');
+function mount(p, where = 'beforeend') {
+  byId[p.id] = p;
+  st[p.id] = { serv: p.servings, have: new Set() };
+  if (where === 'afterbegin') $('#none').insertAdjacentHTML('afterend', postHTML(p));
+  else feed.insertAdjacentHTML('beforeend', postHTML(p));
+  const el = feed.querySelector(`.post[data-id="${p.id}"]`);
+  refreshRecipe(el);
+  const c = $('canvas', el);
+  if (c) { sizeCanvas(c); drawDish(c, p, 0); }
+  io.observe(el);
+  $('.track', el).addEventListener('scroll', onTrackScroll, { passive: true });
+  return el;
+}
+
+/* ---------- dessin des plats (remplace la vidéo dans la démo) ---------- */
+function rng(seed) { let s = seed * 9301 + 49297; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; }
+function shade(hex, amt) {
+  const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const t = amt < 0 ? 0 : 255, a = Math.abs(amt);
+  r = Math.round(r + (t - r) * a); g = Math.round(g + (t - g) * a); b = Math.round(b + (t - b) * a);
+  return `rgb(${r},${g},${b})`;
+}
+function polar(R, r0, r1, a0 = 0, a1 = TAU) { const a = a0 + R() * (a1 - a0), d = r0 + Math.sqrt(R()) * (r1 - r0); return [Math.cos(a) * d, Math.sin(a) * d]; }
+function blob(ctx, x, y, r, col, R, k = 12) {
+  ctx.beginPath();
+  const pts = []; for (let i = 0; i < k; i++) { const a = i / k * TAU, rr = r * (.86 + R() * .28); pts.push([x + Math.cos(a) * rr, y + Math.sin(a) * rr]); }
+  for (let i = 0; i < k; i++) { const p0 = pts[i], p1 = pts[(i + 1) % k], mx = (p0[0] + p1[0]) / 2, my = (p0[1] + p1[1]) / 2; i ? ctx.quadraticCurveTo(p0[0], p0[1], mx, my) : ctx.moveTo(mx, my); }
+  const p0 = pts[0], p1 = pts[1]; ctx.quadraticCurveTo(p0[0], p0[1], (p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2);
+  ctx.fillStyle = col; ctx.fill();
+}
+function disc(ctx, x, y, r, col) { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = col; ctx.fill(); }
+function rrect(ctx, x, y, w, h, rad, col) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, rad) : ctx.rect(x, y, w, h); ctx.fillStyle = col; ctx.fill(); }
+function plate(ctx, r, col, inner) {
+  ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowBlur = r * .28; ctx.shadowOffsetY = r * .1;
+  disc(ctx, 0, 0, r, col); ctx.restore();
+  const g = ctx.createRadialGradient(-r * .3, -r * .3, r * .1, 0, 0, r);
+  g.addColorStop(0, 'rgba(255,255,255,.14)'); g.addColorStop(1, 'rgba(0,0,0,.18)');
+  disc(ctx, 0, 0, r, g);
+  if (inner) disc(ctx, 0, 0, r * inner, shade(col.startsWith('#') ? col : '#888888', -.06));
+}
+
+const DRAW = {
+  pasta(ctx, r, p, R) {
+    plate(ctx, r, p.plate, .78);
+    ctx.save(); ctx.beginPath(); ctx.arc(0, 0, r * .64, 0, TAU); ctx.clip();
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 110; i++) {
+      const [x, y] = polar(R, 0, r * .42), rr = r * (.1 + R() * .3), s = R() * TAU;
+      ctx.strokeStyle = shade(p.food[0], R() * .3 - .15); ctx.lineWidth = r * .032;
+      ctx.beginPath(); ctx.arc(x, y, rr, s, s + 1 + R() * 1.8); ctx.stroke();
+    }
+    ctx.restore();
+    for (let i = 0; i < 22; i++) { const [x, y] = polar(R, 0, r * .52), s = r * (.06 + R() * .04);
+      ctx.save(); ctx.translate(x, y); ctx.rotate(R() * TAU); rrect(ctx, -s / 2, -s / 3, s, s * .66, s * .2, shade(p.food[1], R() * .2 - .1)); rrect(ctx, -s / 2, -s / 10, s, s * .18, 2, 'rgba(255,240,225,.55)'); ctx.restore(); }
+    for (let i = 0; i < 40; i++) { const [x, y] = polar(R, 0, r * .55); ctx.save(); ctx.translate(x, y); ctx.rotate(R() * TAU); rrect(ctx, 0, 0, r * .05, r * .015, 1, 'rgba(255,248,220,.85)'); ctx.restore(); }
+    for (let i = 0; i < 220; i++) { const [x, y] = polar(R, 0, r * .62); disc(ctx, x, y, r * (.004 + R() * .005), p.food[2]); }
+  },
+  pan(ctx, r, p, R) {
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowBlur = r * .25; ctx.shadowOffsetY = r * .08;
+    rrect(ctx, r * .92, -r * .09, r * .9, r * .18, r * .09, '#1b1b20'); disc(ctx, 0, 0, r * 1.02, p.plate); ctx.restore();
+    disc(ctx, 0, 0, r * .95, '#35353d');
+    const g = ctx.createRadialGradient(0, 0, 0, 0, 0, r * .88); g.addColorStop(0, shade(p.food[0], .12)); g.addColorStop(1, shade(p.food[0], -.25));
+    disc(ctx, 0, 0, r * .88, g);
+    for (let i = 0; i < 46; i++) { const [x, y] = polar(R, 0, r * .8); blob(ctx, x, y, r * (.03 + R() * .05), shade(p.food[0], R() * .3 - .2), R, 8); }
+    for (let i = 0; i < 12; i++) { const [x, y] = polar(R, r * .1, r * .78); ctx.save(); ctx.translate(x, y); ctx.rotate(R() * TAU); rrect(ctx, -r * .07, -r * .018, r * .14, r * .036, r * .018, p.food[1]); ctx.restore(); }
+    for (let i = 0; i < 4; i++) {
+      const a = i * TAU / 4 + .5, x = Math.cos(a) * r * .44, y = Math.sin(a) * r * .44;
+      blob(ctx, x, y, r * .21, '#f6f0e4', R, 14);
+      const yg = ctx.createRadialGradient(x - r * .03, y - r * .03, r * .01, x, y, r * .09); yg.addColorStop(0, '#ffd257'); yg.addColorStop(1, '#ec9a12');
+      disc(ctx, x + r * .01, y, r * .09, yg); disc(ctx, x - r * .025, y - r * .03, r * .02, 'rgba(255,255,255,.7)');
+    }
+    for (let i = 0; i < 70; i++) { const [x, y] = polar(R, 0, r * .85); ctx.save(); ctx.translate(x, y); ctx.rotate(R() * TAU); ctx.beginPath(); ctx.ellipse(0, 0, r * .022, r * .01, 0, 0, TAU); ctx.fillStyle = shade(p.food[2], R() * .3 - .1); ctx.fill(); ctx.restore(); }
+  },
+  bowl(ctx, r, p, R) {
+    plate(ctx, r, p.plate, null);
+    disc(ctx, 0, 0, r * .88, '#f2ede1');
+    for (let i = 0; i < 260; i++) { const [x, y] = polar(R, 0, r * .86); ctx.save(); ctx.translate(x, y); ctx.rotate(R() * TAU); ctx.beginPath(); ctx.ellipse(0, 0, r * .022, r * .009, 0, 0, TAU); ctx.fillStyle = R() > .5 ? '#fffaf0' : '#e2dacb'; ctx.fill(); ctx.restore(); }
+    const q = (k) => [k * TAU / 4 + .18, (k + 1) * TAU / 4 - .18];
+    let [a0, a1] = q(0);
+    for (let i = 0; i < 12; i++) { const [x, y] = polar(R, r * .28, r * .74, a0, a1), s = r * .12; ctx.save(); ctx.translate(x, y); ctx.rotate(R()); rrect(ctx, -s / 2, -s / 2, s, s, s * .2, shade(p.food[0], R() * .16 - .08)); ctx.strokeStyle = 'rgba(255,215,195,.8)'; ctx.lineWidth = r * .01; ctx.beginPath(); ctx.moveTo(-s / 2, -s * .1); ctx.lineTo(s / 2, s * .15); ctx.stroke(); ctx.restore(); }
+    [a0, a1] = q(1);
+    for (let i = 0; i < 6; i++) { const a = a0 + (i + .5) / 6 * (a1 - a0); ctx.save(); ctx.rotate(a); ctx.translate(r * .52, 0); ctx.rotate(Math.PI / 2);
+      ctx.beginPath(); ctx.ellipse(0, 0, r * .2, r * .07, 0, 0, TAU); ctx.fillStyle = '#4d7a2a'; ctx.fill();
+      ctx.beginPath(); ctx.ellipse(0, -r * .006, r * .185, r * .055, 0, 0, TAU); ctx.fillStyle = p.food[1]; ctx.fill(); ctx.restore(); }
+    [a0, a1] = q(2);
+    for (let i = 0; i < 14; i++) { const [x, y] = polar(R, r * .28, r * .74, a0, a1), s = r * .1; ctx.save(); ctx.translate(x, y); ctx.rotate(R()); rrect(ctx, -s / 2, -s / 2, s, s, s * .25, shade(p.food[2], R() * .2 - .1)); ctx.restore(); }
+    [a0, a1] = q(3);
+    for (let i = 0; i < 22; i++) { const [x, y] = polar(R, r * .28, r * .76, a0, a1); disc(ctx, x, y, r * .045, shade(p.food[3], R() * .2 - .1)); disc(ctx, x - r * .012, y - r * .012, r * .013, 'rgba(255,255,255,.35)'); }
+    for (let i = 0; i < 90; i++) { const [x, y] = polar(R, 0, r * .8); ctx.save(); ctx.translate(x, y); ctx.rotate(R() * TAU); ctx.beginPath(); ctx.ellipse(0, 0, r * .011, r * .006, 0, 0, TAU); ctx.fillStyle = R() > .3 ? '#fbf3e0' : '#1b1b1b'; ctx.fill(); ctx.restore(); }
+  },
+  curry(ctx, r, p, R) {
+    plate(ctx, r, p.plate, null);
+    const g = ctx.createRadialGradient(-r * .2, -r * .2, 0, 0, 0, r * .88); g.addColorStop(0, shade(p.food[0], .1)); g.addColorStop(1, shade(p.food[0], -.3));
+    disc(ctx, 0, 0, r * .88, g);
+    for (let i = 0; i < 14; i++) { const [x, y] = polar(R, 0, r * .7); blob(ctx, x, y, r * (.06 + R() * .05), shade(p.food[2], R() * .2 - .1), R, 9); }
+    for (let i = 0; i < 34; i++) { const [x, y] = polar(R, 0, r * .78);
+      disc(ctx, x, y, r * .055, shade(p.food[1], -.12)); disc(ctx, x - r * .008, y - r * .008, r * .048, p.food[1]); disc(ctx, x - r * .02, y - r * .02, r * .012, 'rgba(255,255,255,.4)'); }
+    ctx.strokeStyle = 'rgba(255,246,230,.85)'; ctx.lineWidth = r * .028; ctx.lineCap = 'round'; ctx.beginPath();
+    for (let i = 0; i <= 60; i++) { const a = i / 60 * TAU * 1.6, d = r * (.08 + i / 60 * .38); const x = Math.cos(a) * d, y = Math.sin(a) * d; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
+    for (let i = 0; i < 40; i++) { const [x, y] = polar(R, 0, r * .8); ctx.save(); ctx.translate(x, y); ctx.rotate(R() * TAU); ctx.beginPath(); ctx.ellipse(0, 0, r * .03, r * .016, 0, 0, TAU); ctx.fillStyle = shade(p.food[3], R() * .2 - .1); ctx.fill(); ctx.restore(); }
+  },
+  cookie(ctx, r, p, R) {
+    ctx.save(); ctx.rotate(.15); ctx.shadowColor = 'rgba(0,0,0,.4)'; ctx.shadowBlur = r * .2; ctx.shadowOffsetY = r * .06;
+    rrect(ctx, -r * 1.05, -r * 1.05, r * 2.1, r * 2.1, r * .04, p.plate); ctx.restore();
+    const spots = [[-.48, -.45], [.45, -.5], [0, .02], [-.5, .5], [.5, .45]];
+    spots.forEach(([sx, sy]) => {
+      const x = sx * r, y = sy * r, cr = r * (.27 + R() * .04);
+      ctx.save(); ctx.shadowColor = 'rgba(70,35,10,.35)'; ctx.shadowBlur = r * .05; ctx.shadowOffsetY = r * .02;
+      blob(ctx, x, y, cr, shade(p.food[0], -.15), R, 14); ctx.restore();
+      const g = ctx.createRadialGradient(x - cr * .2, y - cr * .2, cr * .1, x, y, cr); g.addColorStop(0, shade(p.food[0], .18)); g.addColorStop(1, shade(p.food[0], -.1));
+      blob(ctx, x, y, cr * .9, g, R, 14);
+      ctx.strokeStyle = 'rgba(90,50,20,.35)'; ctx.lineWidth = r * .008;
+      for (let k = 0; k < 4; k++) { ctx.beginPath(); const a = R() * TAU; ctx.moveTo(x + Math.cos(a) * cr * .2, y + Math.sin(a) * cr * .2); ctx.lineTo(x + Math.cos(a + .3) * cr * .6, y + Math.sin(a + .3) * cr * .6); ctx.stroke(); }
+      for (let k = 0; k < 8; k++) { const [dx, dy] = polar(R, 0, cr * .7); blob(ctx, x + dx, y + dy, r * (.025 + R() * .02), p.food[1], R, 7); }
+      for (let k = 0; k < 6; k++) { const [dx, dy] = polar(R, 0, cr * .7); disc(ctx, x + dx, y + dy, r * .007, '#ffffff'); }
+    });
+  }
+};
+
+function drawDish(c, p, t) {
+  const ctx = c.getContext('2d'), W = c.width, H = c.height; if (!W || !H) return;
+  const R = rng(p.seed || 7);
+  const g = ctx.createRadialGradient(W * .5, H * .38, 0, W * .5, H * .38, Math.max(W, H) * .75);
+  g.addColorStop(0, p.bg[0]); g.addColorStop(1, p.bg[1]);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  ctx.save(); ctx.globalAlpha = .05; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = Math.max(1, W * .003);
+  for (let x = -H; x < W + H; x += W * .055) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x - H * .35, H); ctx.stroke(); }
+  ctx.restore();
+  const cx = W / 2, cy = H * .38, r = Math.min(W * .43, H * .3);
+  ctx.save(); ctx.translate(cx, cy);
+  const z = 1 + .035 * Math.sin(t / 2300); ctx.scale(z, z); ctx.rotate(t * .00005);
+  (DRAW[p.kind] || DRAW.bowl)(ctx, r, p, R);
+  ctx.restore();
+  ctx.save(); ctx.lineCap = 'round'; ctx.strokeStyle = '#ffffff';
+  for (let k = 0; k < 4; k++) {
+    const ph = ((t / 3400) + k / 4) % 1, x0 = cx + (k - 1.5) * r * .26, y0 = cy - r * .25 - ph * r * 1.05;
+    ctx.globalAlpha = Math.sin(ph * Math.PI) * .2; ctx.lineWidth = r * .045; ctx.beginPath();
+    for (let j = 0; j <= 10; j++) { const yy = y0 - j * r * .04, xx = x0 + Math.sin(j * .7 + t / 650 + k) * r * .05; j ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy); }
+    ctx.stroke();
+  }
+  ctx.restore();
+  const v = ctx.createRadialGradient(cx, H * .45, Math.min(W, H) * .35, cx, H * .45, Math.max(W, H) * .8);
+  v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.45)'); ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+}
+function sizeCanvas(c) {
+  const b = c.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1);
+  c.width = Math.max(1, Math.round(b.width * d)); c.height = Math.max(1, Math.round(b.height * d));
+}
+
+/* ---------- lecture : post actif ---------- */
+let active = null;
+const io = new IntersectionObserver((es) => {
+  es.forEach(e => {
+    const v = $('.media video', e.target);
+    if (e.isIntersecting && e.intersectionRatio >= .6) { active = e.target; if (v && !cook) v.play().catch(() => {}); }
+    else if (v) v.pause();
+  });
+}, { root: feed, threshold: [.6] });
+
+const DUR = 12000;
+function loop(t) {
+  if (timers.length) tickTimers();
+  if (cook) {
+    const c = $('#cook-body canvas');
+    if (c && !reduceMotion) drawDish(c, cook.p, t + cook.i * 5000);
+  } else if (active) {
+    const p = byId[active.dataset.id], c = $('.media canvas', active), bar = $('.progress i', active), v = $('.media video', active);
+    if (c && !reduceMotion) drawDish(c, p, t);
+    if (bar) bar.style.width = (v && v.duration ? v.currentTime / v.duration : (c ? (t % DUR) / DUR : 0)) * 100 + '%';
+  }
+  requestAnimationFrame(loop);
+}
+
+/* ---------- interactions ---------- */
+function onTrackScroll(e) {
+  const tr = e.currentTarget;
+  tr.closest('.post').classList.toggle('is-open', tr.scrollLeft > (tr.scrollWidth - tr.clientWidth) * .5);
+}
+function openRecipe(post, open = true) {
+  const tr = $('.track', post);
+  tr.scrollTo({ left: open ? tr.scrollWidth : 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+}
+function toggleLike(post, btn) {
+  const id = post.dataset.id, p = byId[id];
+  liked.has(id) ? liked.delete(id) : liked.add(id);
+  btn.classList.toggle('on', liked.has(id)); btn.setAttribute('aria-pressed', liked.has(id));
+  $('.lc', btn).textContent = kfmt(p.likes + (liked.has(id) ? 1 : 0));
+  store.set('liked', [...liked]);
+}
+
+feed.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const post = b.closest('.post'), id = post.dataset.id, p = byId[id], s = st[id];
+  switch (b.dataset.act) {
+    case 'toggle': openRecipe(post, !post.classList.contains('is-open')); break;
+    case 'back': openRecipe(post, false); break;
+    case 'like': toggleLike(post, b); break;
+    case 'save':
+      saved.has(id) ? saved.delete(id) : saved.add(id);
+      b.classList.toggle('on', saved.has(id)); b.setAttribute('aria-pressed', saved.has(id));
+      $('.sl', b).textContent = saved.has(id) ? 'Gardée' : 'Garder';
+      store.set('saved', [...saved]); toast(saved.has(id) ? 'Recette gardée' : 'Retirée de tes recettes'); break;
+    case 'minus': s.serv = Math.max(1, s.serv - 1); refreshRecipe(post); break;
+    case 'plus': s.serv = Math.min(30, s.serv + 1); refreshRecipe(post); break;
+    case 'add': addToCart(p, s); break;
+    case 'cook': openCook(p); break;
+  }
+});
+feed.addEventListener('change', (e) => {
+  const cb = e.target.closest('input[data-k]'); if (!cb) return;
+  const post = cb.closest('.post'), s = st[post.dataset.id], k = +cb.dataset.k;
+  cb.checked ? s.have.add(k) : s.have.delete(k); refreshRecipe(post);
+});
+feed.addEventListener('dblclick', (e) => {
+  const pane = e.target.closest('.media'); if (!pane) return;
+  const post = pane.closest('.post'), btn = post.querySelector('[data-act="like"]');
+  if (!liked.has(post.dataset.id)) toggleLike(post, btn);
+  const h = $('.burst', pane); h.classList.remove('go'); void h.offsetWidth; h.classList.add('go');
+});
+document.addEventListener('keydown', (e) => {
+  if (cook) {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); cookGo(1); }
+    if (e.key === 'ArrowLeft') cookGo(-1);
+    if (e.key === 'Escape') closeCook();
+    return;
+  }
+  if (e.target.closest('input,textarea') || !$('#cart-sheet').hidden || !$('#post-sheet').hidden) return;
+  if (e.key === 'ArrowDown') { feed.scrollBy({ top: feed.clientHeight, behavior: 'smooth' }); e.preventDefault(); }
+  if (e.key === 'ArrowUp') { feed.scrollBy({ top: -feed.clientHeight, behavior: 'smooth' }); e.preventDefault(); }
+  if (active && e.key === 'ArrowRight') openRecipe(active);
+  if (active && e.key === 'ArrowLeft') openRecipe(active, false);
+});
+
+/* ---------- mode cuisine ---------- */
+let cook = null, wakeLock = null, audio = null, tid = 0, timers = [];
+const norm = (s) => s.toLowerCase().replace(/œ/g, 'oe').normalize('NFD').replace(/[̀-ͯ]/g, '');
+const STOP = new Set(['les','des','aux','pour','frais','fraiche','moulu','noir','rouge','boite','doux','patissier','surgeles','fume','blanc','rape','pave','romano']);
+const keywords = (name) => norm(name).split(/[^a-z]+/).filter(w => w.length >= 3 && !STOP.has(w)).map(w => w.slice(0, 6));
+const stepMinutes = (txt) => { const m = norm(txt).match(/(\d+)(?:\s*a\s*\d+)?\s*min/); return m ? +m[1] : null; };
+const mmss = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+const clipMedia = (p) => p.media
+  ? (p.media.type === 'video' ? `<video src="${p.media.url}" muted loop playsinline></video>` : `<img src="${p.media.url}" alt="">`)
+  : '<canvas aria-hidden="true"></canvas>';
+
+function openCook(p) {
+  cook = { p, i: 0 };
+  $('#cook').hidden = false;
+  const v = active && $('.media video', active); if (v) v.pause();
+  renderCook(); requestWake();
+}
+function closeCook() {
+  cook = null; $('#cook').hidden = true;
+  try { wakeLock && wakeLock.release(); } catch {}
+  wakeLock = null; $('#awake').hidden = true;
+  const v = active && $('.media video', active); if (v) v.play().catch(() => {});
+}
+async function requestWake() {
+  try { wakeLock = await navigator.wakeLock.request('screen'); $('#awake').hidden = false;
+    wakeLock.addEventListener('release', () => { $('#awake').hidden = true; }); }
+  catch { $('#awake').hidden = true; }
+}
+document.addEventListener('visibilitychange', () => { if (cook && document.visibilityState === 'visible') requestWake(); });
+
+function renderCook() {
+  const { p, i } = cook, n = p.steps.length, done = i >= n, body = $('#cook-body');
+  $('#cook-title').textContent = p.title;
+  $('#cook-count').textContent = done ? 'Recette terminée' : `Étape ${i + 1} sur ${n}`;
+  $('#segs').innerHTML = p.steps.map((_, k) => `<i class="${k < i ? 'done' : k === i ? 'cur' : ''}"></i>`).join('');
+  if (done) {
+    body.innerHTML = `<div class="finish"><p class="step-no">Bon appétit</p><h2>C’est prêt.</h2>
+      <p class="desc">Montre ton résultat : ta version apparaîtra dans le fil, liée à la recette de ${esc(p.user)}.</p>
+      <button class="timer-go" id="tested">Poster ma version</button></div>`;
+  } else {
+    const step = p.steps[i], f = st[p.id].serv / p.servings, ns = norm(step);
+    const need = p.ing.filter(it => keywords(it.n).some(w => new RegExp('\\b' + w).test(ns)));
+    const min = stepMinutes(step);
+    body.innerHTML = `<div class="clip">${clipMedia(p)}<span class="lbl">Séquence ${i + 1}</span></div>
+      <p class="step-no">Étape ${i + 1}</p>
+      <p class="step-txt">${esc(step)}</p>
+      ${need.length ? `<div class="need">${need.map(it => `<span class="chip">${esc(it.n)} <b>${esc(qtxt(scaleQ(it.q, it.u, f), it.u))}</b></span>`).join('')}</div>` : ''}
+      ${min ? `<button class="timer-go" data-min="${min}">${ICON.clock} Lancer un minuteur de ${min} min</button>` : ''}`;
+    const c = $('canvas', body); if (c) { sizeCanvas(c); drawDish(c, p, i * 5000); }
+    const v = $('video', body); if (v) v.play().catch(() => {});
+  }
+  $('#prev').disabled = i === 0;
+  $('#next').textContent = done ? 'Fermer' : i === n - 1 ? 'Terminer' : 'Étape suivante';
+  body.scrollTop = 0;
+}
+function cookGo(d) {
+  if (!cook) return;
+  const n = cook.p.steps.length;
+  if (cook.i >= n && d > 0) { closeCook(); return; }
+  cook.i = Math.max(0, Math.min(n, cook.i + d)); renderCook();
+}
+$('#next').onclick = () => cookGo(1);
+$('#prev').onclick = () => cookGo(-1);
+$('#cook-close').onclick = closeCook;
+$('#cook-body').addEventListener('click', (e) => {
+  const t = e.target.closest('[data-min]');
+  if (t) { startTimer(+t.dataset.min, `Étape ${cook.i + 1}`); return; }
+  if (e.target.closest('#tested')) {
+    const p = cook.p; closeCook();
+    $('#f-title').value = p.title + ' (ma version)';
+    $('#f-caption').value = 'Testé à partir de la recette de ' + p.user;
+    openSheet('post-sheet'); setNav('nav-post');
+  }
+});
+let sx = null, sy = 0;
+$('#cook-body').addEventListener('pointerdown', (e) => { sx = e.clientX; sy = e.clientY; });
+$('#cook-body').addEventListener('pointerup', (e) => {
+  if (sx == null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) cookGo(dx < 0 ? 1 : -1);
+});
+
+/* minuteurs */
+function ensureAudio() { try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume && audio.resume(); } catch {} }
+function beep() {
+  if (!audio) return;
+  try { const t0 = audio.currentTime;
+    for (let k = 0; k < 3; k++) { const o = audio.createOscillator(), g = audio.createGain(), s = t0 + k * .35;
+      o.frequency.value = 880; o.connect(g); g.connect(audio.destination);
+      g.gain.setValueAtTime(.0001, s); g.gain.exponentialRampToValueAtTime(.3, s + .02); g.gain.exponentialRampToValueAtTime(.0001, s + .25);
+      o.start(s); o.stop(s + .3); } } catch {}
+}
+function startTimer(min, label) {
+  ensureAudio();
+  timers.push({ id: ++tid, label, left: min * 60000, end: Date.now() + min * 60000, run: true, ring: false, beeps: 0, lastBeep: 0 });
+  renderTimers(); toast(`Minuteur lancé : ${min} min`);
+}
+function renderTimers() {
+  $('#timers').innerHTML = timers.map(tm => `
+    <span class="tm ${tm.ring ? 'ring' : tm.run ? '' : 'paused'}" data-t="${tm.id}">
+      <small>${esc(tm.label)}</small><span class="tl">${tm.ring ? 'Terminé' : mmss(tm.left)}</span>
+      ${tm.ring ? '<button data-tact="stop" aria-label="Arrêter la sonnerie">OK</button>'
+        : `<button data-tact="${tm.run ? 'pause' : 'play'}" aria-label="${tm.run ? 'Pause' : 'Reprendre'}">${tm.run ? '❚❚' : '▶'}</button><button data-tact="stop" aria-label="Supprimer le minuteur">×</button>`}
+    </span>`).join('');
+}
+$('#timers').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-tact]'); if (!b) return;
+  const id = +b.closest('.tm').dataset.t, tm = timers.find(x => x.id === id); if (!tm) return;
+  if (b.dataset.tact === 'stop') timers = timers.filter(x => x.id !== id);
+  if (b.dataset.tact === 'pause') { tm.left = tm.end - Date.now(); tm.run = false; }
+  if (b.dataset.tact === 'play') { tm.end = Date.now() + tm.left; tm.run = true; }
+  renderTimers();
+});
+function tickTimers() {
+  const now = Date.now(); let changed = false;
+  timers.forEach(tm => {
+    if (tm.run) {
+      tm.left = tm.end - now;
+      if (tm.left <= 0) { tm.run = false; tm.ring = true; changed = true; toast(`Minuteur terminé : ${tm.label}`); try { navigator.vibrate && navigator.vibrate([300, 150, 300]); } catch {} }
+    }
+    if (tm.ring && tm.beeps < 5 && now - tm.lastBeep > 4000) { beep(); tm.beeps++; tm.lastBeep = now; }
+  });
+  if (changed) renderTimers();
+  else timers.forEach(tm => { if (tm.run) { const el = document.querySelector(`.tm[data-t="${tm.id}"] .tl`); if (el) el.textContent = mmss(tm.left); } });
+}
+
+/* ---------- panier ---------- */
+function addToCart(p, s) {
+  const f = s.serv / p.servings; let n = 0;
+  p.ing.forEach((it, k) => {
+    if (s.have.has(k)) return;
+    const q = scaleQ(it.q, it.u, f), key = (it.n + '|' + it.u).toLowerCase();
+    const ex = cart.find(c => c.key === key);
+    if (ex) { if (ex.q != null && q != null) ex.q += q; ex.price += it.p * f; if (!ex.from.includes(p.title)) ex.from.push(p.title); }
+    else cart.push({ key, n: it.n, u: it.u, q, price: it.p * f, from: [p.title] });
+    n++;
+  });
+  store.set('cart', cart); updateBadge();
+  toast(`${n} ingrédient${n > 1 ? 's' : ''} ajouté${n > 1 ? 's' : ''} au panier`);
+}
+function updateBadge() { const b = $('#badge'); b.hidden = !cart.length; b.textContent = cart.length; }
+function listText() { return cart.map(c => `- ${c.n}${c.q != null ? ' : ' + qtxt(Math.round(c.q * 10) / 10, c.u) : ''}`).join('\n'); }
+function renderCart() {
+  const body = $('#cart-body');
+  if (!cart.length) { body.innerHTML = `<div class="empty"><strong>Ton panier est vide</strong>Ouvre une recette et touche « Ajouter au panier ».</div>`; return; }
+  const groups = {};
+  cart.forEach((c, i) => { const g = c.from[0]; (groups[g] = groups[g] || []).push([c, i]); });
+  const total = cart.reduce((a, c) => a + c.price, 0);
+  body.innerHTML = Object.entries(groups).map(([g, items]) => `
+    <div class="group"><h3>${esc(g)}</h3>${items.map(([c, i]) => `
+      <div class="row"><div class="n">${esc(c.n)}<small>${c.q != null ? esc(qtxt(Math.round(c.q * 10) / 10, c.u)) : 'à votre goût'} · ${c.price ? '≈ ' + eur.format(c.price) : 'placard'}</small></div>
+        <a href="${shopUrl(c.n)}" target="_blank" rel="noopener">Trouver ↗</a>
+        <button class="rm" data-rm="${i}" aria-label="Retirer ${esc(c.n)}">×</button></div>`).join('')}</div>`).join('') + `
+    <div class="total"><span>Total estimé · ${cart.length} article${cart.length > 1 ? 's' : ''}</span><span>${eur.format(total)}</span></div>
+    <div class="actions">
+      <button class="btn primary" id="copy-list">Copier la liste</button>
+      <button class="btn" id="clear-cart">Vider</button>
+    </div>
+    <textarea class="copybox" id="copybox" readonly hidden aria-label="Liste de courses">${esc(listText())}</textarea>
+    <p class="legal">« Trouver » ouvre la recherche Carrefour.fr pour chaque produit. Dans cette démo, le panier drive n’est pas rempli automatiquement.</p>`;
+}
+$('#cart-body').addEventListener('click', (e) => {
+  const rm = e.target.closest('[data-rm]');
+  if (rm) { cart.splice(+rm.dataset.rm, 1); store.set('cart', cart); updateBadge(); renderCart(); return; }
+  if (e.target.id === 'clear-cart') { cart = []; store.set('cart', cart); updateBadge(); renderCart(); return; }
+  if (e.target.id === 'copy-list') {
+    const txt = 'Liste de courses Bouchée\n' + listText();
+    const fallback = () => { const box = $('#copybox'); box.hidden = false; box.select(); toast('Sélectionne la liste pour la copier'); };
+    try { navigator.clipboard.writeText(txt).then(() => toast('Liste copiée'), fallback); } catch { fallback(); }
+  }
+});
+
+/* ---------- feuilles ---------- */
+function openSheet(id) { $('#' + id).hidden = false; }
+document.querySelectorAll('.sheet').forEach(sh => sh.addEventListener('click', (e) => {
+  if (e.target === sh || e.target.closest('[data-close]')) { sh.hidden = true; setNav('nav-home'); }
+}));
+function setNav(id) { document.querySelectorAll('.dock .dk:not(.plus)').forEach(b => b.classList.toggle('on', b.id === id)); }
+$('#nav-home').onclick = () => { document.querySelectorAll('.sheet').forEach(s => s.hidden = true); setNav('nav-home'); feed.scrollTo({ top: 0, behavior: 'smooth' }); };
+$('#nav-cart').onclick = () => { renderCart(); openSheet('cart-sheet'); setNav('nav-cart'); };
+$('#nav-post').onclick = () => { openSheet('post-sheet'); setNav(''); };
+
+/* ---------- filtres ---------- */
+const FILTERS = { all: () => true, quick: p => p.min <= 25, budget: p => perServ(p) > 0 && perServ(p) <= 2.5, veg: p => p.veg };
+let filter = 'all';
+function applyFilter() {
+  let shown = 0;
+  feed.querySelectorAll('.post').forEach(el => { const ok = FILTERS[filter](byId[el.dataset.id]); el.hidden = !ok; if (ok) shown++; });
+  $('#none').hidden = shown > 0;
+  feed.scrollTo({ top: 0 });
+  active = feed.querySelector('.post:not([hidden])');
+}
+document.querySelector('.chips').addEventListener('click', (e) => {
+  const c = e.target.closest('[data-f]'); if (!c) return;
+  filter = c.dataset.f;
+  document.querySelectorAll('.fchip').forEach(x => x.classList.toggle('on', x === c));
+  applyFilter();
+});
+
+/* ---------- poster ---------- */
+let upload = null;
+$('#f-media').addEventListener('change', (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  if (upload) URL.revokeObjectURL(upload.url);
+  upload = { type: f.type.startsWith('video') ? 'video' : 'image', url: URL.createObjectURL(f) };
+  $('#drop-label').innerHTML = upload.type === 'video' ? `<video src="${upload.url}" muted autoplay loop playsinline></video>` : `<img src="${upload.url}" alt="Aperçu">`;
+});
+const UNITS = 'kg|g|ml|cl|l|c\\. ?à ?s\\.|c\\. ?à ?c\\.|cs|cc|pincées?|tranches?|gousses?|bottes?|boîtes?|sachets?';
+const LINE = new RegExp(`^\\s*([\\d.,/]+)?\\s*(${UNITS})?\\s*(?:de |d['’])?(.+)$`, 'i');
+$('#post-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const ing = $('#f-ing').value.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+    const m = l.match(LINE) || [];
+    let q = m[1] ? parseFloat(m[1].replace(',', '.')) : null; if (m[1] && m[1].includes('/')) { const [a, b] = m[1].split('/'); q = +a / +b; }
+    return { n: (m[3] || l).trim().replace(/^./, c => c.toUpperCase()), q, u: (m[2] || '').toLowerCase(), p: 0 };
+  });
+  const time = $('#f-time').value.trim() || '—';
+  const p = { id: 'u' + Date.now(), user: '@toi', kind: 'bowl', title: $('#f-title').value.trim() || 'Mon plat', caption: $('#f-caption').value.trim(), tags: 'à l’instant', likes: 0,
+    time, min: parseInt(time) || 99, veg: false, level: 'Fait maison', servings: Math.max(1, +$('#f-serv').value || 1), unit: 'pers.', no: ticketNo++,
+    tint: '#d9c6ec', bg: ['#3a2440', '#0f0812'], plate: '#e9e2d6', food: ['#e9844f', '#a5c85d', '#f6c344', '#7fbf4f'], seed: Date.now() % 997,
+    media: upload, ing, steps: $('#f-steps').value.split('\n').map(s => s.trim()).filter(Boolean) };
+  upload = null; e.target.reset(); $('#drop-label').textContent = 'Touche pour ajouter une photo ou une vidéo';
+  $('#post-sheet').hidden = true; setNav('nav-home');
+  filter = 'all'; document.querySelectorAll('.fchip').forEach(x => x.classList.toggle('on', x.dataset.f === 'all'));
+  mount(p, 'afterbegin'); applyFilter(); toast('Publié en haut de ton fil');
+});
+
+/* ---------- démarrage ---------- */
+POSTS.forEach(p => mount(p));
+updateBadge();
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => {
+  feed.querySelectorAll('.post').forEach(el => { const c = $('.media canvas', el); if (c) { sizeCanvas(c); drawDish(c, byId[el.dataset.id], performance.now()); } });
+}, 120); });
+active = feed.querySelector('.post');
+requestAnimationFrame(loop);
+})();
+</script>
+
+</template>
+<script>
+(() => {
+'use strict';
+const SKELETON = '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+  '<style>body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>';
+const frame = document.getElementById('app-frame');
+const src = document.getElementById('app-src');
+frame.srcdoc = SKELETON + src.innerHTML + '</body></html>';
+
+const doc = () => { try { return frame.contentDocument; } catch { return null; } };
+function syncTheme() {
+  const d = doc(); if (!d || !d.documentElement) return;
+  const t = document.documentElement.getAttribute('data-theme');
+  t ? d.documentElement.setAttribute('data-theme', t) : d.documentElement.removeAttribute('data-theme');
+}
+frame.addEventListener('load', () => { syncTheme(); const b = document.querySelector('.boot'); if (b) b.remove(); });
+new MutationObserver(syncTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+function currentPost(d) {
+  const feed = d.getElementById('feed'); if (!feed) return null;
+  const posts = [...feed.querySelectorAll('.post:not([hidden])')];
+  const top = feed.scrollTop;
+  return posts.reduce((best, p) => Math.abs(p.offsetTop - top) < Math.abs(best.offsetTop - top) ? p : best, posts[0]);
+}
+function closeAll(d) {
+  d.querySelectorAll('.sheet').forEach(s => s.hidden = true);
+  const cc = d.getElementById('cook-close'); if (cc && !d.getElementById('cook').hidden) cc.click();
+}
+document.querySelector('.try-row').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-try]'); const d = doc(); if (!b || !d) return;
+  const post = currentPost(d); if (!post) return;
+  const act = b.dataset.try;
+  closeAll(d);
+  if (act === 'recipe') {
+    if (!post.classList.contains('is-open')) post.querySelector('.open').click();
+  } else if (act === 'cook') {
+    post.querySelector('[data-act="cook"]').click();
+  } else if (act === 'cart') {
+    const add = post.querySelector('[data-act="add"]');
+    if (add && !add.disabled) add.click();
+    setTimeout(() => d.getElementById('nav-cart').click(), 350);
+  } else if (act === 'next') {
+    const feed = d.getElementById('feed');
+    feed.scrollBy({ top: feed.clientHeight, behavior: 'smooth' });
+  }
+});
+
+/* minuteur de l'aperçu mode cuisine */
+let left = 600, run = null;
+const out = document.getElementById('demo-timer'), btn = document.getElementById('demo-timer-btn');
+const fmt = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+btn.addEventListener('click', () => {
+  if (run) { clearInterval(run); run = null; btn.textContent = 'Reprendre'; return; }
+  if (left <= 0) left = 600;
+  btn.textContent = 'Pause';
+  run = setInterval(() => {
+    left--; out.textContent = fmt(left);
+    if (left <= 0) { clearInterval(run); run = null; btn.textContent = 'Relancer'; out.textContent = 'Terminé'; }
+  }, 1000);
+});
+})();
+</script>
+
+</body>
+</html>
