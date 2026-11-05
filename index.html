@@ -713,6 +713,98 @@ form{display:grid;gap:12px}
   .dk:hover,.dk.on{background:color-mix(in oklab,var(--dock-fg) 12%,transparent);color:var(--dock-fg)}
   .post-side,.post-side:hover{background:var(--accent);color:var(--accent-ink)}
 }
+
+/* ===== v10 : compte, Premium, agenda, import TikTok, comparateur ===== */
+.me-btn{width:34px;height:34px;flex:0 0 auto;border:1.5px solid var(--line);border-radius:50%;background:var(--surface);color:var(--fg);display:grid;place-items:center;margin-left:auto;font:800 .95rem var(--font-d);padding:0}
+.me-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.me-btn.in{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.me-btn.prem{box-shadow:0 0 0 2.5px var(--accent)}
+.brand small{margin-left:0}
+.post-btn{margin-left:2px}
+.prem-tag{margin-left:auto;font:700 .66rem var(--font-b);text-transform:uppercase;letter-spacing:.06em;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:2px 7px}
+.go-prem{display:none;margin-top:8px;border:1px solid color-mix(in oklab,var(--accent) 60%,transparent);background:color-mix(in oklab,var(--accent) 14%,transparent);color:var(--dock-fg);border-radius:12px;padding:10px 12px;text-align:left;flex-direction:column;gap:2px}
+.go-prem b{font-size:.92rem}.go-prem span{font-size:.76rem;opacity:.75}
+@media (min-width:1000px){.go-prem:not([hidden]){display:flex}}
+.lock{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;vertical-align:-2px;margin-right:6px}
+.vbtn.needs-prem span::after{content:" · Premium";font-weight:600;opacity:.7}
+.stu.tk{border-color:#25f4ee;color:var(--fg);background:color-mix(in oklab,#25f4ee 18%,transparent)}
+.opt{font-weight:500;color:var(--muted)}
+.btn.danger{color:var(--like);border-color:color-mix(in oklab,var(--like) 40%,var(--line))}
+.pill.ok{background:color-mix(in oklab,var(--ok) 16%,var(--surface));color:var(--ok)}
+.form-err{margin:0;color:var(--like);font-weight:600;font-size:.88rem}
+.tabs.big{grid-template-columns:1fr 1fr}
+.tabs.big button{padding:11px}
+.tabs button[data-at],.tabs button[data-addtab]{color:var(--muted)}
+.tabs button[aria-selected="true"]{color:var(--fg)}
+.card .tabs{margin-bottom:2px}
+/* santé verrouillée */
+.tiles-wrap{position:relative}
+.tiles.locked{filter:blur(6px);opacity:.6;pointer-events:none;user-select:none}
+.unlock{position:absolute;inset:0;margin:auto;width:max-content;max-width:calc(100% - 24px);height:max-content;border:0;border-radius:999px;background:var(--fg);color:var(--bg);font-weight:700;padding:11px 16px;box-shadow:var(--shadow)}
+/* fenêtre Premium */
+.cmp-wrap,.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.cmp,.tbl table{width:100%;border-collapse:collapse;font-size:.86rem}
+.cmp th,.cmp td,.tbl th,.tbl td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.cmp th:not(:first-child),.cmp td:not(:first-child){text-align:center;width:22%}
+.cmp thead th{background:var(--surface-2);font-weight:700}
+.cmp thead th:last-child{background:var(--accent);color:var(--accent-ink)}
+.cmp tr:last-child td,.tbl tr:last-child td{border-bottom:0}
+.cmp .ok{color:var(--ok);font-weight:800}.cmp .no{color:var(--muted)}
+.tbl th{background:var(--surface-2);font-weight:700;white-space:nowrap}
+.tbl td{white-space:nowrap}
+.tbl code{font:500 .78rem var(--font-m)}
+.recap{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.recap div{display:flex;justify-content:space-between;gap:12px;background:var(--surface);padding:10px 12px;font-size:.9rem}
+.recap span{color:var(--muted)}.recap b{text-align:right}
+.demo-pay{margin:0;background:var(--surface-2);border-radius:12px;padding:10px 12px;font-size:.86rem}
+.paying{display:grid;justify-items:center;gap:12px;padding:30px 0}
+.paying p{margin:0;color:var(--muted)}
+.spin{width:38px;height:38px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--accent);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.unlocked{margin:0;padding-left:20px;display:grid;gap:4px}
+/* agenda */
+.gc-list{display:grid;gap:6px;max-height:300px;overflow-y:auto}
+.gc-it{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:12px;padding:9px 12px;text-decoration:none;color:var(--fg);background:var(--surface)}
+.gc-it span{display:grid;min-width:0}.gc-it b{font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gc-it small{color:var(--muted);font-size:.78rem}
+.gc-it em{font-style:normal;font-weight:700;font-size:.84rem;color:#1a73e8;white-space:nowrap}
+.panel input[type=time]{width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font:inherit}
+/* compte */
+.profile{grid-template-columns:auto minmax(0,1fr) auto;align-items:center}
+.big-av{width:54px;height:54px;border-radius:50%;background:var(--fg);color:var(--bg);display:grid;place-items:center;font:800 1.5rem var(--font-d)}
+.big-av.prem{box-shadow:0 0 0 3px var(--accent)}
+.pf{display:grid;min-width:0}.pf b{font:800 1.15rem var(--font-d)}.pf span{color:var(--muted);overflow:hidden;text-overflow:ellipsis}.pf small{color:var(--muted);font-size:.76rem}
+@media (max-width:480px){.profile{grid-template-columns:auto minmax(0,1fr)}.profile .btn{grid-column:1/-1}}
+.dbv summary{cursor:pointer;list-style:none;display:grid;gap:2px}
+.dbv summary::-webkit-details-marker{display:none}
+.dbv summary span{color:var(--muted);font-size:.84rem}
+.dbv[open] summary{margin-bottom:6px}
+.sub small{font-weight:500;color:var(--muted);font-size:.78rem;margin-left:6px}
+/* import TikTok */
+#imp-form textarea{min-height:120px}
+.imp-actions{display:flex;flex-wrap:wrap;gap:8px}.imp-actions .btn{flex:1 1 160px}
+.imp-steps{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.imp-steps li{display:flex;align-items:center;gap:10px;color:var(--muted);font-weight:600}
+.imp-steps li::before{content:"";width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:0 0 auto}
+.imp-steps li.cur{color:var(--fg)}.imp-steps li.cur::before{border-color:var(--accent);border-top-color:transparent;animation:spin .7s linear infinite}
+.imp-steps li.done{color:var(--fg)}.imp-steps li.done::before{background:var(--ok);border-color:var(--ok);box-shadow:inset 0 0 0 3px var(--surface)}
+/* comparateur de drives */
+.cmp-shops{display:grid;gap:10px}
+.cmp-shops h3{margin:0;font:500 .74rem var(--font-m);text-transform:uppercase;letter-spacing:.12em;color:var(--accent-text)}
+.shops{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:640px){.shops{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.shopc{display:grid;gap:2px;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 12px;min-width:0}
+.shopc .sn{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-weight:700;font-size:.88rem}
+.shopc .sn em{font-style:normal;font:700 .62rem var(--font-b);text-transform:uppercase;letter-spacing:.05em;background:var(--ok);color:#fff;border-radius:999px;padding:2px 6px}
+.shopc b{font:800 1.25rem var(--font-d);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.shopc small{color:var(--muted);font-size:.76rem}
+.shopc.on{border-color:var(--fg);box-shadow:inset 0 0 0 1px var(--fg)}
+.save-tip{margin:0;background:color-mix(in oklab,var(--ok) 12%,var(--surface));border-radius:12px;padding:10px 12px;font-size:.88rem}
+.save-tip .linkbtn{margin-left:4px}
+.cmp-det summary{cursor:pointer;font-weight:700;font-size:.88rem;padding:4px 0}
+.cmp-det .tbl{margin-top:8px}
+.cmp-det td.min{color:var(--ok);font-weight:800}
+.cmp-det tr.tot td{font-weight:800;background:var(--surface-2)}
+.field input[type=email],.field input[type=password]{width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit}
 </style>
 </head>
 <body>
@@ -722,7 +814,8 @@ form{display:grid;gap:12px}
       <svg viewBox="0 0 32 32" aria-hidden="true"><defs><mask id="bite"><rect width="32" height="32" fill="#fff"/><circle cx="29" cy="7" r="5" fill="#000"/><circle cx="31" cy="14" r="4" fill="#000"/><circle cx="24" cy="3" r="4" fill="#000"/></mask></defs><circle cx="16" cy="16" r="14" style="fill:var(--accent)" mask="url(#bite)"/></svg>
       <span class="word">tastetok</span>
       <small>Ce soir, on mange quoi ?</small>
-      <button class="post-btn" data-go="poster" aria-label="Poster un plat"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+      <button class="me-btn" data-go="compte" aria-label="Mon compte" id="me-btn"><span id="me-ini"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg></span></button>
+      <button class="post-btn" data-go="poster" aria-label="Poster ou importer un plat"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
     </div>
     <div class="chips" role="group" aria-label="Filtres">
       <button class="fchip on" data-f="all">Pour toi</button>
@@ -750,7 +843,9 @@ form{display:grid;gap:12px}
     <button class="dk" data-go="frigo"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M6 10h12M9 6v2M9 13v3"/></svg><span>Frigo</span></button>
     <button class="dk" data-go="panier"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 11.1a1 1 0 0 1-1 .9H7.2a1 1 0 0 1-1-.9z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Panier</span><span class="badge" id="badge" hidden>0</span></button>
     <button class="dk" data-go="sante"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg><span>Santé</span></button>
-    <button class="dk side-only post-side" data-go="poster"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Poster un plat</span></button>
+    <button class="dk side-only" data-go="compte"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg><span>Compte</span><span class="prem-tag" id="side-prem" hidden>Premium</span></button>
+    <button class="dk side-only post-side" data-go="poster"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Poster ou importer</span></button>
+    <button class="side-only go-prem" id="side-go-prem" data-premium="sidebar"><b>Passer Premium</b><span>5 € par mois · essai 7 jours</span></button>
     <p class="side-note">Prototype · recettes, prix et valeurs nutritionnelles d’exemple.</p>
   </nav>
 
@@ -787,10 +882,30 @@ form{display:grid;gap:12px}
     </div>
   </section>
 
+  <section class="page" id="page-compte" hidden aria-label="Mon compte">
+    <div class="page-in">
+      <header class="page-head"><div><h2>Mon compte</h2><p>Profil, abonnement et données.</p></div></header>
+      <div id="acct-body" class="stack"></div>
+    </div>
+  </section>
+
   <section class="page" id="page-poster" hidden aria-label="Poster un plat">
     <div class="page-in">
-      <header class="page-head"><div><h2>Poster ton plat</h2><p>Ta vidéo arrive en haut du fil, avec sa recette.</p></div><button class="x" data-go="fil" aria-label="Fermer">×</button></header>
-      <form id="post-form">
+      <header class="page-head"><div><h2>Ajouter un plat</h2><p>Importe une vidéo TikTok ou poste ta propre recette.</p></div><button class="x" data-go="fil" aria-label="Fermer">×</button></header>
+      <div class="tabs big" role="tablist" id="add-tabs">
+        <button role="tab" data-addtab="import" aria-selected="true">Importer de TikTok</button>
+        <button role="tab" data-addtab="post" aria-selected="false">Poster mon plat</button>
+      </div>
+      <div id="import-pane" class="stack">
+        <form id="imp-form" class="card">
+          <div class="field"><label for="imp-url">Lien de la vidéo TikTok</label><input type="text" id="imp-url" inputmode="url" autocomplete="off" placeholder="https://www.tiktok.com/@créateur/video/…"><small>Depuis TikTok : Partager → Copier le lien.</small></div>
+          <div class="field"><label for="imp-cap">Légende de la vidéo <span class="opt">(conseillé)</span></label><textarea id="imp-cap" placeholder="Colle la description : les créateurs y mettent souvent les ingrédients et les étapes."></textarea></div>
+          <div class="imp-actions"><button class="btn primary" type="submit">Transformer en recette</button><button class="btn" type="button" id="imp-example">Essayer avec un exemple</button></div>
+          <p class="legal" id="imp-quota"></p>
+        </form>
+        <div id="imp-out"></div>
+      </div>
+      <form id="post-form" hidden>
         <div class="drop" id="drop"><input type="file" id="f-media" accept="image/*,video/*" aria-label="Photo ou vidéo"><span id="drop-label">Touche pour ajouter une photo ou une vidéo</span></div>
         <div class="field"><label for="f-title">Nom du plat</label><input type="text" id="f-title" required value="Croque-monsieur à la poêle"></div>
         <div class="field"><label for="f-caption">Le mot du chef</label><input type="text" id="f-caption" value="Le goûter salé du dimanche soir, sans four."></div>
@@ -880,7 +995,8 @@ const nrm = (x) => String(x).toLowerCase().replace(/œ/g, 'oe').replace(/[’']/
 const kfmt = (n) => n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace('.', ',') + ' k' : String(n);
 const store = {
   get(k, d) { try { const v = localStorage.getItem('tt2.' + k); return v ? JSON.parse(v) : d; } catch { return d; } },
-  set(k, v) { try { localStorage.setItem('tt2.' + k, JSON.stringify(v)); } catch {} }
+  set(k, v) { try { localStorage.setItem('tt2.' + k, JSON.stringify(v)); } catch {} if (store.onset) store.onset(k); },
+  onset: null
 };
 /* dates locales */
 function today0() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
@@ -1372,6 +1488,7 @@ let pending = store.get('pending', []);
 let health = store.get('health', null) || { sex:'H', a:24, h:178, w:72, act:1, goal:'maintien', example:true };
 let weights = store.get('weights', null) || exampleWeights();
 let voiceOn = store.get('voice', false);
+let me = store.get('me', null); // compte connecté (copie locale ; la base de données IndexedDB fait foi)
 let dirty = false;
 function exampleWeights() {
   const t = today0(), vals = [73.4, 73.1, 72.9, 72.6, 72.3, 72.0];
@@ -1511,6 +1628,7 @@ function postHTML(p) {
             </div>
             <p class="goal-line" hidden></p>
             ${p.caption ? `<p class="note"><b>${esc(p.user)}</b> ${esc(p.caption)}</p>` : ''}
+            ${p.imported ? `<p class="note">Importé de TikTok · <a href="${esc(p.imported.url)}" target="_blank" rel="noopener">voir la vidéo d’origine ↗</a></p>` : ''}
             <div class="r-acts"><button class="rate-inline" data-act="rate">${ICON.star}<span class="rl2">Noter ce plat</span></button><span class="r-why"></span></div>
           </header>
           <div class="r-body">
@@ -1534,7 +1652,7 @@ function postHTML(p) {
       </section>
     </div></div>
     <div class="info">
-      <div class="who"><span class="avatar" aria-hidden="true">${esc(p.user.replace('@', '').charAt(0).toUpperCase())}</span><span class="handle">${esc(p.user)}</span>${p.stu ? '<span class="stu">Étudiant·e</span>' : ''}${p.ad ? '<span class="stu ad">Sponsorisé</span>' : ''}<span class="tags">${esc(p.tags)}</span></div>
+      <div class="who"><span class="avatar" aria-hidden="true">${esc(p.user.replace('@', '').charAt(0).toUpperCase())}</span><span class="handle">${esc(p.user)}</span>${p.stu ? '<span class="stu">Étudiant·e</span>' : ''}${p.ad ? '<span class="stu ad">Sponsorisé</span>' : ''}${p.imported ? '<span class="stu tk">Importé de TikTok</span>' : ''}<span class="tags">${esc(p.tags)}</span></div>
       <h1 class="dish-title">${esc(p.title)}</h1>
       ${adLine}
       <div class="meta">${p.nut && p.nut.kcal ? `<span>${p.nut.kcal} kcal</span><span>${p.nut.p} g prot.</span>` : ''}<span class="cx l${cx.lv}"><i></i><i></i><i></i>${cx.t} · ${p.ing.length} ingr.</span></div>
@@ -1614,7 +1732,7 @@ function mount(p, where = 'beforeend') {
 }
 
 const FILTERS = {
-  all: () => true,
+  all: p => !(p.ad && isPremium()),
   fridge: p => !p.ad && !fitOf(p).toolsMiss.length,
   budget: p => !p.ad && perServ(p) > 0 && perServ(p) <= 2.5,
   quick: p => !p.ad && p.min <= 20,
@@ -1773,11 +1891,12 @@ function closeModal() {
 function mhead(eyebrow, title) { return `<div class="grab"></div><div class="panel-head"><div class="ph-t"><p class="eyebrow-s">${eyebrow}</p><h2>${esc(title)}</h2></div><button class="x" data-close aria-label="Fermer">×</button></div>`; }
 function renderModal() {
   if (!mctx) return;
-  mpanel.innerHTML = ({ rate: mRate, plan: mPlanFor, slot: mSlot, pick: mPick })[mctx.type]();
+  mpanel.innerHTML = ({ rate: mRate, plan: mPlanFor, slot: mSlot, pick: mPick, premium: mPremium, checkout: mCheckout, gcal: mGcal })[mctx.type]();
 }
 modal.addEventListener('click', (e) => {
   if (e.target === modal || e.target.closest('[data-close]')) { closeModal(); return; }
   if (!mctx) return;
+  if (modalExtra(e)) return;
   const t = e.target;
   const r = t.closest('[data-rate]');
   if (r && mctx.type === 'rate') { doRate(byId[mctx.id], +r.dataset.rate); return; }
@@ -1913,7 +2032,8 @@ function renderPlan() {
     <div class="plan-bar">
       <div class="wk-nav"><button class="x" data-wk="-1" aria-label="Semaine précédente">‹</button><b>${wkOff === 0 ? 'Cette semaine' : wkOff === 1 ? 'Semaine prochaine' : 'Semaine'} · ${fmtD.format(a)} – ${fmtD.format(b)}</b><button class="x" data-wk="1" aria-label="Semaine suivante">›</button></div>
       <div class="actions">
-        <button class="btn primary" data-pa="gen">${ents.length ? 'Compléter ma semaine' : 'Générer ma semaine'}</button>
+        <button class="btn primary" data-pa="gen">${isPremium() ? '' : LOCK}${ents.length ? 'Compléter ma semaine' : 'Générer ma semaine'}</button>
+        <button class="btn" data-pa="gcal">Exporter vers Google Agenda</button>
         <button class="btn" data-pa="cart">Manquants au panier</button>
         ${ents.length ? `<button class="btn" data-pa="clear">${clearArm ? 'Confirmer : tout vider' : 'Vider la semaine'}</button>` : ''}
       </div>
@@ -1928,6 +2048,8 @@ $('#plan-body').addEventListener('click', (e) => {
   const add = e.target.closest('[data-addslot]'); if (add) { openModal('pick', { key: add.dataset.addslot, q: '' }); return; }
   const sl = e.target.closest('[data-slot]'); if (sl) { openModal('slot', { key: sl.dataset.slot }); return; }
   const pa = e.target.closest('[data-pa]'); if (!pa) return;
+  if (pa.dataset.pa === 'gcal') { openModal('gcal', {}); return; }
+  if (pa.dataset.pa === 'gen' && !isPremium()) { openPremium('La génération automatique de la semaine est une fonction Premium.'); return; }
   if (pa.dataset.pa === 'gen') { const n = genWeek(); renderPlan(); toast(n ? `${n} repas ajoutés à ta semaine` : 'Ta semaine est déjà complète'); }
   if (pa.dataset.pa === 'cart') { const n = weekEntries().reduce((a, [, en]) => a + addEntryToCart(en), 0); toast(n ? `${n} article${n > 1 ? 's' : ''} ajouté${n > 1 ? 's' : ''} au panier` : 'Rien à acheter : tu as tout'); }
   if (pa.dataset.pa === 'clear') {
@@ -2135,6 +2257,7 @@ function say(text, q = null, talk = true) {
 }
 function syncVoiceBtn() { const b = $('#voice'); b.setAttribute('aria-pressed', voiceOn); b.classList.toggle('on', voiceOn); }
 $('#voice').onclick = () => {
+  if (!isPremium()) { openPremium('Le guide vocal qui lit les étapes à voix haute est une fonction Premium.'); return; }
   voiceOn = !voiceOn; store.set('voice', voiceOn); syncVoiceBtn();
   if (voiceOn) { if (!hasTTS) { say('La lecture à voix haute n’est pas disponible sur ce navigateur. Je réponds par écrit.', null, false); return; } readStep(); }
   else { try { speechSynthesis.cancel(); } catch {} say('Voix coupée. Je réponds par écrit.', null, false); }
@@ -2143,6 +2266,7 @@ const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let rec = null, listening = false;
 $('#mic').hidden = !SR;
 $('#mic').onclick = () => {
+  if (!isPremium()) { openPremium('Parler au guide à voix haute est une fonction Premium.'); return; }
   if (listening && rec) { try { rec.stop(); } catch {} return; }
   try {
     rec = new SR(); rec.lang = 'fr-FR'; rec.interimResults = false; rec.maxAlternatives = 1;
@@ -2276,22 +2400,43 @@ function addEntryToCart(e) {
 }
 function updateBadge() { const b = $('#badge'); b.hidden = !cart.length; b.textContent = cart.length; }
 function listText() { return cart.map(c => `- ${c.n}${c.q != null ? ' : ' + qtxt(Math.round(c.q * 10) / 10, c.u) : ''}`).join('\n'); }
+/* comparaison de prix entre enseignes (prix simulés pour la démo : en production, catalogues ou API des enseignes) */
+const SHOPF = { leclerc: .93, intermarche: .97, auchan: .99, carrefour: 1.02 };
+function hvar(str) { let h = 2166136261; for (const ch of str) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return ((h >>> 0) % 1000) / 1000; }
+const priceAt = (c, s) => c.price ? Math.round(c.price * SHOPF[s] * (0.9 + hvar(c.n + '|' + s) * 0.2) * 100) / 100 : 0;
+const cartTotal = (s) => cart.reduce((a, c) => a + priceAt(c, s), 0);
+let cmpOpen = false;
 function renderCart() {
   const body = $('#cart-body');
   if (!cart.length) { body.innerHTML = `<div class="empty"><strong>Ton panier est vide</strong>Ouvre une recette et touche « Ajouter », ou envoie les manquants de ta semaine depuis le Planning. Seuls les ingrédients qui manquent à ton frigo y partent.</div>`; return; }
   const groups = {};
   cart.forEach((c, i) => { const g = c.from[0]; (groups[g] = groups[g] || []).push([c, i]); });
-  const total = cart.reduce((a, c) => a + c.price, 0), left = budget - total, pct = Math.min(100, total / budget * 100);
+  const shopsSorted = Object.keys(SHOPS).map(k => [k, cartTotal(k)]).sort((a, b) => a[1] - b[1]);
+  const best = shopsSorted[0], total = cartTotal(shop), left = budget - total, pct = Math.min(100, total / budget * 100);
+  const priced = cart.filter(c => c.price);
   body.innerHTML = `<div class="budget"><div class="budget-top"><b>${eur.format(total)} sur ${eur.format(budget)}</b><label for="budget-input">Budget semaine <input type="number" id="budget-input" min="5" max="300" step="5" value="${budget}"> €</label></div>
     <div class="bar${left < 0 ? ' over' : ''}"><i style="width:${pct}%"></i></div>
-    <p>${left >= 0 ? `Il te reste <b>${eur.format(left)}</b> cette semaine.` : `Tu dépasses ton budget de <b>${eur.format(-left)}</b>.`}</p></div>
-    <div class="fr-sec"><h3>Mon drive</h3><div class="seg" role="group" aria-label="Enseigne">${Object.entries(SHOPS).map(([k, v]) => `<button data-shop="${k}" aria-pressed="${k === shop}">${v.n}</button>`).join('')}</div></div>
+    <p>${left >= 0 ? `Il te reste <b>${eur.format(left)}</b> cette semaine chez ${SHOPS[shop].n}.` : `Tu dépasses ton budget de <b>${eur.format(-left)}</b>.`}</p></div>
+    <section class="cmp-shops">
+      <div class="card-h"><h3>Comparer les drives</h3><span class="hint">${cart.length} article${cart.length > 1 ? 's' : ''}</span></div>
+      <div class="shops">${shopsSorted.map(([k, t], r) => `<button class="shopc${k === shop ? ' on' : ''}" data-shop="${k}" aria-pressed="${k === shop}">
+        <span class="sn">${SHOPS[k].n}${r === 0 ? '<em>Le moins cher</em>' : ''}</span>
+        <b>${eur.format(t)}</b>
+        <small>${r === 0 ? 'Meilleur prix' : '+ ' + eur.format(t - best[1])}${k === shop ? ' · choisi' : ''}</small></button>`).join('')}</div>
+      ${shop !== best[0] && total - best[1] >= .05 ? `<p class="save-tip">En passant chez <b>${SHOPS[best[0]].n}</b>, tu économises <b>${eur.format(total - best[1])}</b> sur ce panier. <button class="linkbtn" data-shop="${best[0]}">Choisir ${SHOPS[best[0]].n}</button></p>` : ''}
+      <details class="cmp-det"${cmpOpen ? ' open' : ''}><summary>Voir le prix de chaque produit</summary>
+        <div class="tbl"><table><thead><tr><th>Produit</th>${Object.keys(SHOPS).map(k => `<th>${SHOPS[k].n}</th>`).join('')}</tr></thead><tbody>
+        ${priced.map(c => { const ps = Object.keys(SHOPS).map(k => priceAt(c, k)), mn = Math.min(...ps); return `<tr><td>${esc(c.n)}</td>${ps.map(v => `<td class="${v === mn ? 'min' : ''}">${eur.format(v)}</td>`).join('')}</tr>`; }).join('')}
+        <tr class="tot"><td>Total</td>${Object.keys(SHOPS).map(k => `<td class="${k === best[0] ? 'min' : ''}">${eur.format(cartTotal(k))}</td>`).join('')}</tr>
+        </tbody></table></div>
+      </details>
+    </section>
     ${Object.entries(groups).map(([g, items]) => `
     <div class="group"><h3>${esc(g)}</h3>${items.map(([c, i]) => `
-      <div class="row"><div class="n">${esc(c.n)}<small>${c.q != null ? esc(qtxt(Math.round(c.q * 10) / 10, c.u)) : 'à ajuster'} · ${c.price ? '≈ ' + eur.format(c.price) : 'prix à voir'}</small></div>
+      <div class="row"><div class="n">${esc(c.n)}<small>${c.q != null ? esc(qtxt(Math.round(c.q * 10) / 10, c.u)) : 'à ajuster'} · ${c.price ? '≈ ' + eur.format(priceAt(c, shop)) + ' chez ' + SHOPS[shop].n : 'prix à voir'}</small></div>
         <a href="${shopUrl(c.n)}" target="_blank" rel="noopener">Trouver ↗</a>
         <button class="rm" data-rm="${i}" aria-label="Retirer ${esc(c.n)}">×</button></div>`).join('')}</div>`).join('')}
-    <div class="total"><span>Total estimé · ${cart.length} article${cart.length > 1 ? 's' : ''}</span><span>${eur.format(total)}</span></div>
+    <div class="total"><span>Total estimé chez ${SHOPS[shop].n} · ${cart.length} article${cart.length > 1 ? 's' : ''}</span><span>${eur.format(total)}</span></div>
     <div class="actions">
       <button class="btn primary" id="copy-list">Copier la liste</button>
       <button class="btn" id="share-coloc">Partager</button>
@@ -2299,7 +2444,8 @@ function renderCart() {
     </div>
     <div class="share-alt" id="share-alt" hidden><a class="btn" href="#" target="_blank" rel="noopener">Envoyer sur WhatsApp</a></div>
     <textarea class="copybox" id="copybox" readonly hidden aria-label="Liste de courses">${esc(listText())}</textarea>
-    <p class="legal">« Trouver » ouvre la recherche ${SHOPS[shop].n} pour chaque produit. Prix moyens estimés. Dans ce prototype, le panier drive n’est pas rempli automatiquement.</p>`;
+    <p class="legal">Prix simulés pour le prototype, à partir de prix moyens. En production : catalogues des enseignes ou relevés de prix, mis à jour chaque jour. « Trouver » ouvre la recherche ${SHOPS[shop].n} pour chaque produit ; le panier drive n’est pas rempli automatiquement.</p>`;
+  const det = $('.cmp-det', body); if (det) det.addEventListener('toggle', () => { cmpOpen = det.open; });
 }
 $('#cart-body').addEventListener('change', (e) => {
   if (e.target.id !== 'budget-input') return;
@@ -2310,9 +2456,9 @@ $('#cart-body').addEventListener('click', (e) => {
   const rm = e.target.closest('[data-rm]'); if (rm) { cart.splice(+rm.dataset.rm, 1); store.set('cart', cart); updateBadge(); renderCart(); return; }
   if (e.target.closest('#clear-cart')) { cart = []; store.set('cart', cart); updateBadge(); renderCart(); return; }
   const btn = e.target.closest('#copy-list, #share-coloc'); if (!btn) return;
-  const total = cart.reduce((a, c) => a + c.price, 0), dishes = [...new Set(cart.flatMap(c => c.from))].join(', ');
+  const total = cartTotal(shop), dishes = [...new Set(cart.flatMap(c => c.from))].join(', ');
   const isShare = btn.id === 'share-coloc';
-  const txt = isShare ? `Salut ! Cette semaine je fais : ${dishes}.\nIl nous manque :\n${listText()}\nTotal ≈ ${eur.format(total)}, soit ${eur.format(total / 2)} chacun à deux.` : 'Liste de courses TasteTok\n' + listText();
+  const txt = isShare ? `Salut ! Cette semaine je fais : ${dishes}.\nIl nous manque :\n${listText()}\nTotal ≈ ${eur.format(total)} chez ${SHOPS[shop].n}, soit ${eur.format(total / 2)} chacun à deux.` : 'Liste de courses TasteTok\n' + listText();
   const fallback = () => { const box = $('#copybox'); box.hidden = false; box.select(); toast('Sélectionne la liste pour la copier'); };
   $('#copybox').value = txt;
   if (isShare) {
@@ -2331,7 +2477,7 @@ $('#cart-body').addEventListener('click', (e) => {
 });
 
 /* ---------- pages ---------- */
-const PAGES = { fil: null, planning: 'page-planning', frigo: 'page-frigo', panier: 'page-panier', sante: 'page-sante', poster: 'page-poster' };
+const PAGES = { fil: null, planning: 'page-planning', frigo: 'page-frigo', panier: 'page-panier', sante: 'page-sante', poster: 'page-poster', compte: 'page-compte' };
 let current = 'fil';
 function go(name, push = true) {
   if (!(name in PAGES)) name = 'fil';
@@ -2342,6 +2488,8 @@ function go(name, push = true) {
   if (name === 'frigo') renderFridge();
   if (name === 'panier') renderCart();
   if (name === 'sante') renderSante();
+  if (name === 'compte') renderAccount();
+  if (name === 'poster') renderImportQuota();
   if (name === 'fil' && dirty) applyFilter(true);
   const pg = PAGES[name] && $('#' + PAGES[name]); if (pg) pg.scrollTop = 0;
   if (canHash && push) { try { if (location.hash !== '#' + name) location.hash = name; } catch {} }
@@ -2433,12 +2581,12 @@ function renderSante() {
     </div>
     <div class="field"><label>Activité</label>${seg('act', ACT.map((a, i) => [i, a[0]]), h.act)}<small>${ACT[h.act][1]}</small></div>
     <div class="field"><label>Objectif</label>${seg('goal', GOALS, h.goal)}</div>
-    <div class="tiles">
+    <div class="tiles-wrap"><div class="tiles${isPremium() ? '' : ' locked'}" ${isPremium() ? '' : 'aria-hidden="true"'}>
       <div><b>${T.kcal}</b><span>kcal par jour</span></div>
       <div><b>${T.prot} g</b><span>protéines</span></div>
       <div><b>${T.glu} g</b><span>glucides</span></div>
       <div><b>${T.lip} g</b><span>lipides</span></div>
-    </div>
+    </div>${isPremium() ? '' : `<button class="unlock" data-premium="Ton programme détaillé (calories et macros par jour) est une fonction Premium.">${LOCK}Voir mon programme avec Premium</button>`}</div>
     <p class="fr-note">Par repas principal (midi ou soir) : <b>environ ${T.meal.kcal} kcal</b> et <b>${T.meal.prot} g de protéines</b>. Le fil et le planning mettent en avant les plats proches de ces valeurs.</p>
     <p class="legal">Estimation : métabolisme de base ${T.bmr} kcal (formule de Mifflin-St Jeor) × niveau d’activité = ${T.tdee} kcal${h.goal === 'perte' ? ', moins 400 kcal, sans descendre sous le métabolisme de base' : h.goal === 'muscle' ? ', plus 250 kcal' : ''}. Ce n’est pas un avis médical : pour un vrai programme, parle à un médecin ou à un diététicien.</p>
   </section>
@@ -2521,7 +2669,7 @@ $('#post-form').addEventListener('submit', (e) => {
   upload = null; e.target.reset(); $('#f-brand-row').hidden = true; $$('#f-taste .tg').forEach(b => b.setAttribute('aria-pressed', 'false'));
   $('#drop-label').textContent = 'Touche pour ajouter une photo ou une vidéo';
   filter = 'all'; syncChips(); go('fil');
-  mount(p, 'afterbegin'); applyFilter(); toast('Publié en haut de ton fil');
+  mount(p, 'afterbegin'); saveMine(p); applyFilter(); toast('Publié en haut de ton fil');
 });
 
 /* ---------- accueil en 4 étapes ---------- */
@@ -2562,8 +2710,494 @@ $('#onb-next').onclick = () => { if (onb.i < 3) { onb.i++; renderOnb(); } else c
 $('#onb-prev').onclick = () => { if (onb.i > 0) { onb.i--; renderOnb(); } };
 $('#onb-skip').onclick = () => closeOnb(false);
 
+
+/* =====================================================================
+   Comptes, base de données, Premium, export Google Agenda, import TikTok
+   ===================================================================== */
+const LOCK = '<svg class="lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>';
+const PRICE_EUR = 5, TRIAL_DAYS = 7, FREE_IMPORTS = 3;
+const DAY = 86400000;
+
+/* ---------- base de données (IndexedDB, dans le navigateur) ----------
+   Tables : users (profil + abonnement + mot de passe haché), payments (historique), userdata (données de l'appli par compte).
+   En production : un serveur avec une vraie base (PostgreSQL, Firebase…) et un hachage bcrypt ou argon2. */
+const DB = (() => {
+  let dbp = null;
+  function open() {
+    if (dbp) return dbp;
+    dbp = new Promise((res, rej) => {
+      try {
+        const rq = indexedDB.open('tastetok-db', 1);
+        rq.onupgradeneeded = () => {
+          const d = rq.result;
+          d.createObjectStore('users', { keyPath: 'id' }).createIndex('email', 'email', { unique: true });
+          d.createObjectStore('payments', { keyPath: 'id' }).createIndex('uid', 'uid');
+          d.createObjectStore('userdata', { keyPath: 'uid' });
+        };
+        rq.onsuccess = () => res(rq.result);
+        rq.onerror = () => rej(rq.error);
+      } catch (e) { rej(e); }
+    });
+    return dbp;
+  }
+  async function run(storeName, mode, fn) {
+    const d = await open();
+    return new Promise((res, rej) => {
+      const t = d.transaction(storeName, mode), s = t.objectStore(storeName);
+      let out; const r = fn(s);
+      if (r) r.onsuccess = () => { out = r.result; };
+      t.oncomplete = () => res(out); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+    });
+  }
+  return {
+    get: (s, k) => run(s, 'readonly', st => st.get(k)),
+    put: (s, v) => run(s, 'readwrite', st => st.put(v)),
+    del: (s, k) => run(s, 'readwrite', st => st.delete(k)),
+    all: (s) => run(s, 'readonly', st => st.getAll()),
+    byEmail: (e) => run('users', 'readonly', st => st.index('email').get(e)),
+    byUid: (s, uid) => run(s, 'readonly', st => st.index('uid').getAll(uid))
+  };
+})();
+const rid = (p) => p + Math.random().toString(16).slice(2, 10) + Date.now().toString(16).slice(-4);
+async function hashPw(pw, salt) {
+  try {
+    const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(salt + ':' + pw));
+    return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+  } catch { let h = 0; for (const c of salt + pw) h = (h * 31 + c.charCodeAt(0)) | 0; return 'faible-' + (h >>> 0).toString(16); }
+}
+const publicUser = (u) => ({ id: u.id, pseudo: u.pseudo, email: u.email, created: u.created, sub: u.sub || null });
+
+/* données de l'appli : toutes les clés tt2.* sauf la session */
+const LOCAL_ONLY = new Set(['session', 'me']);
+function snapshot() {
+  const o = {};
+  try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('tt2.') && !LOCAL_ONLY.has(k.slice(4))) o[k.slice(4)] = localStorage.getItem(k); } } catch {}
+  return o;
+}
+function clearLocalData(keepOnboarded = true) {
+  try { Object.keys(localStorage).filter(k => k.startsWith('tt2.') && !(keepOnboarded && k === 'tt2.onboarded')).forEach(k => localStorage.removeItem(k)); } catch {}
+}
+let syncT = null;
+async function syncUser() { if (!me) return; try { await DB.put('userdata', { uid: me.id, data: snapshot(), at: Date.now() }); } catch {} }
+store.onset = (k) => { if (!me || LOCAL_ONLY.has(k)) return; clearTimeout(syncT); syncT = setTimeout(syncUser, 700); };
+function setMe(u) { me = u ? publicUser(u) : null; store.set('me', me); store.set('session', me ? { uid: me.id } : null); syncMeUI(); }
+async function saveUser(patch) {
+  const u = await DB.get('users', me.id); Object.assign(u, patch); await DB.put('users', u); setMe(u); return u;
+}
+function reloadApp() { setTimeout(() => location.reload(), 50); }
+
+/* ---------- Premium ---------- */
+function isPremium() { const s = me && me.sub; return !!s && ['active', 'trial', 'canceled'].includes(s.status) && s.until > Date.now(); }
+function syncMeUI() {
+  const ini = $('#me-ini');
+  if (ini) ini.innerHTML = me ? esc(me.pseudo.charAt(0).toUpperCase()) : '<svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c1.2-3.6 4-5.2 7-5.2s5.8 1.6 7 5.2"/></svg>';
+  const btn = $('#me-btn'); if (btn) { btn.classList.toggle('in', !!me); btn.classList.toggle('prem', isPremium()); }
+  const sp = $('#side-prem'); if (sp) sp.hidden = !isPremium();
+  const gp = $('#side-go-prem'); if (gp) gp.hidden = isPremium();
+  const vb = $('#voice'); if (vb) vb.classList.toggle('needs-prem', !isPremium());
+}
+function premiumChanged() {
+  syncMeUI(); applyFilter(true);
+  if (current === 'planning') renderPlan();
+  if (current === 'sante') renderSante();
+  if (current === 'compte') renderAccount();
+  renderImportQuota();
+}
+let pendingSub = null;
+function openPremium(reason = '') { openModal('premium', { reason }); }
+const PERKS = [
+  ['Fil, recettes, frigo et panier drive', true, true],
+  ['Notes /10 et recommandation', true, true],
+  ['Ajouter des repas au planning', true, true],
+  ['Export vers Google Agenda', true, true],
+  ['Génération automatique de la semaine', false, true],
+  ['Programme santé détaillé (kcal et macros)', false, true],
+  ['Guide vocal en cuisine', false, true],
+  ['Import de vidéos TikTok', `${FREE_IMPORTS} offerts`, 'Illimité'],
+  ['Pubs des créateurs dans le fil', 'Oui', 'Aucune']
+];
+function mPremium() {
+  const cell = (v) => v === true ? '<span class="ok">✓</span>' : v === false ? '<span class="no">—</span>' : esc(v);
+  const s = me && me.sub;
+  return mhead('TasteTok Premium', `${PRICE_EUR} € par mois, sans engagement`) + `
+    ${mctx.reason ? `<p class="stline warn">${LOCK}${esc(mctx.reason)}</p>` : ''}
+    <div class="cmp-wrap"><table class="cmp"><thead><tr><th></th><th>Gratuit</th><th>Premium</th></tr></thead>
+      <tbody>${PERKS.map(([l, f, p]) => `<tr><td>${esc(l)}</td><td>${cell(f)}</td><td>${cell(p)}</td></tr>`).join('')}</tbody></table></div>
+    ${isPremium()
+      ? `<p class="stline ok">Tu es déjà Premium${s.status === 'trial' ? ' (essai)' : ''} jusqu’au ${fmtLong.format(new Date(s.until))}.</p><button class="btn" data-go-acct>Gérer mon abonnement</button>`
+      : `<div class="slot-acts"><button class="btn primary" data-sub="active">S’abonner · ${PRICE_EUR} €/mois</button>${me && me.usedTrial ? '' : `<button class="btn" data-sub="trial">Essai gratuit ${TRIAL_DAYS} jours</button>`}</div>`}
+    <p class="legal">Au prix de KitChef (4,99 € par mois). Un étudiant paie déjà ~30 € par mois sa salle de sport : 5 € pour manger mieux reste accessible.${me ? '' : ' Un compte est demandé pour s’abonner.'}</p>`;
+}
+function mCheckout() {
+  const trial = mctx.kind === 'trial';
+  if (mctx.step === 'pay') return mhead('Paiement', 'Traitement…') + `<div class="paying"><span class="spin" aria-hidden="true"></span><p>Validation du paiement simulé…</p></div>`;
+  if (mctx.step === 'done') return mhead('Bienvenue', 'Tu es Premium') + `
+    <p class="stline ok">${trial ? `Essai gratuit activé jusqu’au ${fmtLong.format(new Date(me.sub.until))}.` : `Abonnement actif. Prochain renouvellement le ${fmtLong.format(new Date(me.sub.until))}.`}</p>
+    <ul class="unlocked"><li>Génère ta semaine en un geste</li><li>Ton programme santé détaillé</li><li>Le guide vocal en cuisine</li><li>Imports TikTok illimités, sans pub</li></ul>
+    <button class="btn primary" data-close>C’est parti</button>`;
+  return mhead('Récapitulatif', trial ? `Essai gratuit ${TRIAL_DAYS} jours` : 'Abonnement mensuel') + `
+    <div class="recap">
+      <div><span>Offre</span><b>TasteTok Premium · mensuel</b></div>
+      <div><span>Compte</span><b>${esc(me.email)}</b></div>
+      <div><span>À payer aujourd’hui</span><b>${trial ? '0,00 €' : eur.format(PRICE_EUR)}</b></div>
+      <div><span>Ensuite</span><b>${eur.format(PRICE_EUR)} par mois${trial ? ` à partir du ${fmtD.format(new Date(Date.now() + TRIAL_DAYS * DAY))}` : ''}, résiliable à tout moment</b></div>
+    </div>
+    <p class="demo-pay"><b>Paiement simulé.</b> Aucune carte n’est demandée dans ce prototype. Dans la vraie appli : Apple Pay, Google Pay ou carte bancaire via un prestataire comme Stripe.</p>
+    <button class="btn primary" data-pay>${trial ? 'Démarrer l’essai (simulation)' : `Confirmer le paiement de ${eur.format(PRICE_EUR)} (simulation)`}</button>`;
+}
+async function doPay() {
+  const trial = mctx.kind === 'trial';
+  mctx.step = 'pay'; renderModal();
+  await new Promise(r => setTimeout(r, 1100));
+  const now = Date.now(), until = now + (trial ? TRIAL_DAYS : 30) * DAY;
+  try {
+    await DB.put('payments', { id: rid('pay_'), uid: me.id, date: now, amount: trial ? 0 : PRICE_EUR, label: trial ? `Essai gratuit ${TRIAL_DAYS} jours` : 'Premium · 1 mois', status: 'simulé' });
+    const u = await DB.get('users', me.id);
+    u.sub = { status: trial ? 'trial' : 'active', plan: 'mensuel', price: PRICE_EUR, start: now, until };
+    if (trial) u.usedTrial = true;
+    await DB.put('users', u); setMe(u); me.usedTrial = u.usedTrial;
+  } catch { toast('Base de données indisponible ici'); closeModal(); return; }
+  if (mctx) { mctx.step = 'done'; renderModal(); }
+  premiumChanged();
+}
+function mGcal() {
+  const ents = weekEntries().filter(([, e]) => e.st !== 'fait');
+  const tm = store.get('gcalTimes', { midi: '12:30', soir: '19:30' });
+  return mhead('Exporter', 'Planning vers Google Agenda') + `
+    <div class="two"><div class="field"><label for="gc-midi">Heure du midi</label><input type="time" id="gc-midi" value="${tm.midi}"></div><div class="field"><label for="gc-soir">Heure du soir</label><input type="time" id="gc-soir" value="${tm.soir}"></div></div>
+    ${ents.length ? `
+    <p class="hint">Un repas à la fois : chaque lien ouvre Google Agenda avec l’événement prêt (plat, ingrédients, ce qui manque).</p>
+    <div class="gc-list">${ents.map(([k, e]) => `<a class="gc-it" href="${gcalUrl(k, e, tm)}" target="_blank" rel="noopener"><span><b>${esc(byId[e.id].title)}</b><small>${cap(slotLabel(k))}</small></span><em>Ajouter ↗</em></a>`).join('')}</div>
+    <p class="hint">Toute la semaine d’un coup : télécharge le fichier .ics, puis dans Google Agenda : Paramètres → Importer et exporter → Importer.</p>
+    <div class="slot-acts"><button class="btn primary" data-ics="dl">Télécharger le .ics de la semaine</button><button class="btn" data-ics="copy">Copier le .ics</button></div>
+    <textarea class="copybox" id="ics-box" readonly hidden aria-label="Fichier ICS"></textarea>
+    <p class="legal">Dans l’aperçu Claude, le téléchargement est bloqué : utilise les liens ou « Copier ». Sur la version hébergée, il marche. En production, une connexion Google (OAuth) synchroniserait le planning automatiquement.</p>`
+    : '<p class="empty">Rien à exporter cette semaine. Ajoute des repas au planning.</p>'}`;
+}
+function evTimes(key, tm) {
+  const [d, s] = key.split('|'); const [hh, mm] = (tm[s] || (s === 'midi' ? '12:30' : '19:30')).split(':').map(Number);
+  const a = dateOf(d); a.setHours(hh, mm, 0, 0); const b = new Date(a.getTime() + 45 * 60000);
+  const f = (x) => `${x.getFullYear()}${String(x.getMonth() + 1).padStart(2, '0')}${String(x.getDate()).padStart(2, '0')}T${String(x.getHours()).padStart(2, '0')}${String(x.getMinutes()).padStart(2, '0')}00`;
+  return [f(a), f(b)];
+}
+function evText(e) {
+  const p = byId[e.id], h = entryHave(e), f = e.serv / p.servings;
+  const miss = e.rest ? [] : p.ing.filter((_, k) => !h.has(k)).map(it => `${it.n} (${qtxt(scaleQ(it.q, it.u, f), it.u)})`).concat((e.note || '').split(',').map(x => x.trim()).filter(Boolean));
+  return { title: `${e.rest ? 'Restes : ' : 'Repas : '}${p.title}`,
+    desc: `${p.time} · ${e.serv} portion${e.serv > 1 ? 's' : ''}${p.nut && p.nut.kcal ? ` · ${p.nut.kcal} kcal par portion` : ''}\n` +
+      (miss.length ? `Il manque : ${miss.join(', ')}\n` : 'Tu as tous les ingrédients.\n') +
+      `Étapes :\n${p.steps.map((s, i) => `${i + 1}. ${s}`).join('\n')}\n\nPlanifié avec TasteTok` };
+}
+function gcalUrl(key, e, tm) {
+  const [a, b] = evTimes(key, tm), t = evText(e);
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(t.title) + '&dates=' + a + '/' + b + '&ctz=Europe%2FParis&details=' + encodeURIComponent(t.desc);
+}
+function buildIcs(tm) {
+  const icsEsc = (s) => s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//TasteTok//Planning//FR', 'CALSCALE:GREGORIAN', 'X-WR-CALNAME:TasteTok'];
+  weekEntries().filter(([, e]) => e.st !== 'fait').forEach(([k, e]) => {
+    const [a, b] = evTimes(k, tm), t = evText(e);
+    lines.push('BEGIN:VEVENT', `UID:${k.replace('|', '-')}-${e.id}@tastetok`, `DTSTAMP:${stamp}`, `DTSTART:${a}`, `DTEND:${b}`, `SUMMARY:${icsEsc(t.title)}`, `DESCRIPTION:${icsEsc(t.desc)}`, 'END:VEVENT');
+  });
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+function downloadFile(name, text, type) {
+  try { const url = URL.createObjectURL(new Blob([text], { type })); const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000); } catch {}
+}
+function copyText(text, boxSel) {
+  const fb = () => { const box = $(boxSel); if (box) { box.value = text; box.hidden = false; box.select(); } toast('Sélectionne le texte pour le copier'); };
+  try { navigator.clipboard.writeText(text).then(() => toast('Copié'), fb); } catch { fb(); }
+}
+
+/* clics propres aux nouvelles fenêtres ; renvoie true si traité */
+function modalExtra(e) {
+  const t = e.target;
+  const sub = t.closest('[data-sub]');
+  if (sub) {
+    if (!me) { pendingSub = sub.dataset.sub; closeModal(); acctTab = 'signup'; go('compte'); toast('Crée ton compte pour continuer'); return true; }
+    openModal('checkout', { kind: sub.dataset.sub, step: '' }); return true;
+  }
+  if (t.closest('[data-pay]')) { doPay(); return true; }
+  if (t.closest('[data-go-acct]')) { closeModal(); go('compte'); return true; }
+  const ic = t.closest('[data-ics]');
+  if (ic) {
+    const tm = { midi: $('#gc-midi').value || '12:30', soir: $('#gc-soir').value || '19:30' };
+    const ics = buildIcs(tm);
+    if (ic.dataset.ics === 'dl') { downloadFile('tastetok-planning.ics', ics, 'text/calendar'); toast('Fichier .ics téléchargé'); }
+    else copyText(ics, '#ics-box');
+    return true;
+  }
+  return false;
+}
+modal.addEventListener('change', (e) => {
+  if (mctx && mctx.type === 'gcal' && (e.target.id === 'gc-midi' || e.target.id === 'gc-soir')) {
+    store.set('gcalTimes', { midi: $('#gc-midi').value || '12:30', soir: $('#gc-soir').value || '19:30' }); renderModal();
+  }
+});
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-premium]'); if (b && !b.closest('#modal')) openPremium(b.dataset.premium === 'sidebar' ? '' : b.dataset.premium); });
+
+/* ---------- page Compte ---------- */
+let acctTab = 'signup', delArm = false;
+function renderAccount() {
+  const body = $('#acct-body');
+  if (!me) {
+    body.innerHTML = `
+    <section class="card">
+      ${pendingSub ? `<p class="stline warn">Crée ton compte, puis tu passeras au paiement ${pendingSub === 'trial' ? 'de l’essai gratuit' : 'de Premium'}.</p>` : ''}
+      <div class="tabs" role="tablist"><button role="tab" data-at="signup" aria-selected="${acctTab === 'signup'}">Créer un compte</button><button role="tab" data-at="login" aria-selected="${acctTab === 'login'}">Se connecter</button></div>
+      <form id="auth-form" class="stack" novalidate>
+        ${acctTab === 'signup' ? '<div class="field"><label for="a-pseudo">Pseudo</label><input type="text" id="a-pseudo" autocomplete="nickname" maxlength="24" placeholder="Ex. lucas.cuisine"></div>' : ''}
+        <div class="field"><label for="a-email">E-mail</label><input type="email" id="a-email" autocomplete="email" placeholder="toi@exemple.fr"></div>
+        <div class="field"><label for="a-pw">Mot de passe</label><input type="password" id="a-pw" autocomplete="${acctTab === 'signup' ? 'new-password' : 'current-password'}" placeholder="6 caractères minimum"><small>Prototype : n’utilise pas un vrai mot de passe.</small></div>
+        <p class="form-err" id="a-err" hidden></p>
+        <button class="btn primary" type="submit">${acctTab === 'signup' ? 'Créer mon compte' : 'Me connecter'}</button>
+      </form>
+      <p class="legal">${acctTab === 'signup' ? 'Ton fil, tes notes, ton planning et ton frigo actuels seront rattachés à ce compte.' : 'Tes données (notes, planning, frigo, santé) seront rechargées depuis la base.'} Les comptes sont stockés dans la base de données de ce navigateur (IndexedDB).</p>
+    </section>
+    ${dbViewHTML()}`;
+    loadDbView(); return;
+  }
+  const s = me.sub, prem = isPremium();
+  const status = !s || !prem ? 'Gratuit' : s.status === 'trial' ? 'Premium · essai gratuit' : s.status === 'canceled' ? 'Premium · résilié' : 'Premium · actif';
+  body.innerHTML = `
+  <section class="card profile">
+    <span class="big-av${prem ? ' prem' : ''}">${esc(me.pseudo.charAt(0).toUpperCase())}</span>
+    <div class="pf"><b>${esc(me.pseudo)}</b><span>${esc(me.email)}</span><small>Membre depuis le ${fmtLong.format(new Date(me.created))}</small></div>
+    <button class="btn" id="logout">Se déconnecter</button>
+  </section>
+  <section class="card">
+    <div class="card-h"><h3>Abonnement</h3><span class="pill${prem ? ' ok' : ''}">${status}</span></div>
+    ${prem
+      ? `<p class="fr-note">${s.status === 'canceled' ? `Résilié : Premium reste actif jusqu’au <b>${fmtLong.format(new Date(s.until))}</b>, puis ton compte repasse en gratuit.` : s.status === 'trial' ? `Essai gratuit jusqu’au <b>${fmtLong.format(new Date(s.until))}</b>. Ensuite ${PRICE_EUR} € par mois, sauf si tu résilies.` : `${PRICE_EUR} € par mois. Prochain renouvellement le <b>${fmtLong.format(new Date(s.until))}</b>.`}</p>
+         <div class="slot-acts">${s.status === 'canceled' ? '<button class="btn primary" id="sub-resume">Réactiver</button>' : '<button class="btn" id="sub-cancel">Résilier</button>'}${s.status === 'trial' ? '<button class="btn primary" data-sub-now>Passer à l’abonnement payant</button>' : ''}</div>`
+      : `<p class="fr-note">Génération automatique du planning, programme santé détaillé, guide vocal, imports TikTok illimités et zéro pub : <b>${PRICE_EUR} € par mois</b>.</p><button class="btn primary" data-premium="">Découvrir Premium</button>`}
+    <h4 class="sub">Historique des paiements</h4>
+    <div id="pay-list"><p class="empty">Chargement…</p></div>
+  </section>
+  <section class="card">
+    <h3>Mes données</h3>
+    <div class="field"><label for="a-ps">Pseudo</label><div class="fr-add"><input type="text" id="a-ps" maxlength="24" value="${esc(me.pseudo)}"><button id="ps-save">Enregistrer</button></div></div>
+    <p class="fr-note">Notes, planning, frigo, santé et recettes importées sont enregistrés dans ton compte et synchronisés à chaque modification.</p>
+    <div class="slot-acts"><button class="btn" id="exp-json">Exporter mes données (JSON)</button><button class="btn danger" id="del-acct">${delArm ? 'Confirmer : tout supprimer' : 'Supprimer mon compte'}</button></div>
+    <textarea class="copybox" id="json-box" readonly hidden aria-label="Mes données"></textarea>
+  </section>
+  ${dbViewHTML()}`;
+  DB.byUid('payments', me.id).then(list => {
+    const el = $('#pay-list'); if (!el) return;
+    el.innerHTML = list && list.length ? `<div class="tbl"><table><thead><tr><th>Date</th><th>Objet</th><th>Montant</th><th>Statut</th></tr></thead><tbody>${list.sort((a, b) => b.date - a.date).map(x => `<tr><td>${fmtD.format(new Date(x.date))}</td><td>${esc(x.label)}</td><td>${eur.format(x.amount)}</td><td>${esc(x.status)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="empty">Aucun paiement.</p>';
+  }).catch(() => {});
+  loadDbView();
+}
+function dbViewHTML() {
+  return `<details class="card dbv" id="dbv"><summary><h3>Base de données (vue développeur)</h3><span>Ce que contient la base de ce navigateur</span></summary><div id="dbv-body"><p class="empty">Chargement…</p></div></details>`;
+}
+async function loadDbView() {
+  const el = $('#dbv-body'); if (!el) return;
+  try {
+    const [users, pays, data] = await Promise.all([DB.all('users'), DB.all('payments'), DB.all('userdata')]);
+    const t = (title, head, rows) => `<h4 class="sub">${title} <small>${rows.length} ligne${rows.length > 1 ? 's' : ''}</small></h4>${rows.length ? `<div class="tbl"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : '<p class="empty">Vide.</p>'}`;
+    el.innerHTML =
+      t('users', ['id', 'email', 'pseudo', 'mot de passe (haché)', 'abonnement'], users.map(u => [esc(u.id), esc(u.email), esc(u.pseudo), `<code>${esc(u.hash.slice(0, 12))}…</code>`, esc(u.sub ? u.sub.status + ' → ' + fmtD.format(new Date(u.sub.until)) : 'gratuit')])) +
+      t('payments', ['id', 'uid', 'date', 'montant', 'statut'], pays.map(x => [esc(x.id), esc(x.uid), fmtD.format(new Date(x.date)), eur.format(x.amount), esc(x.status)])) +
+      t('userdata', ['uid', 'clés', 'taille', 'synchronisé'], data.map(d => [esc(d.uid), Object.keys(d.data || {}).length, Math.round(JSON.stringify(d.data || {}).length / 102.4) / 10 + ' Ko', new Date(d.at).toLocaleTimeString('fr-FR')])) +
+      '<p class="legal">Base IndexedDB « tastetok-db » de ce navigateur. En production, ces trois tables vivraient sur un serveur, et les mots de passe seraient hachés avec bcrypt ou argon2.</p>';
+  } catch { el.innerHTML = '<p class="empty">Base de données indisponible dans ce navigateur.</p>'; }
+}
+$('#acct-body').addEventListener('click', async (e) => {
+  const at = e.target.closest('[data-at]'); if (at) { acctTab = at.dataset.at; renderAccount(); return; }
+  if (e.target.closest('#logout')) { await syncUser(); setMe(null); clearLocalData(true); toast('Déconnecté'); reloadApp(); return; }
+  if (e.target.closest('#sub-cancel')) { const s = { ...me.sub, status: 'canceled' }; await saveUser({ sub: s }); premiumChanged(); toast('Abonnement résilié, actif jusqu’à la fin de la période'); return; }
+  if (e.target.closest('#sub-resume')) { const s = { ...me.sub, status: 'active' }; await saveUser({ sub: s }); premiumChanged(); toast('Abonnement réactivé'); return; }
+  if (e.target.closest('[data-sub-now]')) { openModal('checkout', { kind: 'active', step: '' }); return; }
+  if (e.target.closest('#ps-save')) { const v = $('#a-ps').value.trim(); if (v.length < 2) { toast('Pseudo trop court'); return; } await saveUser({ pseudo: v }); renderAccount(); toast('Pseudo enregistré'); return; }
+  if (e.target.closest('#exp-json')) {
+    const u = await DB.get('users', me.id), pays = await DB.byUid('payments', me.id);
+    const out = JSON.stringify({ compte: publicUser(u), paiements: pays, donnees: Object.fromEntries(Object.entries(snapshot()).map(([k, v]) => { try { return [k, JSON.parse(v)]; } catch { return [k, v]; } })) }, null, 2);
+    downloadFile('tastetok-mes-donnees.json', out, 'application/json'); copyText(out, '#json-box'); return;
+  }
+  if (e.target.closest('#del-acct')) {
+    if (!delArm) { delArm = true; renderAccount(); setTimeout(() => { delArm = false; if (current === 'compte') renderAccount(); }, 4000); return; }
+    delArm = false;
+    try { const pays = await DB.byUid('payments', me.id); for (const x of pays) await DB.del('payments', x.id); await DB.del('userdata', me.id); await DB.del('users', me.id); } catch {}
+    setMe(null); clearLocalData(true); toast('Compte supprimé'); reloadApp();
+  }
+});
+$('#acct-body').addEventListener('submit', async (e) => {
+  if (e.target.id !== 'auth-form') return;
+  e.preventDefault();
+  const err = (m) => { const el = $('#a-err'); el.textContent = m; el.hidden = false; };
+  const email = $('#a-email').value.trim().toLowerCase(), pw = $('#a-pw').value;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return err('Adresse e-mail invalide.');
+  if (pw.length < 6) return err('Mot de passe : 6 caractères minimum.');
+  try {
+    if (acctTab === 'signup') {
+      const pseudo = ($('#a-pseudo').value || '').trim() || email.split('@')[0];
+      if (await DB.byEmail(email)) return err('Un compte existe déjà avec cet e-mail. Connecte-toi.');
+      const salt = rid('s'), u = { id: rid('u_'), email, pseudo, salt, hash: await hashPw(pw, salt), created: Date.now(), sub: null };
+      await DB.put('users', u); setMe(u); await syncUser();
+      toast('Compte créé'); renderAccount();
+      if (pendingSub) { const k = pendingSub; pendingSub = null; openModal('checkout', { kind: k, step: '' }); }
+    } else {
+      const u = await DB.byEmail(email);
+      if (!u || (await hashPw(pw, u.salt)) !== u.hash) return err('E-mail ou mot de passe incorrect.');
+      const ud = await DB.get('userdata', u.id);
+      clearLocalData(false);
+      try { Object.entries((ud && ud.data) || { onboarded: 'true' }).forEach(([k, v]) => localStorage.setItem('tt2.' + k, v)); localStorage.setItem('tt2.onboarded', 'true'); } catch {}
+      setMe(u); toast('Connecté'); reloadApp();
+    }
+  } catch { err('Base de données indisponible dans ce navigateur.'); }
+});
+/* au démarrage : la base fait foi (abonnement expiré, compte supprimé ailleurs…) */
+(async () => {
+  if (!me) return;
+  try {
+    const u = await DB.get('users', me.id);
+    if (!u) { setMe(null); premiumChanged(); return; }
+    if (u.sub && u.sub.until < Date.now() && u.sub.status !== 'expired') { u.sub.status = 'expired'; await DB.put('users', u); }
+    const was = isPremium(); setMe(u); me.usedTrial = u.usedTrial; if (was !== isPremium()) premiumChanged();
+  } catch {}
+})();
+
+/* ---------- mes recettes (postées ou importées), gardées d'une visite à l'autre ---------- */
+function saveMine(p) {
+  const list = store.get('myposts', []).filter(x => x.id !== p.id);
+  const { media, ...rest } = p; list.unshift(rest); store.set('myposts', list.slice(0, 30));
+}
+
+/* ---------- import TikTok → recette ----------
+   Le prototype lit la légende collée (ingrédients, étapes, temps, portions).
+   En production : récupération de la vidéo, transcription de l'audio et lecture de l'image par un modèle d'IA. */
+const TT_RE = /^https?:\/\/(www\.|vm\.|vt\.|m\.)?tiktok\.com\/\S+/i;
+const VERBS = /\b(mettre|met|ajout|cuire|cuis|melang|faire|fais|coup|verse|servi|laiss|enfourn|mix|etal|assaisonn|saisi|dore|dorer|egoutt|porte|chauff|fouett|incorpor|reserv|ferme|roul|place|remu|rajout|depos|garni|parsem|press|presse|epluch|emince|hach|rape|fond|prechauff|sale|poivre)\w*/;
+const IMP_TEMPLATES = [
+  { title: 'Pâtes crémeuses citron et parmesan', kind: 'pasta', time: '15 min', serv: 2, ing: '200 g spaghetti\n1 citron\n50 g parmesan\n20 cl crème\n1 gousse ail', steps: 'Cuire les pâtes.\nFaire revenir l’ail, ajouter la crème et le zeste du citron.\nMélanger avec les pâtes, le jus du citron et le parmesan.' },
+  { title: 'Bowl poulet teriyaki', kind: 'bowl', time: '25 min', serv: 2, ing: '250 g blanc de poulet\n150 g riz\n3 c. à s. sauce soja\n1 c. à s. miel\n1 brocoli', steps: 'Cuire le riz.\nSaisir le poulet en morceaux.\nAjouter sauce soja et miel, laisser caraméliser.\nServir avec le brocoli cuit à la vapeur.' },
+  { title: 'Cookie géant à la poêle', kind: 'cookie', time: '20 min', serv: 4, ing: '120 g farine\n60 g beurre\n60 g sucre\n1 oeuf\n100 g chocolat', steps: 'Mélanger le beurre fondu, le sucre et l’œuf.\nAjouter la farine puis le chocolat.\nÉtaler dans une poêle, cuire 12 min à couvert, feu doux.' }
+];
+const EXAMPLE = { url: 'https://www.tiktok.com/@chef.demo/video/7311234567890123456', cap: 'Pâtes crémeuses au citron en 15 min 🍋 parfait pour les soirs de flemme\nIngrédients (2 pers) :\n- 200 g de spaghetti\n- 1 citron\n- 50 g de parmesan\n- 20 cl de crème\n- 1 gousse d’ail\n1. Cuire les pâtes dans l’eau salée.\n2. Faire revenir l’ail dans un peu de beurre, ajouter la crème et le zeste du citron.\n3. Mélanger avec les pâtes, le jus du citron et le parmesan. Poivrer.\n#pates #recetterapide #etudiant' };
+let impDraft = null;
+function renderImportQuota() {
+  const el = $('#imp-quota'); if (!el) return;
+  const used = store.get('imports', 0);
+  el.innerHTML = isPremium() ? 'Premium : imports illimités.' : `${Math.max(0, FREE_IMPORTS - used)} import${FREE_IMPORTS - used > 1 ? 's' : ''} gratuit${FREE_IMPORTS - used > 1 ? 's' : ''} restant${FREE_IMPORTS - used > 1 ? 's' : ''} sur ${FREE_IMPORTS}. Illimité avec Premium.`;
+}
+function parseCaption(raw) {
+  const out = { title: '', ing: [], steps: [], time: '', serv: 0 };
+  const txt = raw.replace(/#[\p{L}\d_]+/gu, ' ').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, ' ');
+  const tm = nrm(txt).match(/(\d+)\s?(min|minutes)\b/); if (tm) out.time = tm[1] + ' min';
+  const sv = nrm(txt).match(/(\d+)\s?(pers|personnes|portions|parts)\b/); if (sv) out.serv = +sv[1];
+  txt.split(/\n+/).forEach(line0 => {
+    let l = line0.replace(/^[\s\-–—•*·▪>]+/, '').trim(); if (!l) return;
+    const n = nrm(l);
+    if (/^ingredients?\b/.test(n)) {
+      const rest = l.replace(/^[^:]*:\s*/, ''); if (rest && rest !== l) rest.split(/,|;| et (?=\d)/).map(x => x.trim()).filter(Boolean).forEach(x => out.ing.push(x));
+      return;
+    }
+    if (/^(etapes?|preparation|recette)\s*:?$/.test(n)) return;
+    const num = l.match(/^(?:etape\s*)?(\d+)\s*[.)\/:-]\s+(.*)$/i) || nrm(l).match(/^etape\s*\d+\s*:?\s*(.*)$/);
+    if (num && !/^\d+\s*(g|kg|ml|cl|l|c\.|cs|cc|pinc|tranche|gousse|sachet)\b/i.test(l)) { out.steps.push(cap((num[2] || num[1] || '').trim())); return; }
+    const short = l.length <= 60, verb = VERBS.test(n);
+    const qtyStart = /^\d+([.,/]\d+)?\s*([a-zA-Zéèàû.]{0,8})\s/.test(l);
+    const pantry = PANTRY.some(r => r[3].test(n));
+    if (short && !verb && (qtyStart || (pantry && l.split(' ').length <= 6))) { out.ing.push(l); return; }
+    if (verb && l.length > 12) { l.split(/(?<=\.)\s+(?=[A-ZÉÀ])/).forEach(sx => out.steps.push(cap(sx.trim()))); return; }
+    if (!out.title && l.length >= 4 && l.length <= 70) out.title = cap(l.replace(/\s*(en )?\d+\s?min(utes)?.*$/i, '').trim()) || cap(l);
+  });
+  return out;
+}
+function guessMeta(ingTxt, stepsTxt, title) {
+  const t = nrm(ingTxt + ' ' + stepsTxt + ' ' + title);
+  const taste = [];
+  if (/piment|epice|curry|harissa|sriracha|chili/.test(t)) taste.push('epice');
+  if (/parmesan|fromage|mozza|emmental|feta|comte|cheddar/.test(t)) taste.push('fromage');
+  if (/chocolat|sucre|miel|cookie|gateau|vanille/.test(t)) taste.push('sucre');
+  if (/soja|nouille|teriyaki|gingembre|sesame|coco/.test(t)) taste.push('asiat');
+  if (/pates|spaghetti|penne|pesto|parmesan|risotto/.test(t)) taste.push('italien');
+  if (/mijot|four\b|longtemps/.test(t)) taste.push('mijote');
+  if (/salade|citron|concombre|avocat|menthe|crudite/.test(t)) taste.push('frais');
+  const tools = [];
+  if (/four|enfourn|prechauff/.test(t)) tools.push('four'); else if (/poele|casserole|cuire|saisi|revenir|bouill|faire fondre/.test(t)) tools.push('plaque');
+  if (/micro-?ondes/.test(t)) tools.push('micro');
+  if (/mix/.test(t)) tools.push('mixeur');
+  const kind = /pates|spaghetti|penne|tagliatelle|nouille/.test(t) ? 'pasta' : /soupe|veloute|bouillon|ramen/.test(t) ? 'soup' : /pizza/.test(t) ? 'pizza' : /cookie|gateau|biscuit/.test(t) ? 'cookie' : /mug/.test(t) ? 'mug' : /riz|poele|saute/.test(t) ? 'fried' : /pain|toast|tartine|wrap|tortilla/.test(t) ? 'toast' : 'bowl';
+  const course = taste.includes('sucre') && !/poulet|pates|riz|viande|thon/.test(t) ? 'dessert' : 'plat';
+  return { taste: [...new Set(taste)].slice(0, 3), tools, kind, course };
+}
+const IMP_PRICE = { pates: .5, riz: .5, oeufs: .3, fromage: .9, poulet: 3, saumon: 4, thon: 1.5, viande: 3, crevettes: 3, creme: .8, lait: .2, beurre: .3, tomates: .9, oignon: .3, ail: .2, citron: .4, epices: .2, sel: 0, huile: .2, sucre: .1, farine: .2, chocolat: 1, soja: .3, miel: .3 };
+function toIng(lines) {
+  return lines.map(l => {
+    const m = l.match(LINE) || [];
+    let q = m[1] ? parseFloat(m[1].replace(',', '.')) : null; if (m[1] && m[1].includes('/')) { const [a, b] = m[1].split('/'); q = +a / +b; }
+    const name = (m[3] || l).replace(/\s*\(.*?\)\s*$/, '').trim().replace(/^./, c => c.toUpperCase());
+    const k = ingKey(name);
+    return { n: name, q, u: (m[2] || '').toLowerCase(), p: k != null && k in IMP_PRICE ? IMP_PRICE[k] : .8 };
+  });
+}
+async function runImport(url, caption) {
+  const out = $('#imp-out');
+  const author = (url.match(/tiktok\.com\/(@[\w.]+)/i) || [])[1] || '@createur.tiktok';
+  const stepsUI = ['Lecture de la vidéo', 'Transcription de l’audio', 'Détection des ingrédients et des quantités', 'Estimation du prix et des goûts'];
+  out.innerHTML = `<section class="card imp-run"><h3>Transformation en recette</h3><ol class="imp-steps">${stepsUI.map(s => `<li>${s}</li>`).join('')}</ol></section>`;
+  const lis = $$('.imp-steps li', out);
+  for (let i = 0; i < lis.length; i++) { lis[i].classList.add('cur'); await new Promise(r => setTimeout(r, 420)); lis[i].classList.remove('cur'); lis[i].classList.add('done'); }
+  let d = caption.trim() ? parseCaption(caption) : null, fromTemplate = false;
+  if (!d || (!d.ing.length && !d.steps.length)) {
+    let h = 0; for (const c of url) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    const T = IMP_TEMPLATES[h % IMP_TEMPLATES.length]; fromTemplate = true;
+    d = { title: T.title, ing: T.ing.split('\n'), steps: T.steps.split('\n'), time: T.time, serv: T.serv };
+  }
+  impDraft = { url, author, fromTemplate };
+  out.innerHTML = `<section class="card">
+    <div class="card-h"><h3>Recette détectée</h3><span class="pill">${esc(author)}</span></div>
+    ${fromTemplate ? '<p class="stline warn">Sans légende, le prototype propose une recette type. En production, l’IA lit l’audio et l’image de la vidéo.</p>' : `<p class="stline ok">${d.ing.length} ingrédient${d.ing.length > 1 ? 's' : ''} et ${d.steps.length} étape${d.steps.length > 1 ? 's' : ''} trouvés dans la légende. Vérifie et corrige si besoin.</p>`}
+    <div class="field"><label for="ir-title">Nom du plat</label><input type="text" id="ir-title" value="${esc(d.title || 'Recette de ' + author)}"></div>
+    <div class="two"><div class="field"><label for="ir-time">Temps</label><input type="text" id="ir-time" value="${esc(d.time || '20 min')}"></div><div class="field"><label for="ir-serv">Portions</label><input type="number" id="ir-serv" min="1" max="20" value="${d.serv || 2}"></div></div>
+    <div class="field"><label for="ir-ing">Ingrédients</label><small>Un par ligne : quantité, unité, nom</small><textarea id="ir-ing">${esc(d.ing.join('\n'))}</textarea></div>
+    <div class="field"><label for="ir-steps">Étapes</label><small>Une par ligne</small><textarea id="ir-steps">${esc(d.steps.join('\n'))}</textarea></div>
+    <div class="two"><div class="field"><label for="ir-kcal">Kcal par portion</label><input type="number" id="ir-kcal" min="0" max="3000" placeholder="facultatif"></div><div class="field"><label for="ir-prot">Protéines (g)</label><input type="number" id="ir-prot" min="0" max="300" placeholder="facultatif"></div></div>
+    <div class="imp-actions"><button class="btn primary" id="ir-add">Ajouter à mon fil</button><button class="btn" id="ir-cancel">Annuler</button></div>
+    <p class="legal">Les droits de la vidéo restent au créateur : la recette affiche son nom et renvoie vers sa vidéo.</p>
+  </section>`;
+  if (!isPremium()) { store.set('imports', store.get('imports', 0) + 1); renderImportQuota(); }
+}
+$('#imp-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const url = $('#imp-url').value.trim(), cap0 = $('#imp-cap').value;
+  if (!TT_RE.test(url)) { toast('Colle un lien TikTok (tiktok.com/…)'); $('#imp-url').focus(); return; }
+  if (!isPremium() && store.get('imports', 0) >= FREE_IMPORTS) { openPremium(`Tu as utilisé tes ${FREE_IMPORTS} imports gratuits. Premium : imports illimités.`); return; }
+  runImport(url, cap0);
+});
+$('#imp-example').onclick = () => { $('#imp-url').value = EXAMPLE.url; $('#imp-cap').value = EXAMPLE.cap; };
+$('#imp-out').addEventListener('click', (e) => {
+  if (e.target.closest('#ir-cancel')) { $('#imp-out').innerHTML = ''; impDraft = null; return; }
+  if (!e.target.closest('#ir-add') || !impDraft) return;
+  const ingTxt = $('#ir-ing').value, stepsTxt = $('#ir-steps').value, title = $('#ir-title').value.trim() || 'Recette importée';
+  const ing = toIng(ingTxt.split('\n').map(x => x.trim()).filter(Boolean));
+  if (!ing.length) { toast('Ajoute au moins un ingrédient'); return; }
+  const g = guessMeta(ingTxt, stepsTxt, title), time = $('#ir-time').value.trim() || '—';
+  const kcal = parseInt($('#ir-kcal').value, 10), prot = parseInt($('#ir-prot').value, 10);
+  const pal = [['#f3b49a', '#c8402a'], ['#c9dcae', '#5c9a3c'], ['#f0d58a', '#e0a04c'], ['#a6d4e2', '#2f7fa0'], ['#e8c4d0', '#a8345a']][Math.floor(Math.random() * 5)];
+  const p = { id: 'tk' + Date.now(), user: impDraft.author, mine: true, imported: { url: impDraft.url }, kind: g.kind, course: g.course, title, caption: 'Recette tirée de ma vidéo TikTok.', tags: '#importé #tiktok', likes: 0,
+    time, min: parseInt(time, 10) || 99, veg: !/poulet|boeuf|viande|jambon|lardon|thon|saumon|crevette|guanciale/.test(nrm(ingTxt)), tools: g.tools, level: 'Importée', servings: Math.max(1, +$('#ir-serv').value || 2), unit: 'pers.', no: ticketNo++,
+    taste: g.taste, nut: kcal > 0 ? { kcal, p: prot > 0 ? prot : 0, g: null, l: null } : null,
+    tint: pal[0], bg: [], plate: '#f2ece2', food: [pal[1], '#f6efe0', '#4f8a3a', '#e9c27a'], seed: Date.now() % 997, media: null, ing,
+    steps: stepsTxt.split('\n').map(s => s.trim()).filter(Boolean) };
+  $('#imp-out').innerHTML = ''; $('#imp-form').reset(); impDraft = null;
+  filter = 'all'; syncChips(); go('fil');
+  mount(p, 'afterbegin'); saveMine(p); applyFilter(); toast('Recette importée en haut de ton fil');
+});
+$('#add-tabs').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-addtab]'); if (!b) return;
+  $$('[data-addtab]').forEach(x => x.setAttribute('aria-selected', x === b));
+  $('#import-pane').hidden = b.dataset.addtab !== 'import'; $('#post-form').hidden = b.dataset.addtab !== 'post';
+});
+
 /* ---------- démarrage ---------- */
 POSTS.forEach(p => mount(p));
+store.get('myposts', []).slice().reverse().forEach(p => { if (!byId[p.id]) mount(p, 'afterbegin'); });
+syncMeUI();
 updateBadge(); syncVoiceBtn();
 applyFilter();
 let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => {
