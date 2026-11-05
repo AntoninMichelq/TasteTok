@@ -1016,6 +1016,129 @@ const ACTF = [1.2, 1.375, 1.55, 1.725, 1.9];
 const GOALS = [['perte','Perdre du poids'],['maintien','Garder la forme'],['muscle','Prendre du muscle']];
 const SLOTS = [['midi','Midi'],['soir','Soir']];
 
+/* ---------- plats supplémentaires pour remplir le fil (démo) ---------- */
+POSTS.push(
+  { id:'croque', user:'@coloc.cuisine', stu:true, kind:'toast', course:'plat', title:'Croque-monsieur à la poêle', caption:'Pas de four ? La poêle avec un couvercle fait fondre le fromage pareil.', tags:'#sansfour #fromage #étudiant', likes:27300, time:'15 min', min:15, level:'Très facile', servings:2, unit:'pers.',
+    tint:'#f1cf8a', veg:false, tools:['plaque'], taste:['fromage'], nut:{ kcal:520, p:27, g:42, l:27 },
+    bg:[], plate:'#b98a5a', food:['#e2b36a','#f6d55c','#c0392b'], seed:131,
+    ing:[{n:'Pain de mie',q:4,u:'tranches',p:.5},{n:'Jambon blanc',q:2,u:'tranches',p:1.2},{n:'Emmental râpé',q:80,u:'g',p:.9},{n:'Beurre',q:20,u:'g',p:.25}],
+    steps:['Beurrer le pain de mie sur une face.','Garnir l’autre face de jambon et d’emmental, refermer.','Dorer 4 min de chaque côté à feu moyen, couvercle posé.'] },
+  { id:'veloute', user:'@soupe.du.soir', kind:'soup', course:'plat', title:'Velouté de courgette au fromage frais', caption:'Trois ingrédients, un mixeur, et c’est l’hiver en mieux.', tags:'#soupe #végé #petitbudget', likes:6900, time:'25 min', min:25, level:'Très facile', servings:3, unit:'pers.',
+    tint:'#c7dfa3', veg:true, tools:['plaque','mixeur'], taste:['frais'], nut:{ kcal:190, p:7, g:14, l:11 },
+    bg:[], plate:'#f3efe6', food:['#8fbf55','#f6f1e2','#3f7a2a','#e8c27a'], seed:137,
+    ing:[{n:'Courgettes',q:3,u:'',p:2.1},{n:'Oignon',q:1,u:'',p:.3},{n:'Bouillon de légumes',q:1,u:'cube',p:.2},{n:'Fromage frais',q:80,u:'g',p:.9}],
+    steps:['Faire revenir l’oignon émincé 3 min.','Ajouter les courgettes en rondelles, couvrir d’eau avec le bouillon, cuire 15 min.','Mixer avec le fromage frais, saler, poivrer.'] },
+  { id:'ramen', user:'@nouilles.minuit', stu:true, kind:'soup', course:'plat', title:'Ramen express œuf mollet', caption:'Le sachet de nouilles, en version qui se respecte.', tags:'#ramen #rapide #asiatique', likes:31800, time:'15 min', min:15, level:'Facile', servings:1, unit:'bol',
+    tint:'#f3c98a', veg:true, tools:['plaque'], taste:['asiat'], nut:{ kcal:540, p:21, g:68, l:19 },
+    bg:[], plate:'#2c2a2e', food:['#d99a4a','#f2e6c9','#4f8a3a','#f6c343'], seed:139,
+    ing:[{n:'Nouilles ramen',q:1,u:'sachet',p:.6},{n:'Œufs',q:1,u:'',p:.3},{n:'Sauce soja',q:1,u:'c. à s.',p:.2},{n:'Pâte miso',q:1,u:'c. à s.',p:.4},{n:'Oignon nouveau',q:1,u:'',p:.4},{n:'Champignons',q:60,u:'g',p:.6}],
+    steps:['Cuire l’œuf 6 min 30 dans l’eau bouillante, le refroidir.','Dans 40 cl d’eau, délayer le miso et la sauce soja, ajouter les champignons.','Cuire les nouilles 3 min dans ce bouillon.','Servir avec l’œuf coupé en deux et l’oignon nouveau.'] },
+  { id:'pizza', user:'@kot.sucre', stu:true, kind:'pizza', course:'plat', title:'Pizza tortilla à la poêle', caption:'Une tortilla, une poêle, 8 minutes. Croustillante en dessous.', tags:'#sansfour #pizza #rapide', likes:44100, time:'12 min', min:12, level:'Très facile', servings:1, unit:'pizza',
+    tint:'#f3a98a', veg:false, tools:['plaque'], taste:['italien','fromage'], nut:{ kcal:610, p:30, g:52, l:29 },
+    bg:[], plate:'#3a2a20', food:['#e3b571','#c8402a','#f6ead0','#7a2a1c'], seed:149,
+    ing:[{n:'Tortillas de blé',q:1,u:'',p:.4},{n:'Coulis de tomate',q:3,u:'c. à s.',p:.3},{n:'Mozzarella',q:60,u:'g',p:.8},{n:'Jambon blanc',q:1,u:'tranches',p:.6},{n:'Origan',q:1,u:'pincée',p:.05}],
+    steps:['Étaler le coulis sur la tortilla.','Ajouter le jambon et la mozzarella déchirée, l’origan.','Cuire 6 à 8 min à feu moyen, couvercle posé, jusqu’à ce que le fromage fonde.'] },
+  { id:'tortilla', user:'@abuela.pepa', kind:'pan', course:'plat', title:'Tortilla espagnole fondante', caption:'Pommes de terre, œufs, patience. Le reste est un débat.', tags:'#espagne #végé #batchcooking', likes:13600, time:'35 min', min:35, level:'Moyen', servings:4, unit:'pers.',
+    tint:'#f2d48a', veg:true, tools:['plaque'], taste:['mijote'], nut:{ kcal:390, p:15, g:30, l:23 },
+    bg:[], plate:'#2a2a30', food:['#e9b84a','#f6e2a0','#6b8f3a'], seed:151,
+    ing:[{n:'Pommes de terre',q:600,u:'g',p:1.2},{n:'Œufs',q:6,u:'',p:1.8},{n:'Oignon',q:1,u:'',p:.3},{n:'Huile d’olive',q:4,u:'c. à s.',p:.5}],
+    steps:['Couper pommes de terre et oignon en fines tranches.','Les confire 15 min à feu doux dans l’huile.','Mélanger avec les œufs battus, saler.','Cuire 5 min, retourner à l’aide d’une assiette, cuire 3 min.'] },
+  { id:'gnocchi', user:'@nonna.lucia', kind:'fried', course:'plat', title:'Gnocchis poêlés tomate mozza', caption:'Pas besoin de les faire bouillir : direct à la poêle, ils croustillent.', tags:'#italien #rapide #végé', likes:20500, time:'15 min', min:15, level:'Très facile', servings:2, unit:'pers.',
+    tint:'#f3b39a', veg:true, tools:['plaque'], taste:['italien','fromage'], nut:{ kcal:560, p:18, g:84, l:16 },
+    bg:[], plate:'#2b2b30', food:['#e9c27a','#c8402a','#f6efe0','#4f8a3a'], seed:157,
+    ing:[{n:'Gnocchis',q:500,u:'g',p:1.6},{n:'Tomates cerises',q:200,u:'g',p:1.4},{n:'Mozzarella',q:125,u:'g',p:1.1},{n:'Ail',q:1,u:'gousses',p:.15},{n:'Basilic',q:1,u:'botte',p:.9}],
+    steps:['Dorer les gnocchis 6 min dans une poêle huilée.','Ajouter l’ail et les tomates cerises, cuire 4 min.','Couper le feu, ajouter la mozzarella et le basilic.'] },
+  { id:'dahl', user:'@epices.etudiant', kind:'curry', course:'plat', title:'Dahl de lentilles corail', caption:'1,20 € la portion, et ça tient au corps jusqu’au lendemain.', tags:'#vegan #petitbudget #épicé', likes:16400, time:'30 min', min:30, level:'Facile', servings:4, unit:'pers.',
+    tint:'#f2b46a', veg:true, tools:['plaque'], taste:['epice','mijote'], nut:{ kcal:480, p:19, g:66, l:15 },
+    bg:[], plate:'#2e2a26', food:['#e9932c','#f6e3b0','#c26a1a','#4f8a3a'], seed:163,
+    ing:[{n:'Lentilles corail',q:250,u:'g',p:1.1},{n:'Lait de coco',q:400,u:'ml',p:1.6},{n:'Tomates concassées',q:400,u:'g',p:1.1},{n:'Oignon',q:1,u:'',p:.3},{n:'Curry en poudre',q:2,u:'c. à c.',p:.3},{n:'Riz basmati',q:300,u:'g',p:1.1}],
+    steps:['Faire revenir l’oignon avec le curry 3 min.','Ajouter lentilles, tomates, lait de coco et 30 cl d’eau.','Mijoter 20 min en remuant.','Servir sur le riz.'] },
+  { id:'tacos', user:'@piment.club', kind:'toast', course:'plat', title:'Tacos de poulet épicé', caption:'La sauce yaourt-citron calme le piment. Ou pas.', tags:'#épicé #protéiné #streetfood', likes:23700, time:'20 min', min:20, level:'Facile', servings:2, unit:'pers.',
+    tint:'#f3b08a', veg:false, tools:['plaque'], taste:['epice','frais'], nut:{ kcal:540, p:41, g:46, l:20 },
+    bg:[], plate:'#5a3a24', food:['#e8c48a','#c0502a','#6fae3e'], seed:167,
+    ing:[{n:'Tortillas de blé',q:4,u:'',p:1.6},{n:'Blanc de poulet',q:250,u:'g',p:3.5},{n:'Piment en poudre',q:1,u:'c. à c.',p:.1},{n:'Yaourt nature',q:1,u:'',p:.3},{n:'Citron',q:1,u:'',p:.4},{n:'Salade',q:1,u:'poignée',p:.6}],
+    steps:['Couper le poulet en lanières, l’assaisonner de piment.','Le saisir 6 min à la poêle.','Mélanger le yaourt avec le jus du citron.','Garnir les tortillas de salade, de poulet et de sauce.'] },
+  { id:'padthai', user:'@wok.and.roll', kind:'fried', course:'plat', title:'Nouilles sautées crevettes et cacahuètes', caption:'Le pad thaï du mardi soir, sans aller chercher la sauce tamarin.', tags:'#asiatique #wok #épicé', likes:18900, time:'20 min', min:20, level:'Facile', servings:2, unit:'pers.',
+    tint:'#f0c98a', veg:false, tools:['plaque'], taste:['asiat','epice'], nut:{ kcal:620, p:32, g:78, l:20 },
+    bg:[], plate:'#2b2b30', food:['#e2c07a','#f08a6a','#5ea34a','#c98a3a'], seed:173,
+    ing:[{n:'Nouilles de riz',q:200,u:'g',p:1.2},{n:'Crevettes décortiquées',q:200,u:'g',p:4.2},{n:'Œufs',q:2,u:'',p:.6},{n:'Sauce soja',q:3,u:'c. à s.',p:.4},{n:'Cacahuètes',q:40,u:'g',p:.5},{n:'Piment en poudre',q:1,u:'pincée',p:.05}],
+    steps:['Tremper les nouilles 10 min dans l’eau chaude.','Saisir les crevettes 3 min, les réserver.','Brouiller les œufs, ajouter les nouilles et la sauce soja.','Remettre les crevettes, finir aux cacahuètes concassées.'] },
+  { id:'lentsalad', user:'@lunchbox.fac', stu:true, kind:'bowl', course:'plat', title:'Salade de lentilles feta et citron', caption:'Lentilles en boîte : zéro cuisson, prête en 10 minutes.', tags:'#sanscuisson #végé #mealprep', likes:7800, time:'10 min', min:10, level:'Très facile', servings:2, unit:'pers.',
+    tint:'#d6dca8', veg:true, tools:[], taste:['frais'], nut:{ kcal:410, p:21, g:40, l:17 },
+    bg:[], plate:'#2f3a33', food:['#8a6a4a','#e04a3a','#f6f1e2','#6fae3e'], seed:179,
+    ing:[{n:'Lentilles (boîte)',q:1,u:'',p:1.1},{n:'Feta',q:100,u:'g',p:1.4},{n:'Tomate',q:1,u:'',p:.5},{n:'Citron',q:1,u:'',p:.4},{n:'Huile d’olive',q:2,u:'c. à s.',p:.3}],
+    steps:['Égoutter et rincer les lentilles.','Couper la tomate et émietter la feta.','Assaisonner avec le citron et l’huile, mélanger.'] },
+  { id:'patate', user:'@micro.chef', stu:true, kind:'bowl', course:'plat', title:'Patate douce farcie au micro-ondes', caption:'Huit minutes au micro-ondes, et tu as l’air d’un chef.', tags:'#microondes #végé #sansfour', likes:9300, time:'12 min', min:12, level:'Très facile', servings:1, unit:'pers.',
+    tint:'#f2b07a', veg:true, tools:['micro'], taste:['frais'], nut:{ kcal:460, p:17, g:72, l:12 },
+    bg:[], plate:'#3a2e26', food:['#e8833a','#8a2a1c','#f6ead0','#6fae3e'], seed:181,
+    ing:[{n:'Patate douce',q:1,u:'',p:.9},{n:'Haricots rouges (boîte)',q:100,u:'g',p:.4},{n:'Fromage frais',q:40,u:'g',p:.45},{n:'Maïs (boîte)',q:50,u:'g',p:.3}],
+    steps:['Piquer la patate douce, la cuire 8 min au micro-ondes.','L’ouvrir en deux, écraser un peu la chair.','Garnir de haricots, de maïs et de fromage frais.'] },
+  { id:'quesadilla', user:'@lunchbox.fac', stu:true, kind:'toast', course:'plat', title:'Quesadilla jambon fromage', caption:'Le croque-monsieur mexicain, prêt en 10 minutes.', tags:'#rapide #fromage #sansfour', likes:15200, time:'10 min', min:10, level:'Très facile', servings:1, unit:'pers.',
+    tint:'#f1d08a', veg:false, tools:['plaque'], taste:['fromage'], nut:{ kcal:580, p:31, g:44, l:30 },
+    bg:[], plate:'#7a5232', food:['#e6c27a','#f6d55c','#c0392b'], seed:191,
+    ing:[{n:'Tortillas de blé',q:2,u:'',p:.8},{n:'Emmental râpé',q:60,u:'g',p:.7},{n:'Jambon blanc',q:1,u:'tranches',p:.6},{n:'Maïs (boîte)',q:40,u:'g',p:.25}],
+    steps:['Garnir une tortilla de fromage, de jambon et de maïs.','Couvrir de la deuxième tortilla.','Dorer 3 min de chaque côté dans une poêle sèche.'] },
+  { id:'risotto', user:'@nonna.lucia', kind:'curry', course:'plat', title:'Risotto aux champignons', caption:'On remue, on parle, on remue. C’est ça, le secret.', tags:'#italien #réconfort #végé', likes:12100, time:'30 min', min:30, level:'Moyen', servings:2, unit:'pers.',
+    tint:'#e6d4a8', veg:true, tools:['plaque'], taste:['italien','fromage','mijote'], nut:{ kcal:620, p:18, g:88, l:20 },
+    bg:[], plate:'#2b2925', food:['#e9d7a6','#f6f1e2','#8a6a4a','#5a8a3a'], seed:193,
+    ing:[{n:'Riz arborio',q:200,u:'g',p:1.3},{n:'Champignons',q:250,u:'g',p:1.8},{n:'Oignon',q:1,u:'',p:.3},{n:'Bouillon de légumes',q:1,u:'cube',p:.2},{n:'Parmesan',q:40,u:'g',p:1.2},{n:'Beurre',q:20,u:'g',p:.25}],
+    steps:['Faire revenir l’oignon et les champignons 5 min.','Ajouter le riz, le nacrer 2 min.','Verser le bouillon chaud louche par louche pendant 18 min en remuant.','Hors du feu, ajouter le beurre et le parmesan.'] },
+  { id:'bolo', user:'@coloc.cuisine', stu:true, kind:'pasta', course:'plat', title:'Bolognaise pour toute la semaine', caption:'Une grosse casserole le dimanche, quatre repas réglés.', tags:'#batchcooking #pâtes #réconfort', likes:29800, time:'40 min', min:40, level:'Facile', servings:4, unit:'pers.',
+    tint:'#f0a88a', veg:false, tools:['plaque'], taste:['italien','mijote'], nut:{ kcal:690, p:36, g:82, l:22 },
+    bg:[], plate:'#efe7da', food:['#e8c167','#a8341f','#3a2a20'], seed:197,
+    ing:[{n:'Spaghetti',q:400,u:'g',p:.9},{n:'Viande hachée',q:400,u:'g',p:4.6},{n:'Tomates concassées',q:800,u:'g',p:2.2},{n:'Oignon',q:1,u:'',p:.3},{n:'Carotte',q:1,u:'',p:.2},{n:'Ail',q:2,u:'gousses',p:.3}],
+    steps:['Faire revenir oignon, carotte et ail hachés 5 min.','Ajouter la viande, la faire dorer.','Verser les tomates, mijoter 25 min.','Servir sur les spaghetti cuits.'] },
+  { id:'tofu', user:'@wok.and.roll', kind:'fried', course:'plat', title:'Tofu croustillant soja-miel', caption:'Le tofu, enfin bon : fécule, poêle bien chaude, et on n’y touche pas.', tags:'#vegan #asiatique #protéiné', likes:10700, time:'20 min', min:20, level:'Facile', servings:2, unit:'pers.',
+    tint:'#ecd09a', veg:true, tools:['plaque'], taste:['asiat','sucre'], nut:{ kcal:520, p:26, g:62, l:18 },
+    bg:[], plate:'#2b2b30', food:['#e3b86a','#f3ead2','#5ea34a','#c98a3a'], seed:199,
+    ing:[{n:'Tofu ferme',q:400,u:'g',p:2.4},{n:'Fécule de maïs',q:2,u:'c. à s.',p:.1},{n:'Sauce soja',q:3,u:'c. à s.',p:.4},{n:'Miel',q:1,u:'c. à s.',p:.3},{n:'Riz basmati',q:150,u:'g',p:.5},{n:'Graines de sésame',q:1,u:'c. à s.',p:.2}],
+    steps:['Lancer la cuisson du riz.','Couper le tofu en cubes, l’enrober de fécule.','Le dorer 8 min sans trop remuer.','Laquer avec la sauce soja et le miel, parsemer de sésame.'] },
+  { id:'pancakes', user:'@matin.lent', kind:'cookie', course:'petitdej', title:'Pancakes moelleux du dimanche', caption:'La pâte se fait en 5 minutes, le secret c’est la poêle bien chaude.', tags:'#brunch #sucré #weekend', likes:38600, time:'20 min', min:20, level:'Facile', servings:2, unit:'pers.',
+    tint:'#f1d6a0', veg:true, tools:['plaque'], taste:['sucre'], nut:{ kcal:480, p:15, g:70, l:15 },
+    bg:[], plate:'#efe4cf', food:['#e2a95a','#6b3a1a'], seed:211,
+    ing:[{n:'Farine',q:150,u:'g',p:.2},{n:'Lait',q:200,u:'ml',p:.2},{n:'Œufs',q:2,u:'',p:.6},{n:'Sucre',q:1,u:'c. à s.',p:.05},{n:'Levure chimique',q:1,u:'c. à c.',p:.1},{n:'Sirop d’érable',q:2,u:'c. à s.',p:.6}],
+    steps:['Mélanger farine, sucre et levure.','Ajouter les œufs puis le lait petit à petit.','Cuire de petites louches 2 min de chaque côté.','Servir avec le sirop d’érable.'] },
+  { id:'crumble', user:'@kot.sucre', stu:true, kind:'mug', course:'dessert', title:'Crumble pomme cannelle en mug', caption:'Le dessert de grand-mère, version micro-ondes et 6 minutes.', tags:'#microondes #dessert #sansfour', likes:21400, time:'6 min', min:6, level:'Très facile', servings:1, unit:'mug',
+    tint:'#ecc79a', veg:true, tools:['micro'], taste:['sucre'], nut:{ kcal:390, p:4, g:58, l:16 },
+    bg:[], plate:'#f2ece2', food:['#d9a35a','#8a4a1a'], seed:223,
+    ing:[{n:'Pomme',q:1,u:'',p:.4},{n:'Farine',q:2,u:'c. à s.',p:.05},{n:'Sucre',q:1,u:'c. à s.',p:.05},{n:'Beurre',q:15,u:'g',p:.2},{n:'Cannelle',q:1,u:'pincée',p:.05}],
+    steps:['Couper la pomme en dés dans un grand mug, ajouter la cannelle.','Sabler du bout des doigts farine, sucre et beurre.','Couvrir les pommes de ce crumble.','Cuire 2 min 30 au micro-ondes.'] },
+  { id:'buddha', user:'@bowl.club', kind:'bowl', course:'plat', title:'Buddha bowl pois chiches rôtis', caption:'Tout ce qui traîne dans le frigo, mais rangé joliment.', tags:'#vegan #healthy #protéiné', likes:14900, time:'25 min', min:25, level:'Facile', servings:2, unit:'bols',
+    tint:'#cfe0b0', veg:true, tools:['plaque'], taste:['frais'], nut:{ kcal:560, p:22, g:70, l:21 },
+    bg:[], plate:'#24302a', food:['#d9a35a','#6fae3e','#e8833a','#c8e07a'], seed:227,
+    ing:[{n:'Pois chiches (boîte)',q:1,u:'',p:.9},{n:'Semoule',q:120,u:'g',p:.4},{n:'Carotte',q:2,u:'',p:.4},{n:'Avocat',q:1,u:'',p:1.2},{n:'Paprika fumé',q:1,u:'c. à c.',p:.2},{n:'Citron',q:1,u:'',p:.4}],
+    steps:['Rôtir les pois chiches 8 min à la poêle avec le paprika.','Verser l’eau bouillante sur la semoule, couvrir 5 min.','Râper les carottes, trancher l’avocat.','Dresser en bol, arroser de citron.'] },
+  { id:'bananabread', user:'@four.a.minuit', kind:'cookie', course:'dessert', title:'Banana bread aux bananes trop mûres', caption:'Les bananes noires, c’est pas un problème, c’est une recette.', tags:'#antigaspi #dessert #four', likes:26500, time:'55 min', min:55, level:'Facile', servings:8, unit:'tranches',
+    tint:'#d9b48a', veg:true, tools:['four'], taste:['sucre'], nut:{ kcal:250, p:5, g:38, l:9 },
+    bg:[], plate:'#efe4cf', food:['#b9783a','#5a3420'], seed:229,
+    ing:[{n:'Banane',q:3,u:'',p:.75},{n:'Farine',q:200,u:'g',p:.25},{n:'Œufs',q:2,u:'',p:.6},{n:'Sucre roux',q:80,u:'g',p:.3},{n:'Beurre',q:70,u:'g',p:.8},{n:'Levure chimique',q:1,u:'sachet',p:.2}],
+    steps:['Préchauffer le four à 180 °C.','Écraser les bananes, ajouter les œufs, le sucre et le beurre fondu.','Incorporer farine et levure.','Cuire 45 min dans un moule à cake.'] },
+  { id:'gratin', user:'@mamie.dimanche', kind:'curry', course:'plat', title:'Gratin dauphinois de mamie', caption:'Pas de fromage dans le vrai. On ne discute pas.', tags:'#four #réconfort #végé', likes:19300, time:'70 min', min:70, level:'Moyen', servings:4, unit:'pers.',
+    tint:'#f0d7a0', veg:true, tools:['four'], taste:['mijote'], nut:{ kcal:430, p:9, g:40, l:26 },
+    bg:[], plate:'#e9e2d6', food:['#e3b45a','#f6ead0','#c88a2a','#8a6a3a'], seed:233,
+    ing:[{n:'Pommes de terre',q:1000,u:'g',p:2},{n:'Crème liquide',q:200,u:'ml',p:1.2},{n:'Lait',q:300,u:'ml',p:.3},{n:'Ail',q:1,u:'gousses',p:.15},{n:'Muscade',q:1,u:'pincée',p:.05}],
+    steps:['Préchauffer le four à 160 °C.','Trancher finement les pommes de terre.','Les cuire 10 min dans le lait et la crème avec l’ail et la muscade.','Verser dans un plat et cuire 50 min.'] },
+  { id:'skyrbowl', user:'@matin.sportif', kind:'soup', course:'petitdej', ad:{ brand:'Laiterie Lumière', fictive:true }, title:'Bol skyr, granola et fruits rouges', caption:'Le petit-déj protéiné qui ne demande aucune cuisson.', tags:'#partenariat #protéiné #sport', likes:11800, time:'5 min', min:5, level:'Très facile', servings:1, unit:'bol',
+    tint:'#e8c4d0', veg:true, tools:[], taste:['sucre','frais'], nut:{ kcal:420, p:27, g:58, l:9 },
+    bg:[], plate:'#f3efe6', food:['#f6f1ea','#c2264a','#d9a35a','#6a2a4a'], seed:239,
+    ing:[{n:'Skyr Laiterie Lumière',q:200,u:'g',p:1.2},{n:'Granola',q:40,u:'g',p:.4},{n:'Fruits rouges surgelés',q:80,u:'g',p:.7},{n:'Miel',q:1,u:'c. à c.',p:.1}],
+    steps:['Verser le skyr dans un bol.','Ajouter les fruits rouges et le granola.','Finir avec un filet de miel.'] }
+);
+
+/* nouveaux ingrédients reconnus par le frigo (insérés avant les règles plus générales) */
+(function () {
+  const before = (key, rows) => { const i = PANTRY.findIndex(r => r[1] === key); PANTRY.splice(i < 0 ? PANTRY.length : i, 0, ...rows); };
+  before('beurre', [['frais','creme','Crème',/creme/]]);
+  before('fromage', [['frais','feta','Feta, mozzarella',/feta|mozzarella/]]);
+  before('tomates', [['frais','viande','Viande hachée',/viande|hache|boeuf/], ['frais','crevettes','Crevettes',/crevette/], ['frais','tofu','Tofu',/tofu/]]);
+  before('avocat', [['frais','courgette','Courgette',/courgette/], ['frais','champignons','Champignons',/champignon/], ['frais','carotte','Carotte',/carotte/],
+    ['frais','patatedouce','Patate douce',/patate douce/], ['frais','pdt','Pommes de terre',/pommes? de terre/], ['frais','pomme','Pommes',/\bpommes?\b/]]);
+  before('riz', [['placard','nouilles','Nouilles',/nouille|ramen/], ['placard','gnocchi','Gnocchis',/gnocchi/]]);
+  before('pates', [['placard','lentilles','Lentilles',/lentille/], ['placard','semoule','Semoule',/semoule/], ['placard','bouillon','Bouillon, miso',/bouillon|miso/]]);
+  before('farine', [['placard','granola','Granola',/granola|muesli/], ['placard','miel','Miel, sirop',/miel|sirop/]]);
+  const ep = PANTRY.find(r => r[1] === 'epices'); ep[3] = /cumin|paprika|curry|poivre noir|piment|epice|origan|cannelle|muscade/;
+})();
+
 function rng(seed) { let s = seed * 9301 + 49297; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; }
 function shade(hex, amt) {
   const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
@@ -1173,6 +1296,50 @@ function sizeCanvas(c) {
   const b = c.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1);
   c.width = Math.max(1, Math.round(b.width * d)); c.height = Math.max(1, Math.round(b.height * d));
 }
+
+/* nouveaux visuels : soupe, tartines / tortillas, pizza */
+Object.assign(DRAW, {
+  soup(ctx, r, p, R) {
+    plate(ctx, r, p.plate, null);
+    disc(ctx, 0, 0, r * .9, shade(p.plate.startsWith('#') ? p.plate : '#888888', -.08));
+    const g = ctx.createRadialGradient(-r * .2, -r * .2, 0, 0, 0, r * .8); g.addColorStop(0, shade(p.food[0], .15)); g.addColorStop(1, shade(p.food[0], -.18));
+    disc(ctx, 0, 0, r * .8, g);
+    ctx.strokeStyle = p.food[1]; ctx.globalAlpha = .9; ctx.lineWidth = r * .035; ctx.lineCap = 'round'; ctx.beginPath();
+    for (let i = 0; i <= 50; i++) { const a = i / 50 * TAU * 1.4, d = r * (.06 + i / 50 * .32); const x = Math.cos(a) * d, y = Math.sin(a) * d; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    ctx.stroke(); ctx.globalAlpha = 1;
+    for (let i = 0; i < 36; i++) { const [x, y] = polar(R, 0, r * .72); ctx.save(); ctx.translate(x, y); ctx.rotate(R() * TAU); ctx.beginPath(); ctx.ellipse(0, 0, r * .028, r * .012, 0, 0, TAU); ctx.fillStyle = shade(p.food[2], R() * .2 - .1); ctx.fill(); ctx.restore(); }
+    for (let i = 0; i < 9; i++) { const [x, y] = polar(R, r * .2, r * .68), s = r * .07; ctx.save(); ctx.translate(x, y); ctx.rotate(R() * TAU); rrect(ctx, -s / 2, -s / 2, s, s, s * .2, shade(p.food[3], R() * .2 - .1)); ctx.restore(); }
+  },
+  toast(ctx, r, p, R) {
+    ctx.save(); ctx.rotate(-.12); ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = r * .2; ctx.shadowOffsetY = r * .06;
+    rrect(ctx, -r * 1.1, -r * .78, r * 2.2, r * 1.56, r * .14, p.plate); ctx.restore();
+    ctx.save(); ctx.rotate(-.12); ctx.strokeStyle = 'rgba(0,0,0,.12)'; ctx.lineWidth = r * .01;
+    for (let k = -3; k <= 3; k++) { ctx.beginPath(); ctx.moveTo(-r * 1.05, k * r * .2); ctx.lineTo(r * 1.05, k * r * .2 + r * .03); ctx.stroke(); } ctx.restore();
+    [[-.48, -.05, -.1], [.46, .06, .14]].forEach(([sx, sy, rot]) => {
+      ctx.save(); ctx.translate(sx * r, sy * r); ctx.rotate(rot);
+      ctx.shadowColor = 'rgba(0,0,0,.3)'; ctx.shadowBlur = r * .08; ctx.shadowOffsetY = r * .03;
+      rrect(ctx, -r * .42, -r * .5, r * .84, r * 1, r * .16, shade(p.food[0], -.22)); ctx.shadowColor = 'transparent';
+      const g = ctx.createLinearGradient(0, -r * .45, 0, r * .45); g.addColorStop(0, shade(p.food[0], .12)); g.addColorStop(1, shade(p.food[0], -.06));
+      rrect(ctx, -r * .37, -r * .45, r * .74, r * .9, r * .12, g);
+      for (let k = 0; k < 7; k++) { const x = (R() - .5) * r * .5, y = (R() - .5) * r * .6; blob(ctx, x, y, r * (.08 + R() * .06), shade(p.food[1], R() * .15 - .05), R, 9); }
+      for (let k = 0; k < 14; k++) { const x = (R() - .5) * r * .6, y = (R() - .5) * r * .75; disc(ctx, x, y, r * .018, shade(p.food[2], R() * .2 - .1)); }
+      ctx.strokeStyle = 'rgba(80,40,10,.35)'; ctx.lineWidth = r * .02;
+      for (let k = -1; k <= 1; k++) { ctx.beginPath(); ctx.moveTo(-r * .3, k * r * .22); ctx.lineTo(r * .3, k * r * .22 + r * .08); ctx.stroke(); }
+      ctx.restore();
+    });
+  },
+  pizza(ctx, r, p, R) {
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.4)'; ctx.shadowBlur = r * .22; ctx.shadowOffsetY = r * .07;
+    disc(ctx, 0, 0, r * 1.02, p.plate); ctx.restore();
+    const g = ctx.createRadialGradient(-r * .2, -r * .2, r * .2, 0, 0, r * .95); g.addColorStop(0, shade(p.food[0], .1)); g.addColorStop(1, shade(p.food[0], -.2));
+    blob(ctx, 0, 0, r * .95, g, R, 22);
+    blob(ctx, 0, 0, r * .8, shade(p.food[1], -.05), R, 20);
+    for (let i = 0; i < 16; i++) { const [x, y] = polar(R, 0, r * .66); blob(ctx, x, y, r * (.08 + R() * .07), shade(p.food[2], R() * .1 - .05), R, 10); }
+    for (let i = 0; i < 12; i++) { const [x, y] = polar(R, r * .1, r * .68); ctx.save(); ctx.translate(x, y); ctx.rotate(R() * TAU); rrect(ctx, -r * .07, -r * .05, r * .14, r * .1, r * .03, shade(p.food[3], R() * .2 - .1)); ctx.restore(); }
+    for (let i = 0; i < 6; i++) { const [x, y] = polar(R, 0, r * .6); ctx.save(); ctx.translate(x, y); ctx.rotate(R() * TAU); ctx.beginPath(); ctx.ellipse(0, 0, r * .07, r * .035, 0, 0, TAU); ctx.fillStyle = '#3f7a2a'; ctx.fill(); ctx.restore(); }
+    for (let i = 0; i < 60; i++) { const [x, y] = polar(R, 0, r * .8); disc(ctx, x, y, r * .006, '#2a2a2a'); }
+  }
+});
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const mqDesk = matchMedia('(min-width: 1000px)');
