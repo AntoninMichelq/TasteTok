@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>body{margin:0}</style>
+<title>TasteTok Téléphone</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{--bg:#e4ddcf;--fg:#17231b;--muted:#5d6b61;--bezel:#17231b;--rim:#2d3a30;--appbg:#f3efe6;--btn:#ffffff;--line:#d9dfd7;color-scheme:light}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,-apple-system,'Segoe UI',sans-serif}
+.stage{height:100%;display:grid;place-items:center;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{display:grid;justify-items:center;gap:10px}
+.phone{position:relative}
+.device{position:absolute;left:0;top:0;width:414px;height:868px;transform-origin:0 0;border-radius:62px;background:var(--bezel);
+  box-shadow:0 0 0 1.5px var(--rim),inset 0 0 0 1px #fff,0 40px 80px -36px rgba(20,30,22,.35);padding:12px}
+.screen{position:relative;width:390px;height:844px;border-radius:50px;box-shadow:0 0 0 1px var(--rim);overflow:hidden;background:var(--appbg);display:grid;grid-template-rows:44px minmax(0,1fr)}
+.status{display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 34px;font:600 15px/1 system-ui,sans-serif;color:var(--fg);position:relative;z-index:2}
+.status .icons{display:flex;gap:6px;align-items:center}
+.status svg{height:12px;fill:currentColor}
+.island{position:absolute;top:10px;left:50%;width:120px;height:34px;margin-left:-60px;border-radius:20px;background:#000;z-index:3}
+iframe{width:100%;height:100%;border:0;display:block;background:var(--appbg)}
+.home{position:absolute;left:50%;bottom:8px;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:var(--fg);opacity:.75;pointer-events:none;z-index:4}
+.sb{position:absolute;width:4px;border-radius:2px;background:var(--rim)}
+.sb.a{left:-4px;top:150px;height:30px}.sb.b{left:-4px;top:205px;height:58px}.sb.c{left:-4px;top:275px;height:58px}.sb.d{right:-4px;top:230px;height:92px}
+.cap{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:13px}
+.cap b{color:var(--fg)}
+.cap button{border:1px solid var(--line);background:var(--btn);color:var(--fg);border-radius:999px;padding:5px 12px;font:600 12px system-ui,sans-serif;cursor:pointer}
+</style>
+
+<div class="stage"><div class="wrap">
+  <div class="phone" id="phone">
+    <div class="device" id="device">
+      <span class="sb a"></span><span class="sb b"></span><span class="sb c"></span><span class="sb d"></span>
+      <div class="screen">
+        <div class="status"><span id="clock">9:41</span><span class="icons">
+          <svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+          <svg viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5"/><rect x="24" y="4" width="2" height="4" rx="1"/></svg>
+        </span></div>
+        <iframe id="app-frame" title="Application TasteTok"></iframe>
+        <div class="island"></div>
+        <div class="home"></div>
+      </div>
+    </div>
+  </div>
+  <div class="cap"><span><b>TasteTok</b> · prototype interactif</span><button id="reset">Recommencer la démo</button></div>
+</div></div>
+
+
+
+<script>
+(() => {
+  'use strict';
+  const frame = document.getElementById('app-frame');
+  const load = () => { frame.src = 'index.html'; };
+  const doc = () => { try { return frame.contentDocument; } catch { return null; } };
+  function syncTheme() {
+    const d = doc(); if (!d || !d.documentElement) return;
+    const t = document.documentElement.getAttribute('data-theme');
+    t ? d.documentElement.setAttribute('data-theme', t) : d.documentElement.removeAttribute('data-theme');
+  }
+  frame.addEventListener('load', syncTheme);
+  new MutationObserver(syncTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  function fit() {
+    const s = Math.min(1, (innerHeight - 56) / 868, (innerWidth - 32) / 414);
+    const dev = document.getElementById('device'), ph = document.getElementById('phone');
+    dev.style.transform = `scale(${s})`; ph.style.width = 414 * s + 'px'; ph.style.height = 868 * s + 'px';
+  }
+  addEventListener('resize', fit); fit();
+  const clock = () => { const d = new Date(); document.getElementById('clock').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); };
+  clock(); setInterval(clock, 20000);
+  document.getElementById('reset').addEventListener('click', () => {
+    try { Object.keys(localStorage).filter(k => k.startsWith('tt2.')).forEach(k => localStorage.removeItem(k)); } catch {}
+    load();
+  });
+  load();
+})();
+</script>
+
+</html>
