@@ -3470,17 +3470,28 @@ function renderImportQuota() {
 }
 function parseCaption(raw) {
   const out = { title: '', ing: [], steps: [], time: '', serv: 0 };
-  const txt = raw.replace(/#[\p{L}\d_]+/gu, ' ').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, ' ');
+  const txt = raw.replace(/#[\p{L}\d_]+/gu, ' ').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]+/gu, ' ¦ ');
   const tm = nrm(txt).match(/(\d+)\s?(min|minutes)\b/); if (tm) out.time = tm[1] + ' min';
   const sv = nrm(txt).match(/(\d+)\s?(pers|personnes|portions|parts)\b/); if (sv) out.serv = +sv[1];
   txt.split(/\n+/).forEach(line0 => {
-    const raw = line0.replace(/^[\s\-–—•*·▪>]+/, '').trim(); let l = fracFix(raw); if (!l) return;
+    const tsrc = line0.replace(/^[\s\-–—•*·▪>¦]+/, '').split('¦')[0].trim(); // un emoji coupe le titre
+    const raw = line0.replace(/¦/g, ' ').replace(/^[\s\-–—•*·▪>]+/, '').replace(/\s{2,}/g, ' ').trim(); let l = fracFix(raw); if (!l) return;
     const n = nrm(l);
+    const header = /:\s*$/.test(l) || /^(pour (la|le|les|l'|l’|un|une)|sauce|marinade|garniture|topping|dressage|montage|la pate|pate|base|astuce|conseil|bon appetit|abonne|like|commente|partage|lien|recette (en|dans) (bio|commentaire))\b/.test(n);
+    const setTitle = (s) => {
+      let t = s.replace(/\s*(en )?\d+\s?min(utes)?.*$/i, '').replace(/^((la |ma |mes |notre |une )?recette( de| du| des| d’| d')?( mes| ma| mon| la| le| les)?)\s+/i, '').trim();
+      if (t.length > 50 || /[.!?,]/.test(t)) t = (t.split(/\s*[.!?|–—,]+\s*/)[0] || t);
+      if (t.length > 60) t = t.slice(0, 60).replace(/\s+\S*$/, '');
+      if (t.length >= 4 && !/^\d/.test(t)) { out.title = cap(t); return true; }
+      return false;
+    };
     if (/^ingredients?\b/.test(n)) {
       const rest = l.replace(/^[^:]*:\s*/, ''); if (rest && rest !== l) rest.split(/,|;| et (?=\d)/).map(x => x.trim()).filter(Boolean).forEach(x => out.ing.push(x));
       return;
     }
     if (/^(etapes?|preparation|recette)\s*:?$/.test(n)) return;
+    // la première vraie ligne de la légende est le nom du plat, sauf si c'est déjà une consigne (« Faire cuire… »)
+    if (!out.title && !out.ing.length && !out.steps.length && !header && !/^\d/.test(l) && !VERBS.test(n.split(' ')[0]) && setTitle(tsrc)) return;
     const num = l.match(/^(?:etape\s*)?(\d+)\s*[.)\/:-]\s+(.*)$/i) || nrm(l).match(/^etape\s*\d+\s*:?\s*(.*)$/);
     if (num && !/^\d+\s*(g|kg|ml|cl|l|c\.|cs|cc|pinc|tranche|gousse|sachet)\b/i.test(l)) { out.steps.push(cap((num[2] || num[1] || '').trim())); return; }
     const short = l.length <= 60, verb = VERBS.test(n);
@@ -3488,8 +3499,16 @@ function parseCaption(raw) {
     const pantry = PANTRY.some(r => r[3].test(n));
     if (short && !verb && (qtyStart || (pantry && l.split(' ').length <= 6))) { out.ing.push(raw); return; }
     if (verb && l.length > 12) { l.split(/(?<=\.)\s+(?=[A-ZÉÀ])/).forEach(sx => out.steps.push(cap(sx.trim()))); return; }
-    if (!out.title && l.length >= 4 && l.length <= 70) out.title = cap(l.replace(/\s*(en )?\d+\s?min(utes)?.*$/i, '').trim()) || cap(l);
+    // une ligne « Pour la sauce : », « Marinade : », « Garniture » annonce une partie : ce n'est pas le nom du plat
+    if (out.title || header) return;
+    setTitle(tsrc);
   });
+  if (!out.title && out.ing.length) {
+    // pas de titre dans la légende : on le déduit des ingrédients principaux
+    const main = out.ing.map(x => (fracFix(x).match(LINE) || [])[3] || x).map(x => x.replace(/\s*\(.*?\)/, '').replace(/^(de |d'|d’|du |des )/i, '').trim())
+      .filter(x => !/^(sel|poivre|huile|eau|beurre|sucre|epices?|herbes?)\b/.test(nrm(x))).slice(0, 3);
+    if (main.length) out.title = cap(main.length > 1 ? main.slice(0, -1).join(', ') + ' et ' + main[main.length - 1] : main[0]).replace(/ et (.+)$/, (m, x) => ' et ' + x.toLowerCase()).replace(/, (\S)/g, (m, x) => ', ' + x.toLowerCase());
+  }
   return out;
 }
 function guessMeta(ingTxt, stepsTxt, title) {
@@ -3572,6 +3591,7 @@ $('#imp-out').addEventListener('click', (e) => {
   $('#imp-out').innerHTML = ''; $('#imp-form').reset(); impDraft = null;
   feedQ = ''; setFilters([]); go('fil');
   mount(p, 'afterbegin'); saveMine(p); applyFilter(); toast('Recette importée en haut de ton fil');
+  publishPost(p, null, true);
 });
 $('#add-tabs').addEventListener('click', (e) => {
   const b = e.target.closest('[data-addtab]'); if (!b) return;
@@ -3705,17 +3725,29 @@ async function cloudInit() {
     let { data } = await sb.auth.getSession();
     if (!data.session) {
       const r = await sb.auth.signInAnonymously();
-      if (r.error) throw new Error(/anonymous/i.test(r.error.message) ? 'Active « Allow anonymous sign-ins » dans Supabase (Authentication → Sign In / Providers).' : r.error.message);
+      if (r.error) {
+        // sans compte anonyme on peut quand même lire les posts des autres (lecture publique)
+        console.warn('[TasteTok] connexion anonyme refusée :', r.error.message);
+        cloudState = 'readonly'; cloudErr = /anonymous|disabled|422/i.test(r.error.message + r.error.status) ? 'connexions anonymes désactivées dans Supabase' : r.error.message;
+        syncCloudUI(); await loadCloudPosts(); startCloudRefresh(); return;
+      }
       data = { session: r.data.session };
     }
     cloudUid = data.session.user.id;
     cloudState = 'ready'; cloudErr = ''; syncCloudUI();
-    await loadCloudPosts();
+    await loadCloudPosts(); startCloudRefresh();
   } catch (e) { cloudState = 'error'; cloudErr = !e || e.message === 'script' || /fetch/i.test(e.message) ? 'serveur injoignable' : e.message; syncCloudUI(); }
+}
+/* les nouveaux posts des autres arrivent sans recharger la page */
+let cloudTimer = null;
+function startCloudRefresh() {
+  if (cloudTimer) return;
+  cloudTimer = setInterval(() => { if (!document.hidden) loadCloudPosts(); }, 30000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) loadCloudPosts(); });
 }
 function syncCloudUI() {
   const el = $('#cloud-status'); if (!el) return;
-  const txt = { off: 'Hors ligne : ta vidéo restera sur cet appareil.', loading: 'Connexion au serveur…', ready: 'Connecté : ta vidéo sera visible par tout le monde.', error: 'Serveur indisponible (' + cloudErr + ') : ta vidéo restera sur cet appareil.' }[cloudState];
+  const txt = { off: 'Hors ligne : ta vidéo restera sur cet appareil.', loading: 'Connexion au serveur…', ready: 'Connecté : ta vidéo sera visible par tout le monde.', readonly: 'Tu vois les posts des autres, mais l’envoi est bloqué (' + cloudErr + ') : ta vidéo restera sur cet appareil.', error: 'Serveur indisponible (' + cloudErr + ') : ta vidéo restera sur cet appareil.' }[cloudState];
   el.textContent = txt; el.className = 'cloud-st ' + cloudState;
 }
 const PAL = [['#f3b49a', '#c8402a'], ['#c9dcae', '#5c9a3c'], ['#f0d58a', '#e0a04c'], ['#a6d4e2', '#2f7fa0'], ['#e8c4d0', '#a8345a'], ['#d9c6ec', '#7a4ab0']];
@@ -3729,14 +3761,17 @@ function rowToPost(r) {
     media: r.video_url ? { type: r.media_type || 'video', url: r.video_url } : null, imported: rc.imported || null, ad: rc.ad || null, no: ticketNo++,
     created: r.created_at };
 }
+let cloudLoading = false;
 async function loadCloudPosts() {
-  if (cloudState !== 'ready') return;
+  if (!sb || (cloudState !== 'ready' && cloudState !== 'readonly') || cloudLoading) return;
+  cloudLoading = true; try {
   const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false }).limit(80);
   if (error) { cloudState = 'error'; cloudErr = /relation|does not exist|schema cache/i.test(error.message) ? 'table « posts » absente : lance le script SQL' : error.message; syncCloudUI(); return; }
   const localCloudIds = new Set(store.get('myposts', []).map(p => p.cloudId).filter(Boolean));
   let n = 0;
   (data || []).slice().reverse().forEach(r => { if (localCloudIds.has(r.id) || byId['c_' + r.id]) return; mount(rowToPost(r), 'afterbegin'); n++; });
   if (n) applyFilter(true);
+  } finally { cloudLoading = false; }
 }
 function recipeOf(p) {
   const { ing, steps, time, min, level, servings, unit, veg, tools, taste, nut, kind, course, tint, food, seed, tags, imported, ad } = p;
