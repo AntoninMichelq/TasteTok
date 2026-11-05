@@ -901,6 +901,8 @@ form{display:grid;gap:12px}
   .recipe .r-key div:last-child:nth-child(3n+1){grid-column:1/-1}
   .recipe .r-key div:last-child:nth-child(3n+2){grid-column:span 2}
 }
+.cloud-st{margin:-4px 0 0 28px;font-size:.82rem;color:var(--muted)}
+.cloud-st.ready{color:var(--ok)} .cloud-st.error{color:var(--warn)}
 </style>
 </head>
 <body>
@@ -1036,6 +1038,8 @@ form{display:grid;gap:12px}
           <textarea id="f-steps">Beurrer le pain de mie à l’extérieur.
 Garnir de jambon et d’emmental, refermer.
 Dorer 4 min de chaque côté dans une poêle, couvercle posé.</textarea></div>
+        <label class="check"><input type="checkbox" id="f-share" checked><span>Publier pour toute la communauté (la vidéo est envoyée sur le serveur)</span></label>
+        <p class="cloud-st" id="cloud-status"></p>
         <label class="check"><input type="checkbox" id="f-ad"><span>Contenu sponsorisé (partenariat rémunéré avec une marque)</span></label>
         <div class="field" id="f-brand-row" hidden><label for="f-brand">Marque partenaire</label><input type="text" id="f-brand" placeholder="Nom de la marque"><small>Le post affichera « Sponsorisé » et le nom de la marque, comme l’exige la loi.</small></div>
         <button class="btn primary" type="submit">Publier</button>
@@ -1856,7 +1860,7 @@ const ICON = {
 /* ---------- rendu des posts ---------- */
 function postHTML(p) {
   const media = p.media
-    ? (p.media.type === 'video' ? `<video src="${p.media.url}" muted loop playsinline></video>` : `<img src="${p.media.url}" alt="${esc(p.title)}">`)
+    ? (p.media.type === 'video' ? `<video src="${esc(p.media.url)}" muted loop playsinline preload="metadata"></video>` : `<img src="${p.media.url}" alt="${esc(p.title)}">`)
     : `<canvas aria-label="${esc(p.title)}" role="img"></canvas>${p.photo ? `<img class="vid" src="${esc(p.photo)}" alt="${esc(p.title)}" decoding="async"><div class="subs" aria-hidden="true"></div><span class="snd" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9l5 6M21 9l-5 6"/></svg></span>` : ''}`;
   const ps = perServ(p), cx = cxOf(p), L = liked.has(p.id);
   const unitTxt = p.unit === 'pers.' ? 'pers.' : esc(p.unit);
@@ -2435,7 +2439,7 @@ const STOP = new Set(['les','des','aux','pour','frais','fraiche','moulu','noir',
 const keywords = (name) => nrm(name).split(/[^a-z]+/).filter(w => w.length >= 3 && !STOP.has(w)).map(w => w.slice(0, 6));
 const stepMinutes = (txt) => { const m = nrm(txt).match(/(\d+)(?:\s*a\s*\d+)?\s*min/); return m ? +m[1] : null; };
 const mmss = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
-const clipMedia = (p) => p.media ? (p.media.type === 'video' ? `<video src="${p.media.url}" muted loop playsinline></video>` : `<img src="${p.media.url}" alt="">`) : '<canvas aria-hidden="true"></canvas>';
+const clipMedia = (p) => p.media ? (p.media.type === 'video' ? `<video src="${esc(p.media.url)}" muted loop playsinline preload="metadata"></video>` : `<img src="${p.media.url}" alt="">`) : '<canvas aria-hidden="true"></canvas>';
 const needOf = (p, i) => { const ns = nrm(p.steps[i] || ''); return p.ing.filter(it => keywords(it.n).some(w => new RegExp('\\b' + w).test(ns))); };
 const cookF = () => cook ? st[cook.p.id].serv / cook.p.servings : 1;
 function ingSay(it, f) {
@@ -2941,7 +2945,7 @@ $('#f-ad').addEventListener('change', (e) => { $('#f-brand-row').hidden = !e.tar
 $('#f-media').addEventListener('change', (e) => {
   const f = e.target.files[0]; if (!f) return;
   if (upload) URL.revokeObjectURL(upload.url);
-  upload = { type: f.type.startsWith('video') ? 'video' : 'image', url: URL.createObjectURL(f) };
+  upload = { type: f.type.startsWith('video') ? 'video' : 'image', url: URL.createObjectURL(f), file: f };
   $('#drop-label').innerHTML = upload.type === 'video' ? `<video src="${upload.url}" muted autoplay loop playsinline></video>` : `<img src="${upload.url}" alt="Aperçu">`;
 });
 const UNITS = 'kg|g|ml|cl|l|c\\. ?à ?s\\.|c\\. ?à ?c\\.|cs|cc|pincées?|tranches?|gousses?|bottes?|boîtes?|sachets?|poignées?';
@@ -2956,17 +2960,19 @@ $('#post-form').addEventListener('submit', (e) => {
   if (!ing.length) { toast('Ajoute au moins un ingrédient'); return; }
   const time = $('#f-time').value.trim() || '—', kcal = parseInt($('#f-kcal').value, 10), prot = parseInt($('#f-prot').value, 10);
   const isAd = $('#f-ad').checked, brand = $('#f-brand').value.trim();
-  const p = { id: 'u' + Date.now(), user: '@toi', mine: true, kind: 'bowl', course: 'plat', title: $('#f-title').value.trim() || 'Mon plat', caption: $('#f-caption').value.trim(), tags: 'à l’instant', likes: 0,
+  const file = upload && upload.file, share = $('#f-share').checked;
+  const p = { id: 'u' + Date.now(), user: me ? '@' + me.pseudo.replace(/^@/, '') : '@toi', mine: true, kind: 'bowl', course: 'plat', title: $('#f-title').value.trim() || 'Mon plat', caption: $('#f-caption').value.trim(), tags: 'à l’instant', likes: 0,
     time, min: parseInt(time, 10) || 99, veg: false, tools: [], level: 'Fait maison', servings: Math.max(1, +$('#f-serv').value || 1), unit: 'pers.', no: ticketNo++,
     taste: $$('#f-taste [aria-pressed="true"]').map(b => b.dataset.ft),
     nut: kcal > 0 ? { kcal, p: prot > 0 ? prot : 0, g: null, l: null } : null,
     ad: isAd && brand ? { brand } : null,
     tint: '#d9c6ec', bg: ['#3a2440', '#0f0812'], plate: '#e9e2d6', food: ['#e9844f', '#a5c85d', '#f6c344', '#7fbf4f'], seed: Date.now() % 997,
-    media: upload, ing, steps: $('#f-steps').value.split('\n').map(s => s.trim()).filter(Boolean) };
+    media: upload ? { type: upload.type, url: upload.url } : null, ing, steps: $('#f-steps').value.split('\n').map(s => s.trim()).filter(Boolean) };
   upload = null; e.target.reset(); $('#f-brand-row').hidden = true; $$('#f-taste .tg').forEach(b => b.setAttribute('aria-pressed', 'false'));
   $('#drop-label').textContent = 'Touche pour ajouter une photo ou une vidéo';
   feedQ = ''; setFilters([]); go('fil');
   mount(p, 'afterbegin'); saveMine(p); applyFilter(); toast('Publié en haut de ton fil');
+  publishPost(p, file, share);
 });
 
 /* ---------- accueil en 4 étapes ---------- */
@@ -3027,12 +3033,13 @@ const DB = (() => {
     if (dbp) return dbp;
     dbp = new Promise((res, rej) => {
       try {
-        const rq = indexedDB.open('tastetok-db', 1);
+        const rq = indexedDB.open('tastetok-db', 2);
         rq.onupgradeneeded = () => {
-          const d = rq.result;
-          d.createObjectStore('users', { keyPath: 'id' }).createIndex('email', 'email', { unique: true });
-          d.createObjectStore('payments', { keyPath: 'id' }).createIndex('uid', 'uid');
-          d.createObjectStore('userdata', { keyPath: 'uid' });
+          const d = rq.result, has = (n) => d.objectStoreNames.contains(n);
+          if (!has('users')) d.createObjectStore('users', { keyPath: 'id' }).createIndex('email', 'email', { unique: true });
+          if (!has('payments')) d.createObjectStore('payments', { keyPath: 'id' }).createIndex('uid', 'uid');
+          if (!has('userdata')) d.createObjectStore('userdata', { keyPath: 'uid' });
+          if (!has('media')) d.createObjectStore('media', { keyPath: 'id' });
         };
         rq.onsuccess = () => res(rq.result);
         rq.onerror = () => rej(rq.error);
@@ -3440,7 +3447,8 @@ function mGsim() {
 /* ---------- mes recettes (postées ou importées), gardées d'une visite à l'autre ---------- */
 function saveMine(p) {
   const list = store.get('myposts', []).filter(x => x.id !== p.id);
-  const { media, ...rest } = p; list.unshift(rest); store.set('myposts', list.slice(0, 30));
+  const { media, ...rest } = p; if (media && /^https?:/.test(media.url)) rest.media = media;
+  list.unshift(rest); store.set('myposts', list.slice(0, 30));
 }
 
 /* ---------- import TikTok → recette ----------
@@ -3661,6 +3669,9 @@ function myRecipesHTML() {
   </section>`;
 }
 function deleteMine(id) {
+  const rec = byId[id] || store.get('myposts', []).find(p => p.id === id);
+  if (rec && rec.cloudId) cloudDelete(rec);
+  try { DB.del('media', id); } catch {}
   store.set('myposts', store.get('myposts', []).filter(p => p.id !== id));
   const el = feed.querySelector(`.post[data-id="${id}"]`); if (el) { io.unobserve(el); el.remove(); }
   delete byId[id]; delete st[id]; applyFilter(true);
@@ -3674,10 +3685,121 @@ $('#acct-body').addEventListener('click', (e) => {
   }
 });
 
+/* =====================================================================
+   Fil partagé avec Supabase : les vidéos postées sont envoyées dans le stockage « videos »
+   et la recette dans la table « posts ». Tout le monde voit les posts de tout le monde.
+   Sans connexion au serveur (aperçu Claude, hors ligne), la vidéo reste sur l'appareil (IndexedDB).
+   ===================================================================== */
+const SUPA_URL = 'https://abradaqnpdwrbecpzwgq.supabase.co';
+const SUPA_KEY = 'sb_publishable_skf5wlcKZ3fQX6LwRxe5lQ_12_Tzo5Q'; // clé publique : la sécurité repose sur les règles RLS de la base
+const SUPA_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
+let sb = null, cloudState = 'off', cloudUid = null, cloudErr = '';
+
+function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.async = true; s.onload = res; s.onerror = () => rej(new Error('script')); document.head.appendChild(s); }); }
+async function cloudInit() {
+  if (!/^https?:$/.test(location.protocol)) { cloudState = 'off'; cloudErr = 'Aperçu hors ligne'; syncCloudUI(); return; }
+  cloudState = 'loading'; syncCloudUI();
+  try {
+    if (!window.supabase) await loadScript(SUPA_JS);
+    sb = window.supabase.createClient(SUPA_URL, SUPA_KEY, { auth: { persistSession: true, storageKey: 'tt2-supa', autoRefreshToken: true } });
+    let { data } = await sb.auth.getSession();
+    if (!data.session) {
+      const r = await sb.auth.signInAnonymously();
+      if (r.error) throw new Error(/anonymous/i.test(r.error.message) ? 'Active « Allow anonymous sign-ins » dans Supabase (Authentication → Sign In / Providers).' : r.error.message);
+      data = { session: r.data.session };
+    }
+    cloudUid = data.session.user.id;
+    cloudState = 'ready'; cloudErr = ''; syncCloudUI();
+    await loadCloudPosts();
+  } catch (e) { cloudState = 'error'; cloudErr = !e || e.message === 'script' || /fetch/i.test(e.message) ? 'serveur injoignable' : e.message; syncCloudUI(); }
+}
+function syncCloudUI() {
+  const el = $('#cloud-status'); if (!el) return;
+  const txt = { off: 'Hors ligne : ta vidéo restera sur cet appareil.', loading: 'Connexion au serveur…', ready: 'Connecté : ta vidéo sera visible par tout le monde.', error: 'Serveur indisponible (' + cloudErr + ') : ta vidéo restera sur cet appareil.' }[cloudState];
+  el.textContent = txt; el.className = 'cloud-st ' + cloudState;
+}
+const PAL = [['#f3b49a', '#c8402a'], ['#c9dcae', '#5c9a3c'], ['#f0d58a', '#e0a04c'], ['#a6d4e2', '#2f7fa0'], ['#e8c4d0', '#a8345a'], ['#d9c6ec', '#7a4ab0']];
+function rowToPost(r) {
+  const rc = r.recipe || {}, pal = PAL[(parseInt(String(r.id).replace(/\D/g, '').slice(0, 6), 10) || 0) % PAL.length];
+  return { id: 'c_' + r.id, cloudId: r.id, cloud: true, user: r.author || '@anonyme', mine: !!cloudUid && r.author_id === cloudUid,
+    kind: rc.kind || 'bowl', course: rc.course || 'plat', title: r.title, caption: r.caption || '', tags: rc.tags || '#communauté', likes: rc.likes || 0,
+    time: rc.time || '—', min: rc.min || 99, level: rc.level || 'Fait maison', servings: rc.servings || 2, unit: rc.unit || 'pers.',
+    veg: !!rc.veg, tools: rc.tools || [], taste: rc.taste || [], nut: rc.nut || null, ing: rc.ing || [], steps: rc.steps || [],
+    tint: rc.tint || pal[0], bg: [], plate: '#e9e2d6', food: rc.food || [pal[1], '#f6efe0', '#4f8a3a', '#e9c27a'], seed: rc.seed || 7,
+    media: r.video_url ? { type: r.media_type || 'video', url: r.video_url } : null, imported: rc.imported || null, ad: rc.ad || null, no: ticketNo++,
+    created: r.created_at };
+}
+async function loadCloudPosts() {
+  if (cloudState !== 'ready') return;
+  const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false }).limit(80);
+  if (error) { cloudState = 'error'; cloudErr = /relation|does not exist|schema cache/i.test(error.message) ? 'table « posts » absente : lance le script SQL' : error.message; syncCloudUI(); return; }
+  const localCloudIds = new Set(store.get('myposts', []).map(p => p.cloudId).filter(Boolean));
+  let n = 0;
+  (data || []).slice().reverse().forEach(r => { if (localCloudIds.has(r.id) || byId['c_' + r.id]) return; mount(rowToPost(r), 'afterbegin'); n++; });
+  if (n) applyFilter(true);
+}
+function recipeOf(p) {
+  const { ing, steps, time, min, level, servings, unit, veg, tools, taste, nut, kind, course, tint, food, seed, tags, imported, ad } = p;
+  return { ing, steps, time, min, level, servings, unit, veg, tools, taste, nut, kind, course, tint, food, seed, tags, imported, ad };
+}
+async function cloudPublish(p, file) {
+  if (cloudState !== 'ready') throw new Error('hors ligne');
+  let url = null, path = null, type = null;
+  if (file) {
+    if (file.size > 50 * 1024 * 1024) throw new Error('vidéo de plus de 50 Mo');
+    const ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 5);
+    path = `${cloudUid}/${Date.now()}.${ext}`; type = file.type.startsWith('image') ? 'image' : 'video';
+    const up = await sb.storage.from('videos').upload(path, file, { contentType: file.type || 'video/mp4', upsert: false });
+    if (up.error) throw new Error(up.error.message);
+    url = sb.storage.from('videos').getPublicUrl(path).data.publicUrl;
+  }
+  const { data, error } = await sb.from('posts').insert({ author: p.user, author_id: cloudUid, title: p.title, caption: p.caption, recipe: recipeOf(p), video_url: url, video_path: path, media_type: type }).select().single();
+  if (error) { if (path) await sb.storage.from('videos').remove([path]); throw new Error(error.message); }
+  return { id: data.id, url, path, type };
+}
+async function cloudDelete(p) {
+  if (cloudState !== 'ready' || !p.cloudId) return;
+  try {
+    const { data } = await sb.from('posts').select('video_path').eq('id', p.cloudId).single();
+    await sb.from('posts').delete().eq('id', p.cloudId);
+    if (data && data.video_path) await sb.storage.from('videos').remove([data.video_path]);
+  } catch {}
+}
+
+/* vidéos gardées sur l'appareil quand le serveur n'est pas joignable */
+async function mediaPut(id, file) { try { await DB.put('media', { id, file, type: file.type, at: Date.now() }); return true; } catch { return false; } }
+async function mediaRestore() {
+  const mine = store.get('myposts', []).filter(p => p.localMedia);
+  for (const p of mine) {
+    try {
+      const m = await DB.get('media', p.id); if (!m || !byId[p.id]) continue;
+      const url = URL.createObjectURL(m.file), el = feed.querySelector(`.post[data-id="${p.id}"]`);
+      byId[p.id].media = { type: m.type.startsWith('image') ? 'image' : 'video', url };
+      if (el) { const c = $('.media canvas', el); const tag = m.type.startsWith('image') ? `<img src="${url}" alt="">` : `<video src="${url}" muted loop playsinline preload="metadata"></video>`; if (c) c.outerHTML = tag; }
+    } catch {}
+  }
+}
+
+/* publier : d'abord dans le fil (immédiat), puis sur le serveur ou sur l'appareil */
+async function publishPost(p, file, share) {
+  if (share && cloudState === 'ready') {
+    try {
+      toast(file ? 'Envoi de la vidéo…' : 'Publication…');
+      const r = await cloudPublish(p, file);
+      p.cloudId = r.id; if (r.url) p.media = { type: r.type, url: r.url };
+      saveMine(p); toast('Publié pour tout le monde');
+      return;
+    } catch (e) { toast('Envoi impossible (' + e.message + ') : gardé sur cet appareil'); }
+  }
+  if (file && await mediaPut(p.id, file)) { p.localMedia = true; saveMine(p); if (!share) toast('Publié sur ton appareil'); }
+}
+
 /* ---------- démarrage ---------- */
 POSTS.forEach(p => mount(p));
 store.get('myposts', []).slice().reverse().forEach(p => { if (!byId[p.id]) mount(p, 'afterbegin'); });
 syncMeUI();
+mediaRestore();
+cloudInit();
 updateBadge(); syncVoiceBtn();
 applyFilter();
 let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => {
