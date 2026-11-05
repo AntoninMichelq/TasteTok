@@ -805,6 +805,39 @@ form{display:grid;gap:12px}
 .cmp-det td.min{color:var(--ok);font-weight:800}
 .cmp-det tr.tot td{font-weight:800;background:var(--surface-2)}
 .field input[type=email],.field input[type=password]{width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit}
+
+/* ===== v11 : photos réelles, connexion Google ===== */
+.media .vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transform-origin:50% 45%;animation:kb 16s ease-in-out infinite alternate}
+@keyframes kb{0%{transform:scale(1.04) translate(0,0)}50%{transform:scale(1.14) translate(-2%,-1.5%)}100%{transform:scale(1.08) translate(2%,1%)}}
+.post:not(.has-photo) .subs,.post:not(.has-photo) .snd{display:none}
+.subs{position:absolute;left:48px;right:48px;bottom:30px;text-align:center;color:#fff;font:700 .95rem/1.3 var(--font-b);text-shadow:0 1px 3px rgba(0,0,0,.8),0 0 12px rgba(0,0,0,.5);text-wrap:balance;pointer-events:none;min-height:1.3em}
+.snd{position:absolute;right:12px;bottom:44px;width:30px;height:30px;border-radius:50%;background:var(--glass);display:grid;place-items:center;color:#fff}
+.snd svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.has-photo .media::after{content:"";position:absolute;inset:auto 0 0;height:40%;background:linear-gradient(transparent,rgba(0,0,0,.45));pointer-events:none}
+.has-photo .progress{z-index:2;background:rgba(255,255,255,.35)}.has-photo .progress i{background:#fff}
+.has-photo .stats,.has-photo .peek,.has-photo .burst{z-index:2}
+@media (prefers-reduced-motion:reduce){.media .vid{animation:none}}
+/* vignettes d'ingrédients */
+.ii{width:28px;height:28px;flex:0 0 auto;border-radius:8px;background:#fff;border:1px solid var(--line);display:inline-grid;place-items:center;overflow:hidden;font:800 .78rem var(--font-d);color:var(--muted);align-self:center}
+.ii img{width:100%;height:100%;object-fit:contain;padding:2px;display:block}
+.ii.noimg{background:var(--surface-2)}
+.ii.sm{width:20px;height:20px;border-radius:6px;margin-right:6px;font-size:.66rem}
+.ii.xs{width:20px;height:20px;border-radius:50%;margin:-3px 6px -3px -5px;font-size:.62rem}
+.ing .ln{align-items:center}
+.ing .ln .ii{margin-right:2px}
+.tg.wimg{display:inline-flex;align-items:center}
+.tg[aria-pressed="true"] .ii.xs{border-color:transparent}
+.row .n.with-img{display:flex;align-items:center;gap:10px}
+.row .n .nt{min-width:0}
+.need .chip{display:inline-flex;align-items:center}
+/* Google */
+.gwrap{display:grid;justify-items:stretch}
+#g-real:empty{display:none}
+#g-real{display:flex;justify-content:center;min-height:44px}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--surface);border:1.5px solid var(--line);font-weight:700;padding:12px}
+.gmark{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font:800 .8rem var(--font-b);color:var(--fg)}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.8rem}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
 </style>
 </head>
 <body>
@@ -1255,6 +1288,127 @@ POSTS.push(
   const ep = PANTRY.find(r => r[1] === 'epices'); ep[3] = /cumin|paprika|curry|poivre noir|piment|epice|origan|cannelle|muscade/;
 })();
 
+/* ---------- vraies photos de plats (TheMealDB) ----------
+   Affichées en « fausse vidéo » (zoom lent, sous-titres des étapes). Si l'image ne charge pas
+   (aperçu Claude, hors ligne), le dessin animé du plat prend le relais. */
+const MEAL_IMG = 'https://www.themealdb.com/images/media/meals/';
+const PHOTO = { carbo: 'llcbn01574260722.jpg', bolo: 'sutysw1468247559.jpg', pizza: 'x0lk931587671540.jpg', poke: '1549542994.jpg', onepot: 'ustsqw1468250014.jpg' };
+POSTS.forEach(p => { if (PHOTO[p.id]) p.photo = MEAL_IMG + PHOTO[p.id]; });
+
+POSTS.push(
+  { id:'kungpao', photo:MEAL_IMG + '1525872624.jpg', user:'@wok.and.roll', kind:'fried', course:'plat', title:'Poulet Kung Pao aux cacahuètes', caption:'Piquant, sucré, croquant. Le classique du Sichuan en 20 minutes.', tags:'#épicé #asiatique #wok', likes:28700, time:'20 min', min:20, level:'Facile', servings:2, unit:'pers.',
+    tint:'#f0b08a', veg:false, tools:['plaque'], taste:['epice','asiat'], nut:{ kcal:610, p:46, g:42, l:28 },
+    bg:[], plate:'#2b2b30', food:['#c8642a','#e9c27a','#4f8a3a','#c98a3a'], seed:241,
+    ing:[{n:'Blanc de poulet',q:300,u:'g',p:4.2},{n:'Cacahuètes',q:50,u:'g',p:.6},{n:'Sauce soja',q:2,u:'c. à s.',p:.3},{n:'Piment en poudre',q:1,u:'c. à c.',p:.1},{n:'Sucre roux',q:1,u:'c. à s.',p:.05},{n:'Oignon nouveau',q:3,u:'',p:.9},{n:'Ail',q:3,u:'gousses',p:.4},{n:'Riz basmati',q:150,u:'g',p:.5}],
+    steps:['Lancer la cuisson du riz.','Couper le poulet en dés, le mariner 10 min dans la sauce soja.','Saisir le poulet 5 min à feu vif avec l’ail et le piment.','Ajouter le sucre, l’oignon nouveau et les cacahuètes, sauter 2 min.','Servir sur le riz.'] },
+  { id:'karaage', photo:MEAL_IMG + 'tyywsw1505930373.jpg', user:'@nouilles.minuit', stu:true, kind:'fried', course:'plat', title:'Poulet karaage croustillant', caption:'Le poulet frit japonais : mariné, fariné, doré. Un filet de citron et c’est fini.', tags:'#japon #croustillant #street', likes:34100, time:'30 min', min:30, level:'Moyen', servings:2, unit:'pers.',
+    tint:'#f1cf8a', veg:false, tools:['plaque'], taste:['asiat'], nut:{ kcal:640, p:45, g:30, l:36 },
+    bg:[], plate:'#2b2b30', food:['#d99a4a','#f3ead2','#6fae3e','#c98a3a'], seed:251,
+    ing:[{n:'Hauts de cuisse de poulet',q:450,u:'g',p:4.5},{n:'Gingembre frais',q:15,u:'g',p:.3},{n:'Ail',q:1,u:'gousses',p:.15},{n:'Sauce soja',q:2,u:'c. à s.',p:.3},{n:'Fécule de pomme de terre',q:60,u:'g',p:.3},{n:'Huile',q:8,u:'c. à s.',p:.6},{n:'Citron',q:1,u:'',p:.4}],
+    steps:['Couper le poulet en morceaux, le mariner 15 min avec soja, ail et gingembre râpés.','Enrober chaque morceau de fécule.','Frire 5 à 6 min dans l’huile bien chaude, en deux fois.','Égoutter et servir avec des quartiers de citron.'] },
+  { id:'tandoori', photo:MEAL_IMG + 'qptpvt1487339892.jpg', user:'@epices.etudiant', kind:'curry', course:'plat', title:'Poulet tandoori au yaourt', caption:'Une nuit de marinade, 25 minutes de four. Ça sent l’Inde dans tout l’immeuble.', tags:'#épicé #four #protéiné', likes:17200, time:'35 min', min:35, level:'Facile', servings:4, unit:'pers.',
+    tint:'#f2a07a', veg:false, tools:['four'], taste:['epice'], nut:{ kcal:420, p:48, g:9, l:21 },
+    bg:[], plate:'#2e2a26', food:['#c8402a','#f2e6c9','#4f8a3a','#e9a23b'], seed:257,
+    ing:[{n:'Hauts de cuisse de poulet',q:8,u:'',p:7.5},{n:'Yaourt grec',q:300,u:'g',p:1.4},{n:'Citron',q:2,u:'',p:.8},{n:'Paprika',q:4,u:'c. à c.',p:.3},{n:'Cumin moulu',q:1,u:'c. à c.',p:.1},{n:'Gingembre frais',q:20,u:'g',p:.4},{n:'Ail',q:4,u:'gousses',p:.5},{n:'Oignon rouge',q:2,u:'',p:.7}],
+    steps:['Mélanger yaourt, citron, épices, ail et gingembre râpés.','Y enrober le poulet, laisser mariner au moins 1 h (idéalement une nuit).','Cuire 25 min à 220 °C sur une plaque.','Servir avec l’oignon rouge émincé.'] },
+  { id:'stroganoff', photo:MEAL_IMG + 'svprys1511176755.jpg', user:'@mamie.dimanche', kind:'curry', course:'plat', title:'Bœuf Stroganoff aux champignons', caption:'Crème, moutarde, champignons : le réconfort en 25 minutes.', tags:'#réconfort #boeuf #crémeux', likes:13900, time:'25 min', min:25, level:'Facile', servings:2, unit:'pers.',
+    tint:'#e6c9a0', veg:false, tools:['plaque'], taste:['mijote'], nut:{ kcal:720, p:44, g:58, l:34 },
+    bg:[], plate:'#2b2925', food:['#c9965a','#f6ead0','#7a4a2a','#4f8a3a'], seed:263,
+    ing:[{n:'Bœuf (rumsteck)',q:300,u:'g',p:6},{n:'Champignons',q:250,u:'g',p:1.8},{n:'Oignon',q:1,u:'',p:.3},{n:'Crème fraîche',q:150,u:'g',p:1},{n:'Moutarde',q:1,u:'c. à s.',p:.2},{n:'Beurre',q:15,u:'g',p:.2},{n:'Riz basmati',q:150,u:'g',p:.5}],
+    steps:['Lancer la cuisson du riz.','Saisir le bœuf en lanières 2 min, le réserver.','Faire revenir oignon et champignons dans le beurre 6 min.','Ajouter crème et moutarde, remettre le bœuf 1 min, servir sur le riz.'] },
+  { id:'basquaise', photo:MEAL_IMG + 'wruvqv1511880994.jpg', user:'@abuela.pepa', kind:'curry', course:'plat', title:'Poulet basquaise et riz', caption:'Poivrons fondants, une pointe de piment, et le riz qui cuit dans la sauce.', tags:'#mijoté #batchcooking #sudouest', likes:11600, time:'45 min', min:45, level:'Facile', servings:4, unit:'pers.',
+    tint:'#f2a98a', veg:false, tools:['plaque'], taste:['mijote','epice'], nut:{ kcal:610, p:42, g:62, l:20 },
+    bg:[], plate:'#2c2724', food:['#c8402a','#e9a23b','#c9452a','#4f8a3a'], seed:269,
+    ing:[{n:'Hauts de cuisse de poulet',q:6,u:'',p:6},{n:'Poivron rouge',q:3,u:'',p:2.7},{n:'Oignon rouge',q:2,u:'',p:.7},{n:'Ail',q:3,u:'gousses',p:.4},{n:'Tomates concassées',q:400,u:'g',p:1.1},{n:'Paprika fumé',q:1,u:'c. à c.',p:.2},{n:'Riz basmati',q:300,u:'g',p:1.1}],
+    steps:['Dorer le poulet 8 min, le réserver.','Faire revenir oignons, poivrons et ail 8 min.','Ajouter tomates, paprika, le poulet et 40 cl d’eau, mijoter 15 min.','Verser le riz, couvrir et cuire 15 min.'] },
+  { id:'katsu', photo:MEAL_IMG + 'vwrpps1503068729.jpg', user:'@wok.and.roll', kind:'curry', course:'plat', title:'Katsu curry au poulet pané', caption:'La sauce curry japonaise douce, et le poulet pané qui croustille dedans.', tags:'#japon #réconfort #pané', likes:24800, time:'35 min', min:35, level:'Moyen', servings:2, unit:'pers.',
+    tint:'#ecc56a', veg:false, tools:['plaque'], taste:['asiat'], nut:{ kcal:780, p:46, g:84, l:27 },
+    bg:[], plate:'#2b2925', food:['#d9a03a','#f3ead2','#e9a23b','#4f8a3a'], seed:271,
+    ing:[{n:'Blanc de poulet',q:2,u:'',p:3.6},{n:'Chapelure',q:80,u:'g',p:.4},{n:'Œufs',q:1,u:'',p:.3},{n:'Carotte',q:1,u:'',p:.2},{n:'Oignon',q:1,u:'',p:.3},{n:'Curry en poudre',q:2,u:'c. à c.',p:.3},{n:'Miel',q:1,u:'c. à c.',p:.1},{n:'Riz basmati',q:150,u:'g',p:.5}],
+    steps:['Lancer la cuisson du riz.','Faire revenir oignon et carotte, ajouter le curry, le miel et 40 cl d’eau, mijoter 15 min puis mixer.','Paner le poulet (œuf puis chapelure) et le dorer 4 min de chaque côté.','Trancher le poulet, servir sur le riz nappé de sauce.'] },
+  { id:'lomein', photo:MEAL_IMG + '1529444830.jpg', user:'@nouilles.minuit', stu:true, kind:'fried', course:'plat', title:'Nouilles sautées au bœuf', caption:'Le plat de la cantine chinoise, en mieux et pour moins cher.', tags:'#nouilles #asiatique #rapide', likes:21900, time:'20 min', min:20, level:'Facile', servings:2, unit:'pers.',
+    tint:'#e6c58a', veg:false, tools:['plaque'], taste:['asiat'], nut:{ kcal:640, p:34, g:70, l:22 },
+    bg:[], plate:'#2b2b30', food:['#c98a3a','#8a4a2a','#6fae3e','#e9c27a'], seed:277,
+    ing:[{n:'Nouilles',q:200,u:'g',p:1},{n:'Bœuf (rumsteck)',q:200,u:'g',p:4},{n:'Champignons',q:150,u:'g',p:1.1},{n:'Oignon',q:1,u:'',p:.3},{n:'Ail',q:1,u:'gousses',p:.15},{n:'Gingembre frais',q:10,u:'g',p:.2},{n:'Sauce soja',q:3,u:'c. à s.',p:.4}],
+    steps:['Cuire les nouilles selon le paquet, les égoutter.','Saisir le bœuf en lanières 2 min, le réserver.','Sauter oignon, ail, gingembre et champignons 4 min.','Ajouter nouilles, bœuf et sauce soja, sauter 2 min.'] },
+  { id:'parmentier', photo:MEAL_IMG + 'uwvxpv1511557015.jpg', user:'@mamie.dimanche', kind:'pan', course:'plat', title:'Parmentier de poulet gratiné', caption:'Purée maison, poulet mijoté à la tomate, fromage gratiné. Quatre portions pour la semaine.', tags:'#four #batchcooking #réconfort', likes:16300, time:'60 min', min:60, level:'Moyen', servings:4, unit:'pers.',
+    tint:'#f0d7a0', veg:false, tools:['four','plaque'], taste:['fromage','mijote'], nut:{ kcal:620, p:38, g:52, l:27 },
+    bg:[], plate:'#e9e2d6', food:['#efc96a','#f6ead0','#a8341f'], seed:281,
+    ing:[{n:'Pommes de terre',q:1000,u:'g',p:2},{n:'Blanc de poulet',q:500,u:'g',p:6},{n:'Tomates concassées',q:400,u:'g',p:1.1},{n:'Carotte',q:2,u:'',p:.4},{n:'Oignon',q:1,u:'',p:.3},{n:'Beurre',q:30,u:'g',p:.35},{n:'Lait',q:150,u:'ml',p:.15},{n:'Emmental râpé',q:60,u:'g',p:.7}],
+    steps:['Cuire les pommes de terre 20 min, les écraser avec le beurre et le lait.','Faire revenir oignon et carottes, ajouter le poulet en dés et les tomates, mijoter 15 min.','Verser dans un plat, couvrir de purée et de fromage.','Gratiner 20 min à 200 °C.'] },
+  { id:'olivier', photo:MEAL_IMG + 'ebvuir1699013665.jpg', user:'@soupe.du.soir', kind:'bowl', course:'plat', title:'Salade russe (salade Olivier)', caption:'Pommes de terre, carottes, petits pois, œufs et mayo : la salade des fêtes, toute l’année.', tags:'#salade #petitbudget #mealprep', likes:7200, time:'30 min', min:30, level:'Facile', servings:4, unit:'pers.',
+    tint:'#e9e2b0', veg:true, tools:['plaque'], taste:['frais'], nut:{ kcal:430, p:13, g:34, l:27 },
+    bg:[], plate:'#2f3a33', food:['#efe2a0','#e8833a','#6fae3e','#f6efe0'], seed:283,
+    ing:[{n:'Pommes de terre',q:4,u:'',p:.8},{n:'Carotte',q:3,u:'',p:.6},{n:'Petits pois surgelés',q:150,u:'g',p:.5},{n:'Œufs',q:4,u:'',p:1.2},{n:'Mayonnaise',q:4,u:'c. à s.',p:.5},{n:'Cornichons',q:4,u:'',p:.4}],
+    steps:['Cuire pommes de terre et carottes en dés 12 min, ajouter les petits pois 3 min.','Cuire les œufs 9 min, les écaler.','Couper œufs et cornichons, mélanger avec les légumes refroidis.','Lier avec la mayonnaise, saler et poivrer.'] },
+  { id:'pastasalad', photo:MEAL_IMG + 'wvqpwt1468339226.jpg', user:'@lunchbox.fac', stu:true, kind:'pasta', course:'plat', title:'Salade de pâtes thon, mozza et tomates', caption:'La lunchbox qui tient jusqu’à jeudi. Le basilic frais fait toute la différence.', tags:'#mealprep #lunchbox #frais', likes:19400, time:'20 min', min:20, level:'Très facile', servings:4, unit:'pers.',
+    tint:'#d9e0a8', veg:false, tools:['plaque'], taste:['frais','italien'], nut:{ kcal:560, p:29, g:66, l:19 },
+    bg:[], plate:'#f1ebe0', food:['#e8c167','#c8402a','#f6efe0'], seed:293,
+    ing:[{n:'Pâtes (farfalle)',q:350,u:'g',p:.8},{n:'Thon au naturel (boîte)',q:200,u:'g',p:2.2},{n:'Mozzarella',q:125,u:'g',p:1.1},{n:'Tomates cerises',q:250,u:'g',p:1.6},{n:'Basilic',q:1,u:'botte',p:.9},{n:'Huile d’olive',q:3,u:'c. à s.',p:.4}],
+    steps:['Cuire les pâtes, les rincer à l’eau froide.','Couper tomates et mozzarella, émietter le thon.','Mélanger le tout avec l’huile et le basilic, saler, poivrer.'] },
+  { id:'couscous', photo:MEAL_IMG + 'qxytrx1511304021.jpg', user:'@coach.marmite', kind:'bowl', course:'plat', title:'Couscous poulet harissa et pois chiches', caption:'Un bol complet et protéiné, prêt en 20 minutes sans couscoussier.', tags:'#protéiné #épicé #rapide', likes:12800, time:'20 min', min:20, level:'Facile', servings:2, unit:'pers.',
+    tint:'#ecc98a', veg:false, tools:['plaque'], taste:['epice'], nut:{ kcal:620, p:42, g:78, l:14 },
+    bg:[], plate:'#2a2724', food:['#d9a35a','#e8c27a','#c26a1a','#4f8a3a'], seed:307,
+    ing:[{n:'Semoule',q:200,u:'g',p:.6},{n:'Blanc de poulet',q:250,u:'g',p:3.5},{n:'Pois chiches (boîte)',q:1,u:'',p:.9},{n:'Harissa',q:2,u:'c. à c.',p:.3},{n:'Oignon',q:1,u:'',p:.3},{n:'Coriandre fraîche',q:1,u:'botte',p:1}],
+    steps:['Faire revenir l’oignon et le poulet en dés 6 min.','Ajouter harissa et pois chiches, cuire 3 min.','Verser 20 cl d’eau bouillante sur la semoule, couvrir 5 min.','Servir la semoule garnie, parsemer de coriandre.'] },
+  { id:'szechuan', photo:MEAL_IMG + '1529443236.jpg', user:'@piment.club', kind:'fried', course:'plat', title:'Bœuf sauté du Sichuan aux légumes', caption:'Ça pique, ça croque, et c’est prêt avant que le riz cuise.', tags:'#épicé #wok #protéiné', likes:15100, time:'20 min', min:20, level:'Facile', servings:2, unit:'pers.',
+    tint:'#e9a07a', veg:false, tools:['plaque'], taste:['epice','asiat'], nut:{ kcal:560, p:38, g:52, l:20 },
+    bg:[], plate:'#2b2b30', food:['#a8441f','#e8833a','#5ea34a','#c98a3a'], seed:311,
+    ing:[{n:'Bœuf (rumsteck)',q:250,u:'g',p:5},{n:'Poivron vert',q:1,u:'',p:.8},{n:'Carotte',q:1,u:'',p:.2},{n:'Champignons',q:100,u:'g',p:.7},{n:'Sauce soja',q:2,u:'c. à s.',p:.3},{n:'Piment en poudre',q:1,u:'c. à c.',p:.1},{n:'Gingembre frais',q:10,u:'g',p:.2},{n:'Riz basmati',q:150,u:'g',p:.5}],
+    steps:['Lancer la cuisson du riz.','Saisir le bœuf en lanières 2 min à feu très vif, le réserver.','Sauter les légumes émincés 4 min avec le gingembre et le piment.','Remettre le bœuf avec la sauce soja, servir sur le riz.'] },
+  { id:'quinoa', photo:MEAL_IMG + 'k29viq1585565980.jpg', user:'@coach.marmite', kind:'bowl', course:'plat', title:'Salade grecque quinoa, poulet et feta', caption:'Le repas post-séance : protéines, légumes et un bon goût de citron.', tags:'#protéiné #healthy #sport', likes:20700, time:'25 min', min:25, level:'Facile', servings:2, unit:'pers.',
+    tint:'#d4e2b0', veg:false, tools:['plaque'], taste:['frais'], nut:{ kcal:590, p:49, g:44, l:24 },
+    bg:[], plate:'#24302a', food:['#e8d7a6','#6fae3e','#f6f1e2','#5a2a3a'], seed:313,
+    ing:[{n:'Quinoa',q:150,u:'g',p:1.2},{n:'Blanc de poulet',q:300,u:'g',p:4.2},{n:'Feta',q:80,u:'g',p:1.1},{n:'Olives noires',q:40,u:'g',p:.6},{n:'Oignon rouge',q:1,u:'',p:.35},{n:'Citron',q:1,u:'',p:.4},{n:'Huile d’olive',q:2,u:'c. à s.',p:.3}],
+    steps:['Cuire le quinoa 12 min, l’égoutter.','Griller le poulet 6 min de chaque côté, le trancher.','Mélanger quinoa, olives, oignon émincé et feta.','Ajouter le poulet, arroser de citron et d’huile.'] },
+  { id:'bourguignon', photo:MEAL_IMG + 'vtqxtu1511784197.jpg', user:'@mamie.dimanche', kind:'curry', course:'plat', title:'Bœuf bourguignon du dimanche', caption:'Trois heures à feu doux, quatre repas réglés. Encore meilleur réchauffé.', tags:'#mijoté #batchcooking #tradition', likes:22400, time:'3 h', min:180, level:'Moyen', servings:4, unit:'pers.',
+    tint:'#d9a08a', veg:false, tools:['plaque'], taste:['mijote'], nut:{ kcal:640, p:48, g:16, l:32 },
+    bg:[], plate:'#2b2925', food:['#6e2418','#c98a5a','#8a3a2a','#4f8a3a'], seed:317,
+    ing:[{n:'Bœuf à braiser',q:800,u:'g',p:12},{n:'Lardons',q:100,u:'g',p:1.2},{n:'Champignons',q:250,u:'g',p:1.8},{n:'Carotte',q:3,u:'',p:.6},{n:'Oignon',q:2,u:'',p:.6},{n:'Vin rouge',q:750,u:'ml',p:4},{n:'Farine',q:1,u:'c. à s.',p:.05}],
+    steps:['Dorer le bœuf en morceaux avec les lardons, saupoudrer de farine.','Ajouter oignons et carottes, verser le vin.','Mijoter 2 h 30 à couvert, à feu très doux.','Ajouter les champignons 20 min avant la fin.'] }
+);
+(function () {
+  const before = (key, rows) => { const i = PANTRY.findIndex(r => r[1] === key); PANTRY.splice(i < 0 ? PANTRY.length : i, 0, ...rows); };
+  before('pates', [['placard','quinoa','Quinoa',/quinoa/], ['placard','chapelure','Chapelure',/chapelure/]]);
+  before('vinaigre', [['placard','olives','Olives',/\bolives (noires|vertes)\b|^olives\b/], ['placard','mayo','Mayonnaise, moutarde',/mayonnaise|moutarde|cornichon/], ['placard','vin','Vin',/\bvin\b/]]);
+  const ep = PANTRY.find(r => r[1] === 'epices'); ep[3] = /cumin|paprika|curry|poivre noir|piment|epice|origan|cannelle|muscade|harissa/;
+})();
+
+/* ---------- vraies photos d'ingrédients (TheMealDB) ---------- */
+const ING_IMG = 'https://www.themealdb.com/images/ingredients/';
+const ING_NAME = [
+  [/parmesan/, 'Parmesan'], [/pecorino/, 'Pecorino'], [/mozzarella/, 'Mozzarella'], [/feta/, 'Feta'], [/fromage frais/, 'Cream Cheese'], [/emmental|fromage rape/, 'Cheddar Cheese'],
+  [/jambon/, 'Ham'], [/lardon|guanciale|pancetta/, 'Bacon'], [/hauts? de cuisse|blanc de poulet|poulet/, 'Chicken Breast'], [/viande hachee/, 'Minced Beef'], [/boeuf/, 'Beef'],
+  [/tomates? concassee|coulis/, 'Chopped Tomatoes'], [/tomates? cerise/, 'Cherry Tomatoes'], [/tomate/, 'Tomatoes'], [/poivron vert/, 'Green Pepper'], [/poivron/, 'Red Pepper'],
+  [/oignon nouveau/, 'Spring Onions'], [/oignon rouge/, 'Red Onions'], [/oignon/, 'Onion'], [/\bail\b/, 'Garlic'], [/gingembre/, 'Ginger'], [/coriandre/, 'Coriander'], [/basilic/, 'Basil'],
+  [/riz basmati/, 'Basmati Rice'], [/\briz\b/, 'Rice'], [/spaghetti/, 'Spaghetti'], [/farfalle|\bpates\b/, 'Farfalle'], [/nouilles de riz/, 'Rice Noodles'], [/nouille|ramen/, 'Udon Noodles'],
+  [/pois chiche/, 'Chickpeas'], [/haricots? rouge/, 'Kidney Beans'], [/\bmais\b/, 'Sweetcorn'], [/lentille/, 'Lentils'], [/semoule/, 'Couscous'], [/quinoa/, 'Quinoa'],
+  [/lait de coco/, 'Coconut Milk'], [/creme/, 'Double Cream'], [/beurre de cacahuete/, 'Peanut Butter'], [/beurre/, 'Butter'], [/skyr|yaourt/, 'Greek Yogurt'], [/\blait\b/, 'Milk'], [/oeuf/, 'Eggs'],
+  [/saumon/, 'Salmon'], [/thon/, 'Tuna'], [/crevette/, 'Prawns'], [/avocat/, 'Avocado'], [/banane/, 'Banana'], [/citron/, 'Lemon'], [/pomme de terre|pommes de terre/, 'Potatoes'], [/patate douce/, 'Sweet Potatoes'], [/\bpommes?\b/, 'Apples'],
+  [/epinard/, 'Spinach'], [/brocoli/, 'Broccoli'], [/salade/, 'Lettuce'], [/courgette/, 'Courgettes'], [/champignon/, 'Mushrooms'], [/carotte/, 'Carrots'], [/petits pois/, 'Frozen Peas'], [/fruits rouges/, 'Raspberries'],
+  [/tortilla/, 'Tortillas'], [/avoine/, 'Oats'], [/farine/, 'Plain Flour'], [/sucre roux/, 'Brown Sugar'], [/sucre/, 'Sugar'], [/levure/, 'Baking Powder'], [/chocolat/, 'Dark Chocolate'],
+  [/sauce soja/, 'Soy Sauce'], [/sesame/, 'Sesame Seed'], [/huile d olive/, 'Olive Oil'], [/huile/, 'Vegetable Oil'], [/miel/, 'Honey'], [/sirop d erable/, 'Maple Syrup'], [/cacahuete/, 'Peanuts'],
+  [/cumin/, 'Cumin'], [/paprika/, 'Paprika'], [/curry/, 'Curry Powder'], [/piment/, 'Chilli Powder'], [/poivre/, 'Black Pepper'], [/cannelle/, 'Cinnamon'], [/muscade/, 'Nutmeg'], [/origan/, 'Oregano'],
+  [/sel\b|fleur de sel/, 'Salt'], [/pain|pita/, 'Bread'], [/bouillon/, 'Vegetable Stock Cube'], [/chapelure/, 'Breadcrumbs'], [/olive/, 'Black Olives'], [/mayonnaise/, 'Mayonnaise'], [/moutarde/, 'Mustard'],
+  [/vin rouge/, 'Red Wine'], [/fecule/, 'Corn Flour'], [/vinaigre/, 'White Wine Vinegar']
+];
+function ingEn(name) { const n = nrm(name); const hit = ING_NAME.find(([re]) => re.test(n)); return hit ? hit[1] : null; }
+function ingImg(name, cls = 'ii') {
+  const en = ingEn(name);
+  const ini = esc(String(name).replace(/^[^A-Za-zÀ-ÿŒœ]+/, '').charAt(0).toUpperCase() || '·');
+  if (!en) return `<span class="${cls} noimg" aria-hidden="true">${ini}</span>`;
+  const slug = en.toLowerCase().replace(/ /g, '_');
+  return `<span class="${cls}" aria-hidden="true" data-ini="${ini}"><img src="${ING_IMG + slug}.png/small" data-alt="${ING_IMG + encodeURIComponent(en)}-Small.png" alt="" loading="lazy" decoding="async"></span>`;
+}
+/* image qui ne charge pas : on essaie l'ancienne adresse, puis l'initiale (ingrédients) ou le dessin (plats) */
+document.addEventListener('error', (e) => {
+  const img = e.target; if (!(img instanceof HTMLImageElement)) return;
+  if (img.dataset.alt) { const a = img.dataset.alt; delete img.dataset.alt; img.src = a; return; }
+  const box = img.parentElement;
+  if (box && box.dataset.ini !== undefined) { box.classList.add('noimg'); box.textContent = box.dataset.ini; return; }
+  if (img.classList.contains('vid')) { const post = img.closest('.post'); img.remove(); if (post) post.classList.remove('has-photo'); }
+}, true);
+
 function rng(seed) { let s = seed * 9301 + 49297; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; }
 function shade(hex, amt) {
   const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
@@ -1594,17 +1748,17 @@ const ICON = {
 function postHTML(p) {
   const media = p.media
     ? (p.media.type === 'video' ? `<video src="${p.media.url}" muted loop playsinline></video>` : `<img src="${p.media.url}" alt="${esc(p.title)}">`)
-    : `<canvas aria-label="${esc(p.title)}" role="img"></canvas>`;
+    : `<canvas aria-label="${esc(p.title)}" role="img"></canvas>${p.photo ? `<img class="vid" src="${esc(p.photo)}" alt="${esc(p.title)}" decoding="async"><div class="subs" aria-hidden="true"></div><span class="snd" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9l5 6M21 9l-5 6"/></svg></span>` : ''}`;
   const ps = perServ(p), cx = cxOf(p), L = liked.has(p.id);
   const unitTxt = p.unit === 'pers.' ? 'pers.' : esc(p.unit);
   const ingRows = p.ing.map((it, k) => `
       <li><label><input type="checkbox" data-k="${k}"><span class="box"></span>
-        <span class="ln"><span class="nm">${esc(it.n)}</span><span class="dots"></span><span class="qty" data-q="${k}"></span></span>
+        <span class="ln">${ingImg(it.n)}<span class="nm">${esc(it.n)}</span><span class="dots"></span><span class="qty" data-q="${k}"></span></span>
         <span class="pr" data-p="${k}"></span></label></li>`).join('');
   const adLine = p.ad ? `<p class="adline">Partenariat rémunéré avec <b>${esc(p.ad.brand)}</b>${p.ad.fictive ? ' (marque fictive)' : ''}</p>` : '';
   const nutKey = p.nut && p.nut.kcal ? `<div><b>${p.nut.kcal}</b><span>kcal / portion</span></div><div><b>${p.nut.p} g</b><span>protéines</span></div>` : '';
   return `
-  <article class="post${p.ad ? ' is-ad' : ''}" data-id="${p.id}" style="--tint:${p.tint}">
+  <article class="post${p.ad ? ' is-ad' : ''}${p.photo && !p.media ? ' has-photo' : ''}" data-id="${p.id}" style="--tint:${p.tint}">
     <div class="plate"><div class="track">
       <section class="pane media" aria-label="Vidéo du plat">
         ${media}
@@ -1784,7 +1938,9 @@ function loop(t) {
     if (c && !reduceMotion) drawDish(c, cook.p, t + cook.i * 5000);
   } else if (active && current === 'fil') {
     const p = byId[active.dataset.id], c = $('.media canvas', active), bar = $('.progress i', active), v = $('.media video', active);
-    if (c && !reduceMotion) drawDish(c, p, t);
+    const photo = active.classList.contains('has-photo');
+    if (c && !reduceMotion && !photo) drawDish(c, p, t);
+    if (photo) { const sb = $('.subs', active), k = Math.floor(t / 3200) % (p.steps.length + 1); if (sb && sb.dataset.k != k) { sb.dataset.k = k; sb.textContent = k === 0 ? p.title : `${k}. ${p.steps[k - 1]}`; } }
     if (bar) bar.style.width = (v && v.duration ? v.currentTime / v.duration : (c ? (t % DUR) / DUR : 0)) * 100 + '%';
   }
   requestAnimationFrame(loop);
@@ -1891,7 +2047,7 @@ function closeModal() {
 function mhead(eyebrow, title) { return `<div class="grab"></div><div class="panel-head"><div class="ph-t"><p class="eyebrow-s">${eyebrow}</p><h2>${esc(title)}</h2></div><button class="x" data-close aria-label="Fermer">×</button></div>`; }
 function renderModal() {
   if (!mctx) return;
-  mpanel.innerHTML = ({ rate: mRate, plan: mPlanFor, slot: mSlot, pick: mPick, premium: mPremium, checkout: mCheckout, gcal: mGcal })[mctx.type]();
+  mpanel.innerHTML = ({ rate: mRate, plan: mPlanFor, slot: mSlot, pick: mPick, premium: mPremium, checkout: mCheckout, gcal: mGcal, gsim: mGsim })[mctx.type]();
 }
 modal.addEventListener('click', (e) => {
   if (e.target === modal || e.target.closest('[data-close]')) { closeModal(); return; }
@@ -2077,7 +2233,7 @@ function mSlot() {
     ${e.rest ? '<p class="fr-note">Deuxième portion du plat cuisiné la veille au soir : rien à acheter, rien à cuisiner.</p>' : `
     <div class="serv-row"><span>Portions</span><span class="stepper"><button data-sl="minus" aria-label="Moins">−</button><output>${e.serv}</output><button data-sl="plus" aria-label="Plus">+</button></span><span class="u">${esc(p.unit)}</span></div>
     <p class="hint">Coche ce que tu as déjà. Le reste part au panier.</p>
-    <ul class="ing">${p.ing.map((it, k) => `<li><label><input type="checkbox" data-sk="${k}" ${h.has(k) ? 'checked' : ''}><span class="box"></span><span class="ln"><span class="nm">${esc(it.n)}</span><span class="dots"></span><span class="qty">${esc(qtxt(scaleQ(it.q, it.u, f), it.u))}</span></span><span class="pr">${it.p ? eur.format(it.p * f) : 'placard'}</span></label></li>`).join('')}</ul>
+    <ul class="ing">${p.ing.map((it, k) => `<li><label><input type="checkbox" data-sk="${k}" ${h.has(k) ? 'checked' : ''}><span class="box"></span><span class="ln">${ingImg(it.n)}<span class="nm">${esc(it.n)}</span><span class="dots"></span><span class="qty">${esc(qtxt(scaleQ(it.q, it.u, f), it.u))}</span></span><span class="pr">${it.p ? eur.format(it.p * f) : 'placard'}</span></label></li>`).join('')}</ul>
     <div class="field"><label for="slot-note">Il me manque aussi</label><input type="text" id="slot-note" placeholder="Ex. : citron, crème, pain" value="${esc(e.note || '')}"><small>Sépare par des virgules. Ces articles partent aussi au panier.</small></div>`}
     <div class="slot-acts">${acts}</div>
     <div class="slot-acts sec">
@@ -2188,7 +2344,7 @@ function renderCook(first = false) {
     body.innerHTML = `<div class="clip">${clipMedia(p)}<span class="lbl">Séquence ${i + 1}</span></div>
       <p class="step-no">Étape ${i + 1}</p>
       <p class="step-txt">${esc(step)}</p>
-      ${need.length ? `<div class="need">${need.map(it => `<span class="chip">${esc(it.n)} <b>${esc(qtxt(scaleQ(it.q, it.u, f), it.u))}</b></span>`).join('')}</div>` : ''}
+      ${need.length ? `<div class="need">${need.map(it => `<span class="chip">${ingImg(it.n, 'ii sm')}${esc(it.n)} <b>${esc(qtxt(scaleQ(it.q, it.u, f), it.u))}</b></span>`).join('')}</div>` : ''}
       ${min ? `<button class="timer-go" data-min="${min}">${ICON.clock} Lancer un minuteur de ${min} min</button>` : ''}`;
     const c = $('canvas', body); if (c) { sizeCanvas(c); drawDish(c, p, i * 5000); }
     const v = $('video', body); if (v) v.play().catch(() => {});
@@ -2433,7 +2589,7 @@ function renderCart() {
     </section>
     ${Object.entries(groups).map(([g, items]) => `
     <div class="group"><h3>${esc(g)}</h3>${items.map(([c, i]) => `
-      <div class="row"><div class="n">${esc(c.n)}<small>${c.q != null ? esc(qtxt(Math.round(c.q * 10) / 10, c.u)) : 'à ajuster'} · ${c.price ? '≈ ' + eur.format(priceAt(c, shop)) + ' chez ' + SHOPS[shop].n : 'prix à voir'}</small></div>
+      <div class="row"><div class="n with-img">${ingImg(c.n)}<span class="nt">${esc(c.n)}<small>${c.q != null ? esc(qtxt(Math.round(c.q * 10) / 10, c.u)) : 'à ajuster'} · ${c.price ? '≈ ' + eur.format(priceAt(c, shop)) + ' chez ' + SHOPS[shop].n : 'prix à voir'}</small></span></div>
         <a href="${shopUrl(c.n)}" target="_blank" rel="noopener">Trouver ↗</a>
         <button class="rm" data-rm="${i}" aria-label="Retirer ${esc(c.n)}">×</button></div>`).join('')}</div>`).join('')}
     <div class="total"><span>Total estimé chez ${SHOPS[shop].n} · ${cart.length} article${cart.length > 1 ? 's' : ''}</span><span>${eur.format(total)}</span></div>
@@ -2506,12 +2662,12 @@ function renderFridgeNote() {
     `${n} ingrédient${n > 1 ? 's' : ''} et ${fridge.tools.length} appareil${fridge.tools.length > 1 ? 's' : ''}. <b>${ok} recette${ok > 1 ? 's' : ''}</b> faisable${ok > 1 ? 's' : ''} avec 2 courses ou moins.`;
 }
 function renderFridge() {
-  const tg = (on, attr, label, cls = '') => `<button class="tg ${cls}" ${attr} aria-pressed="${on}">${esc(label)}</button>`;
+  const tg = (on, attr, label, cls = '', img = '') => `<button class="tg ${cls}${img ? ' wimg' : ''}" ${attr} aria-pressed="${on}">${img}${esc(label)}</button>`;
   const sec = (title, html) => `<div class="fr-sec"><h3>${title}</h3><div class="fr-grid">${html}</div></div>`;
   $('#fridge-body').innerHTML = `<div class="stack">` +
     sec('Appareils', TOOLS.map(([k, l]) => tg(fridge.tools.includes(k), `data-tool-t="${k}"`, l)).join('')) +
-    sec('Au frais', PANTRY.filter(r => r[0] === 'frais').map(r => tg(fridge.items.includes(r[1]), `data-item="${r[1]}"`, r[2])).join('')) +
-    sec('Au placard', PANTRY.filter(r => r[0] === 'placard').map(r => tg(fridge.items.includes(r[1]), `data-item="${r[1]}"`, r[2])).join('')) +
+    sec('Au frais', PANTRY.filter(r => r[0] === 'frais').map(r => tg(fridge.items.includes(r[1]), `data-item="${r[1]}"`, r[2], '', ingImg(r[2], 'ii xs'))).join('')) +
+    sec('Au placard', PANTRY.filter(r => r[0] === 'placard').map(r => tg(fridge.items.includes(r[1]), `data-item="${r[1]}"`, r[2], '', ingImg(r[2], 'ii xs'))).join('')) +
     (fridge.custom.length ? sec('Ajoutés par toi', fridge.custom.map((c, i) => tg(true, `data-custom="${i}"`, c, 'custom')).join('')) : '') + `</div>`;
   renderFridgeNote();
 }
@@ -2716,6 +2872,9 @@ $('#onb-skip').onclick = () => closeOnb(false);
    ===================================================================== */
 const LOCK = '<svg class="lock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>';
 const PRICE_EUR = 5, TRIAL_DAYS = 7, FREE_IMPORTS = 3;
+/* Connexion Google réelle : colle ici l'identifiant client OAuth (Google Cloud Console → Identifiants → ID client OAuth « Application Web »,
+   origine JavaScript autorisée : https://antoninmichelq.github.io). Vide = mode simulation. */
+const GOOGLE_CLIENT_ID = '';
 const DAY = 86400000;
 
 /* ---------- base de données (IndexedDB, dans le navigateur) ----------
@@ -2765,7 +2924,7 @@ async function hashPw(pw, salt) {
     return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
   } catch { let h = 0; for (const c of salt + pw) h = (h * 31 + c.charCodeAt(0)) | 0; return 'faible-' + (h >>> 0).toString(16); }
 }
-const publicUser = (u) => ({ id: u.id, pseudo: u.pseudo, email: u.email, created: u.created, sub: u.sub || null });
+const publicUser = (u) => ({ id: u.id, pseudo: u.pseudo, email: u.email, created: u.created, sub: u.sub || null, provider: u.provider || 'password' });
 
 /* données de l'appli : toutes les clés tt2.* sauf la session */
 const LOCAL_ONLY = new Set(['session', 'me']);
@@ -2920,6 +3079,11 @@ function modalExtra(e) {
     openModal('checkout', { kind: sub.dataset.sub, step: '' }); return true;
   }
   if (t.closest('[data-pay]')) { doPay(); return true; }
+  if (t.closest('[data-gsim-go]')) {
+    const email = ($('#gs-email').value || '').trim(), name = ($('#gs-name').value || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { const er = $('#gs-err'); er.textContent = 'Adresse e-mail invalide.'; er.hidden = false; return true; }
+    googleLogin({ email, name, sub: 'sim-' + rid(''), picture: '' }); return true;
+  }
   if (t.closest('[data-go-acct]')) { closeModal(); go('compte'); return true; }
   const ic = t.closest('[data-ics]');
   if (ic) {
@@ -2946,6 +3110,8 @@ function renderAccount() {
     body.innerHTML = `
     <section class="card">
       ${pendingSub ? `<p class="stline warn">Crée ton compte, puis tu passeras au paiement ${pendingSub === 'trial' ? 'de l’essai gratuit' : 'de Premium'}.</p>` : ''}
+      <div class="gwrap"><div id="g-real"></div><button class="btn gbtn" id="g-sim" type="button"><span class="gmark" aria-hidden="true">G</span>Continuer avec Google</button></div>
+      <div class="or"><span>ou avec ton e-mail</span></div>
       <div class="tabs" role="tablist"><button role="tab" data-at="signup" aria-selected="${acctTab === 'signup'}">Créer un compte</button><button role="tab" data-at="login" aria-selected="${acctTab === 'login'}">Se connecter</button></div>
       <form id="auth-form" class="stack" novalidate>
         ${acctTab === 'signup' ? '<div class="field"><label for="a-pseudo">Pseudo</label><input type="text" id="a-pseudo" autocomplete="nickname" maxlength="24" placeholder="Ex. lucas.cuisine"></div>' : ''}
@@ -2957,14 +3123,14 @@ function renderAccount() {
       <p class="legal">${acctTab === 'signup' ? 'Ton fil, tes notes, ton planning et ton frigo actuels seront rattachés à ce compte.' : 'Tes données (notes, planning, frigo, santé) seront rechargées depuis la base.'} Les comptes sont stockés dans la base de données de ce navigateur (IndexedDB).</p>
     </section>
     ${dbViewHTML()}`;
-    loadDbView(); return;
+    loadDbView(); initGoogle(); return;
   }
   const s = me.sub, prem = isPremium();
   const status = !s || !prem ? 'Gratuit' : s.status === 'trial' ? 'Premium · essai gratuit' : s.status === 'canceled' ? 'Premium · résilié' : 'Premium · actif';
   body.innerHTML = `
   <section class="card profile">
     <span class="big-av${prem ? ' prem' : ''}">${esc(me.pseudo.charAt(0).toUpperCase())}</span>
-    <div class="pf"><b>${esc(me.pseudo)}</b><span>${esc(me.email)}</span><small>Membre depuis le ${fmtLong.format(new Date(me.created))}</small></div>
+    <div class="pf"><b>${esc(me.pseudo)}</b><span>${esc(me.email)}</span>${me.provider === 'google' ? '<small>Connecté avec Google</small>' : ''}<small>Membre depuis le ${fmtLong.format(new Date(me.created))}</small></div>
     <button class="btn" id="logout">Se déconnecter</button>
   </section>
   <section class="card">
@@ -2999,13 +3165,14 @@ async function loadDbView() {
     const [users, pays, data] = await Promise.all([DB.all('users'), DB.all('payments'), DB.all('userdata')]);
     const t = (title, head, rows) => `<h4 class="sub">${title} <small>${rows.length} ligne${rows.length > 1 ? 's' : ''}</small></h4>${rows.length ? `<div class="tbl"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : '<p class="empty">Vide.</p>'}`;
     el.innerHTML =
-      t('users', ['id', 'email', 'pseudo', 'mot de passe (haché)', 'abonnement'], users.map(u => [esc(u.id), esc(u.email), esc(u.pseudo), `<code>${esc(u.hash.slice(0, 12))}…</code>`, esc(u.sub ? u.sub.status + ' → ' + fmtD.format(new Date(u.sub.until)) : 'gratuit')])) +
+      t('users', ['id', 'email', 'pseudo', 'connexion', 'mot de passe (haché)', 'abonnement'], users.map(u => [esc(u.id), esc(u.email), esc(u.pseudo), u.provider === 'google' ? 'Google' + (u.hash ? ' + e-mail' : '') : 'e-mail', u.hash ? `<code>${esc(u.hash.slice(0, 12))}…</code>` : '—', esc(u.sub ? u.sub.status + ' → ' + fmtD.format(new Date(u.sub.until)) : 'gratuit')])) +
       t('payments', ['id', 'uid', 'date', 'montant', 'statut'], pays.map(x => [esc(x.id), esc(x.uid), fmtD.format(new Date(x.date)), eur.format(x.amount), esc(x.status)])) +
       t('userdata', ['uid', 'clés', 'taille', 'synchronisé'], data.map(d => [esc(d.uid), Object.keys(d.data || {}).length, Math.round(JSON.stringify(d.data || {}).length / 102.4) / 10 + ' Ko', new Date(d.at).toLocaleTimeString('fr-FR')])) +
       '<p class="legal">Base IndexedDB « tastetok-db » de ce navigateur. En production, ces trois tables vivraient sur un serveur, et les mots de passe seraient hachés avec bcrypt ou argon2.</p>';
   } catch { el.innerHTML = '<p class="empty">Base de données indisponible dans ce navigateur.</p>'; }
 }
 $('#acct-body').addEventListener('click', async (e) => {
+  if (e.target.closest('#g-sim')) { openModal('gsim', {}); return; }
   const at = e.target.closest('[data-at]'); if (at) { acctTab = at.dataset.at; renderAccount(); return; }
   if (e.target.closest('#logout')) { await syncUser(); setMe(null); clearLocalData(true); toast('Déconnecté'); reloadApp(); return; }
   if (e.target.closest('#sub-cancel')) { const s = { ...me.sub, status: 'canceled' }; await saveUser({ sub: s }); premiumChanged(); toast('Abonnement résilié, actif jusqu’à la fin de la période'); return; }
@@ -3041,14 +3208,65 @@ $('#acct-body').addEventListener('submit', async (e) => {
       if (pendingSub) { const k = pendingSub; pendingSub = null; openModal('checkout', { kind: k, step: '' }); }
     } else {
       const u = await DB.byEmail(email);
+      if (u && !u.hash) return err('Ce compte utilise Google : touche « Continuer avec Google ».');
       if (!u || (await hashPw(pw, u.salt)) !== u.hash) return err('E-mail ou mot de passe incorrect.');
-      const ud = await DB.get('userdata', u.id);
-      clearLocalData(false);
-      try { Object.entries((ud && ud.data) || { onboarded: 'true' }).forEach(([k, v]) => localStorage.setItem('tt2.' + k, v)); localStorage.setItem('tt2.onboarded', 'true'); } catch {}
-      setMe(u); toast('Connecté'); reloadApp();
+      await loginExisting(u);
     }
   } catch { err('Base de données indisponible dans ce navigateur.'); }
 });
+async function loginExisting(u) {
+  const ud = await DB.get('userdata', u.id);
+  clearLocalData(false);
+  try { Object.entries((ud && ud.data) || { onboarded: 'true' }).forEach(([k, v]) => localStorage.setItem('tt2.' + k, v)); localStorage.setItem('tt2.onboarded', 'true'); } catch {}
+  setMe(u); toast('Connecté'); reloadApp();
+}
+
+/* ---------- connexion avec Google ----------
+   Avec GOOGLE_CLIENT_ID (site en ligne) : vrai bouton Google Identity Services. Sinon : simulation sans aucun échange avec Google.
+   En production, le jeton reçu doit être vérifié par le serveur avant de créer la session. */
+let gisState = 'idle';
+function initGoogle() {
+  const real = $('#g-real'), sim = $('#g-sim'); if (!real || !sim) return;
+  if (!GOOGLE_CLIENT_ID || !/^https?:$/.test(location.protocol)) return;
+  const render = () => {
+    try {
+      google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: (r) => onGoogleCredential(r.credential), ux_mode: 'popup' });
+      google.accounts.id.renderButton(real, { theme: 'outline', size: 'large', text: 'continue_with', shape: 'pill', locale: 'fr', width: Math.min(360, real.clientWidth || 320) });
+      sim.hidden = true;
+    } catch {}
+  };
+  if (gisState === 'ready') return render();
+  if (gisState === 'loading') return;
+  gisState = 'loading';
+  const sc = document.createElement('script'); sc.src = 'https://accounts.google.com/gsi/client'; sc.async = true;
+  sc.onload = () => { gisState = 'ready'; if (current === 'compte' && !me) render(); };
+  sc.onerror = () => { gisState = 'failed'; };
+  document.head.appendChild(sc);
+}
+function decodeJwt(t) {
+  try { const b = t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(decodeURIComponent(atob(b).split('').map(c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0')).join(''))); } catch { return null; }
+}
+function onGoogleCredential(cred) { const d = decodeJwt(cred); if (!d || !d.email) { toast('Connexion Google impossible'); return; } googleLogin({ email: d.email, name: d.given_name || d.name || '', sub: d.sub, picture: d.picture || '' }); }
+async function googleLogin(g) {
+  try {
+    const email = g.email.toLowerCase(); let u = await DB.byEmail(email);
+    if (u) { if (!u.google) { u.google = g.sub; u.provider = 'google'; await DB.put('users', u); } closeModal(); await loginExisting(u); return; }
+    u = { id: rid('u_'), email, pseudo: (g.name || email.split('@')[0]).split(' ')[0], provider: 'google', google: g.sub, picture: g.picture, salt: null, hash: '', created: Date.now(), sub: null };
+    await DB.put('users', u); setMe(u); await syncUser();
+    closeModal(); toast('Compte créé avec Google'); renderAccount();
+    if (pendingSub) { const k = pendingSub; pendingSub = null; openModal('checkout', { kind: k, step: '' }); }
+  } catch { toast('Base de données indisponible ici'); }
+}
+function mGsim() {
+  return mhead('Connexion Google', 'Simulation') + `
+    <p class="fr-note">Dans ce prototype, aucune donnée n’est envoyée à Google : indique le nom et l’adresse Gmail qu’on utiliserait. Sur le site en ligne, avec un identifiant client Google configuré, c’est la vraie fenêtre Google qui s’ouvre.</p>
+    <div class="field"><label for="gs-name">Prénom</label><input type="text" id="gs-name" maxlength="24" placeholder="Ex. Lucas"></div>
+    <div class="field"><label for="gs-email">Adresse Gmail</label><input type="email" id="gs-email" placeholder="lucas@gmail.com"></div>
+    <p class="form-err" id="gs-err" hidden></p>
+    <button class="btn primary" data-gsim-go>Continuer</button>
+    <p class="legal">Pas de mot de passe : avec Google, c’est Google qui confirme ton identité et renvoie un jeton signé à l’appli.</p>`;
+}
+
 /* au démarrage : la base fait foi (abonnement expiré, compte supprimé ailleurs…) */
 (async () => {
   if (!me) return;
