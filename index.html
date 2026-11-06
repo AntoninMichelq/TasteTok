@@ -906,7 +906,9 @@ form{display:grid;gap:12px}
 
 /* ===== v14 : vidéos TikTok réintégrées et photos IA ===== */
 .reel{position:absolute;inset:0;overflow:hidden;z-index:1}
-.reel .shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .9s ease;transform-origin:50% 45%;animation:kb 15s ease-in-out infinite alternate}
+.reel .shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .9s ease;transform-origin:50% 45%;animation:kb2 15s ease-in-out infinite alternate;image-rendering:auto;backface-visibility:hidden}
+@keyframes kb2{0%{transform:scale(1)}100%{transform:scale(1.06) translate(-1%,-.8%)}}
+.reel .shot.lowres{animation:none}
 .reel .shot.s1{animation-duration:13s;animation-direction:alternate-reverse}.reel .shot.s2{animation-duration:11s;transform-origin:40% 60%}
 .reel .shot.ok.on{opacity:1}
 .reel .shot:not([src]){display:none}
@@ -3875,7 +3877,10 @@ async function publishPost(p, file, share) {
    elle n'est générée qu'une fois, puis tout le monde la charge directement.
    ===================================================================== */
 const AI_KEY_DEFAULT = ''; // clé « publishable » Pollinations (pk_…) : enter.pollinations.ai. Vide = mode gratuit, 1 image toutes les 45 s
-const AI_W = 576, AI_H = 1024, AI_VER = 'v1';
+const AI_VER = 'v2';
+// avec une clé : 864 × 1536 (net sur un écran de téléphone). Sans clé, le service gratuit plafonne à 768 × 768 pixels de surface.
+const aiDims = () => aiKey() ? [864, 1536] : [576, 1024];
+const aiRes = { w: 0, h: 0 };
 const aiKey = () => (store.get('aikey', '') || AI_KEY_DEFAULT).trim();
 const AI_ON = /^https?:$/.test(location.protocol);
 const SHOT_N = 3;
@@ -3896,10 +3901,10 @@ function aiPrompt(p, shot) {
   ][shot];
 }
 function aiSeed(p, shot) { return parseInt(h32(p.title + '|' + shot), 36) % 1000000; }
-function aiKeyOf(p, shot) { return h32(aiPrompt(p, shot) + '|' + aiSeed(p, shot) + '|' + AI_W + 'x' + AI_H) + '-' + shot + '-' + AI_VER; }
+function aiKeyOf(p, shot) { const [w, h] = aiDims(); return h32(aiPrompt(p, shot) + '|' + aiSeed(p, shot) + '|' + w + 'x' + h) + '-' + shot + '-' + AI_VER; }
 function aiCacheUrl(k) { return `${SUPA_URL}/storage/v1/object/public/videos/ai/${k}.jpg`; }
 function aiGenUrl(p, shot) {
-  const k = aiKey(), q = new URLSearchParams({ width: AI_W, height: AI_H, seed: aiSeed(p, shot), model: 'flux', safe: 'true' });
+  const k = aiKey(), [w, h] = aiDims(), q = new URLSearchParams({ width: w, height: h, seed: aiSeed(p, shot), model: 'flux', enhance: 'false', safe: 'true' });
   if (k) { q.set('nologo', 'true'); q.set('key', k); }
   return (k ? 'https://gen.pollinations.ai/image/' : 'https://image.pollinations.ai/prompt/') + encodeURIComponent(aiPrompt(p, shot)) + '?' + q;
 }
@@ -3913,6 +3918,7 @@ function paintKey(k) {
 }
 function onShotLoaded(img) {
   img.classList.add('ok');
+  if (img.naturalWidth && img.closest('.reel')) { aiRes.w = img.naturalWidth; aiRes.h = img.naturalHeight; img.classList.toggle('lowres', img.naturalWidth < 500); syncAiPanel(); }
   const post = img.closest('.post');
   if (post) {
     post.classList.add('has-photo', 'has-reel');
@@ -3989,7 +3995,7 @@ async function genShot(job) {
 async function saveShotToCloud(k, blob) {
   if (!aiKey() || cloudState !== 'ready' || !sb) return;
   try {
-    const bm = await createImageBitmap(blob); const okSize = bm.width === AI_W && bm.height === AI_H; bm.close && bm.close();
+    const [w, h] = aiDims(), bm = await createImageBitmap(blob); const okSize = bm.width >= w * .95 && bm.height >= h * .95; bm.close && bm.close();
     if (!okSize) return;
     await sb.storage.from('videos').upload(`ai/${k}.jpg`, blob, { contentType: blob.type || 'image/jpeg', upsert: false });
   } catch {}
@@ -4089,7 +4095,8 @@ function syncAiPanel() {
   const wait = Math.max(0, Math.round((genNext - Date.now()) / 1000));
   el.textContent = `${aiStats.cached} photo${aiStats.cached > 1 ? 's' : ''} chargée${aiStats.cached > 1 ? 's' : ''} depuis le serveur · ${aiStats.generated} générée${aiStats.generated > 1 ? 's' : ''}` +
     (busy ? ` · ${busy} en attente${!aiKey() && wait ? ` (prochaine dans ${wait} s)` : ''}` : '') + (aiStats.failed ? ` · ${aiStats.failed} échec${aiStats.failed > 1 ? 's' : ''}` : '') +
-    (cloudState === 'ready' ? '' : ' · serveur non connecté : les photos ne seront pas partagées');
+    (cloudState === 'ready' ? '' : ' · serveur non connecté : les photos ne seront pas partagées') +
+    (aiRes.w ? ` · dernière photo reçue en ${aiRes.w} × ${aiRes.h} px${aiRes.w < 500 ? ' : trop petite, le service gratuit réduit la qualité (ajoute une clé pk_)' : ''}` : '');
   const pb = $('#ai-pause'); if (pb) { pb.hidden = !busy; pb.textContent = genPaused ? 'Reprendre' : 'Pause'; }
 }
 setInterval(() => { if ($('#ai-status') && genQ.length) syncAiPanel(); }, 1000);
