@@ -903,6 +903,31 @@ form{display:grid;gap:12px}
 }
 .cloud-st{margin:-4px 0 0 28px;font-size:.82rem;color:var(--muted)}
 .cloud-st.ready{color:var(--ok)} .cloud-st.error{color:var(--warn)}
+
+/* ===== v14 : vidéos TikTok réintégrées et photos IA ===== */
+.reel{position:absolute;inset:0;overflow:hidden;z-index:1}
+.reel .shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .9s ease;transform-origin:50% 45%;animation:kb 15s ease-in-out infinite alternate}
+.reel .shot.s1{animation-duration:13s;animation-direction:alternate-reverse}.reel .shot.s2{animation-duration:11s;transform-origin:40% 60%}
+.reel .shot.ok.on{opacity:1}
+.reel .shot:not([src]){display:none}
+.ai-tag{position:absolute;left:12px;bottom:46px;z-index:2;font:700 .62rem/1 var(--font-m,monospace);letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.42);border-radius:999px;padding:5px 8px;opacity:0;transition:opacity .4s}
+.has-reel .ai-tag{opacity:1}
+.has-reel .media .vid{opacity:0;transition:opacity .9s}
+.tkbox{position:absolute;inset:0;z-index:3;background:#000;display:none}
+.tkbox iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
+.tk-on .tkbox{display:block}
+.tk-on .subs,.tk-on .ai-tag,.tk-on .snd{display:none}
+.tk-snd{display:none;position:absolute;right:12px;bottom:44px;z-index:4;width:34px;height:34px;border-radius:50%;border:0;background:rgba(0,0,0,.5);color:#fff;place-items:center;cursor:pointer}
+.tk-on .tk-snd{display:grid}
+.tk-snd svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tk-sound .tk-snd svg path:last-child{d:path("M16 9.5a4 4 0 0 1 0 5M18.5 7a7.5 7.5 0 0 1 0 10")}
+.tk-on .stats,.tk-on .peek,.tk-on .burst,.tk-on .progress{z-index:5}
+.sthumb .ai-th{opacity:0;transition:opacity .5s}.sthumb.ai-ok .ai-th{opacity:1}
+.clip{position:relative}.clip .cookshot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s;border-radius:inherit}.clip.ai-ok .cookshot{opacity:1}
+.imp-vis{display:flex;gap:12px;align-items:center;margin:4px 0 10px}
+.imp-vis img{width:64px;height:112px;object-fit:cover;border-radius:10px;flex:none;background:var(--line,#ddd)}
+.imp-vis .stline{margin:0}
+@media (prefers-reduced-motion:reduce){.reel .shot{animation:none}}
 </style>
 </head>
 <body>
@@ -1010,7 +1035,7 @@ form{display:grid;gap:12px}
       <div id="import-pane" class="stack">
         <form id="imp-form" class="card">
           <div class="field"><label for="imp-url">Lien de la vidéo TikTok</label><input type="text" id="imp-url" inputmode="url" autocomplete="off" placeholder="https://www.tiktok.com/@créateur/video/…"><small>Depuis TikTok : Partager → Copier le lien.</small></div>
-          <div class="field"><label for="imp-cap">Légende de la vidéo <span class="opt">(conseillé)</span></label><textarea id="imp-cap" placeholder="Colle la description : les créateurs y mettent souvent les ingrédients et les étapes."></textarea></div>
+          <div class="field"><label for="imp-cap">Légende de la vidéo <span class="opt">(facultatif)</span></label><textarea id="imp-cap" placeholder="Laisse vide : on récupère la légende de la vidéo automatiquement. Tu peux aussi la coller ici."></textarea><small>La vraie vidéo TikTok est ensuite lue dans ton fil.</small></div>
           <div class="imp-actions"><button class="btn primary" type="submit">Transformer en recette</button><button class="btn" type="button" id="imp-example">Essayer avec un exemple</button></div>
           <p class="legal" id="imp-quota"></p>
         </form>
@@ -1861,7 +1886,7 @@ const ICON = {
 function postHTML(p) {
   const media = p.media
     ? (p.media.type === 'video' ? `<video src="${esc(p.media.url)}" muted loop playsinline preload="metadata"></video>` : `<img src="${p.media.url}" alt="${esc(p.title)}">`)
-    : `<canvas aria-label="${esc(p.title)}" role="img"></canvas>${p.photo ? `<img class="vid" src="${esc(p.photo)}" alt="${esc(p.title)}" decoding="async"><div class="subs" aria-hidden="true"></div><span class="snd" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9l5 6M21 9l-5 6"/></svg></span>` : ''}`;
+    : `<canvas aria-label="${esc(p.title)}" role="img"></canvas>${p.photo ? `<img class="vid" src="${esc(p.photo)}" alt="${esc(p.title)}" decoding="async">` : ''}${reelHTML(p)}${tkHTML(p)}<div class="subs" aria-hidden="true"></div><span class="snd" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9l5 6M21 9l-5 6"/></svg></span>`;
   const ps = perServ(p), cx = cxOf(p), L = liked.has(p.id);
   const unitTxt = p.unit === 'pers.' ? 'pers.' : esc(p.unit);
   const ingRows = p.ing.map((it, k) => `
@@ -1982,8 +2007,8 @@ let active = null;
 const io = new IntersectionObserver((es) => {
   es.forEach(e => {
     const v = $('.media video', e.target);
-    if (e.isIntersecting && e.intersectionRatio >= .6) { active = e.target; if (v && !cook) v.play().catch(() => {}); if (isDesk()) setDeskOpen(active); }
-    else if (v) v.pause();
+    if (e.isIntersecting && e.intersectionRatio >= .6) { active = e.target; if (v && !cook) v.play().catch(() => {}); if (isDesk()) setDeskOpen(active); postActive(e.target); }
+    else { if (v) v.pause(); if (!e.isIntersecting) postInactive(e.target); }
   });
 }, { root: feed, threshold: [.6] });
 
@@ -1994,7 +2019,7 @@ function mount(p, where = 'beforeend') {
   const el = feed.querySelector(`.post[data-id="${p.id}"]`);
   syncPost(el);
   const c = $('.media canvas', el); if (c) { sizeCanvas(c); drawDish(c, p, 0); }
-  io.observe(el);
+  io.observe(el); watchPost(el);
   return el;
 }
 
@@ -2085,7 +2110,9 @@ function loop(t) {
     const photo = active.classList.contains('has-photo');
     if (c && !reduceMotion && !photo) drawDish(c, p, t);
     if (photo) { const sb = $('.subs', active), k = Math.floor(t / 3200) % (p.steps.length + 1); if (sb && sb.dataset.k != k) { sb.dataset.k = k; sb.textContent = k === 0 ? p.title : `${k}. ${p.steps[k - 1]}`; } }
-    if (bar) bar.style.width = (v && v.duration ? v.currentTime / v.duration : (c ? (t % DUR) / DUR : 0)) * 100 + '%';
+    const reel = $('.reel', active);
+    if (reel) { const ok = $$('.shot.ok', reel); if (ok.length > 1) { const i = Math.floor(t / 4200) % ok.length; ok.forEach((im, j) => im.classList.toggle('on', j === i)); } }
+    if (bar && !active.classList.contains('tk-on')) bar.style.width = (v && v.duration ? v.currentTime / v.duration : (c ? (t % DUR) / DUR : 0)) * 100 + '%';
   }
   requestAnimationFrame(loop);
 }
@@ -2439,7 +2466,7 @@ const STOP = new Set(['les','des','aux','pour','frais','fraiche','moulu','noir',
 const keywords = (name) => nrm(name).split(/[^a-z]+/).filter(w => w.length >= 3 && !STOP.has(w)).map(w => w.slice(0, 6));
 const stepMinutes = (txt) => { const m = nrm(txt).match(/(\d+)(?:\s*a\s*\d+)?\s*min/); return m ? +m[1] : null; };
 const mmss = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
-const clipMedia = (p) => p.media ? (p.media.type === 'video' ? `<video src="${esc(p.media.url)}" muted loop playsinline preload="metadata"></video>` : `<img src="${p.media.url}" alt="">`) : '<canvas aria-hidden="true"></canvas>';
+const clipMedia = (p, i = 0) => p.media ? (p.media.type === 'video' ? `<video src="${esc(p.media.url)}" muted loop playsinline preload="metadata"></video>` : `<img src="${p.media.url}" alt="">`) : '<canvas aria-hidden="true"></canvas>' + aiThumbHTML(p, [2, 1, 0][i % 3], 'cookshot ai-th');
 const needOf = (p, i) => { const ns = nrm(p.steps[i] || ''); return p.ing.filter(it => keywords(it.n).some(w => new RegExp('\\b' + w).test(ns))); };
 const cookF = () => cook ? st[cook.p.id].serv / cook.p.servings : 1;
 function ingSay(it, f) {
@@ -2485,13 +2512,14 @@ function renderCook(first = false) {
       <button class="timer-go" id="tested">Poster ma version</button></div>`;
   } else {
     const step = p.steps[i], f = cookF(), need = needOf(p, i), min = stepMinutes(step);
-    body.innerHTML = `<div class="clip">${clipMedia(p)}<span class="lbl">Séquence ${i + 1}</span></div>
+    body.innerHTML = `<div class="clip">${clipMedia(p, i)}<span class="lbl">Séquence ${i + 1}</span></div>
       <p class="step-no">Étape ${i + 1}</p>
       <p class="step-txt">${esc(step)}</p>
       ${need.length ? `<div class="need">${need.map(it => `<span class="chip">${ingImg(it.n, 'ii sm')}${esc(it.n)} <b>${esc(qtxt(scaleQ(it.q, it.u, f), it.u))}</b></span>`).join('')}</div>` : ''}
       ${min ? `<button class="timer-go" data-min="${min}">${ICON.clock} Lancer un minuteur de ${min} min</button>` : ''}`;
     const c = $('canvas', body); if (c) { sizeCanvas(c); drawDish(c, p, i * 5000); }
     const v = $('video', body); if (v) v.play().catch(() => {});
+    fillThumbs(body);
   }
   $('#prev').disabled = i === 0;
   $('#next').textContent = done ? 'Fermer' : i === n - 1 ? 'Terminer' : 'Étape suivante';
@@ -3345,9 +3373,10 @@ function renderAccount() {
   loadDbView();
 }
 function dbViewHTML() {
-  return `<details class="card dbv" id="dbv"><summary><h3>Base de données (vue développeur)</h3><span>Ce que contient la base de ce navigateur</span></summary><div id="dbv-body"><p class="empty">Chargement…</p></div></details>`;
+  return aiPanelHTML() + `<details class="card dbv" id="dbv"><summary><h3>Base de données (vue développeur)</h3><span>Ce que contient la base de ce navigateur</span></summary><div id="dbv-body"><p class="empty">Chargement…</p></div></details>`;
 }
 async function loadDbView() {
+  syncAiPanel();
   const el = $('#dbv-body'); if (!el) return;
   try {
     const [users, pays, data] = await Promise.all([DB.all('users'), DB.all('payments'), DB.all('userdata')]);
@@ -3545,16 +3574,21 @@ async function runImport(url, caption) {
   const stepsUI = ['Lecture de la vidéo', 'Transcription de l’audio', 'Détection des ingrédients et des quantités', 'Estimation du prix et des goûts'];
   out.innerHTML = `<section class="card imp-run"><h3>Transformation en recette</h3><ol class="imp-steps">${stepsUI.map(s => `<li>${s}</li>`).join('')}</ol></section>`;
   const lis = $$('.imp-steps li', out);
+  const infoP = tiktokInfo(url);
   for (let i = 0; i < lis.length; i++) { lis[i].classList.add('cur'); await new Promise(r => setTimeout(r, 420)); lis[i].classList.remove('cur'); lis[i].classList.add('done'); }
+  const info = await infoP;
+  if (!caption.trim() && info.title) caption = info.title;
+  const author2 = info.author || author;
   let d = caption.trim() ? parseCaption(caption) : null, fromTemplate = false;
   if (!d || (!d.ing.length && !d.steps.length)) {
     let h = 0; for (const c of url) h = (h * 31 + c.charCodeAt(0)) >>> 0;
     const T = IMP_TEMPLATES[h % IMP_TEMPLATES.length]; fromTemplate = true;
     d = { title: T.title, ing: T.ing.split('\n'), steps: T.steps.split('\n'), time: T.time, serv: T.serv };
   }
-  impDraft = { url, author, fromTemplate };
+  impDraft = { url, author: author2, fromTemplate, videoId: info.videoId, thumb: info.thumb };
   out.innerHTML = `<section class="card">
-    <div class="card-h"><h3>Recette détectée</h3><span class="pill">${esc(author)}</span></div>
+    <div class="card-h"><h3>Recette détectée</h3><span class="pill">${esc(author2)}</span></div>
+    <div class="imp-vis">${info.thumb ? `<img src="${esc(info.thumb)}" alt="Miniature de la vidéo TikTok" referrerpolicy="no-referrer">` : ''}<p class="stline ${info.videoId ? 'ok' : 'warn'}">${info.videoId ? 'La vraie vidéo TikTok sera lue dans ton fil (lecteur officiel TikTok).' : 'Vidéo TikTok introuvable : ton fil affichera des photos réalistes générées par IA d’après le nom du plat.'}${info.ok && info.title ? ' Légende récupérée automatiquement.' : ''}</p></div>
     ${fromTemplate ? '<p class="stline warn">Sans légende, le prototype propose une recette type. En production, l’IA lit l’audio et l’image de la vidéo.</p>' : `<p class="stline ok">${d.ing.length} ingrédient${d.ing.length > 1 ? 's' : ''} et ${d.steps.length} étape${d.steps.length > 1 ? 's' : ''} trouvés dans la légende. Vérifie et corrige si besoin.</p>`}
     <div class="field"><label for="ir-title">Nom du plat</label><input type="text" id="ir-title" value="${esc(d.title || 'Recette de ' + author)}"></div>
     <div class="two"><div class="field"><label for="ir-time">Temps</label><input type="text" id="ir-time" value="${esc(d.time || '20 min')}"></div><div class="field"><label for="ir-serv">Portions</label><input type="number" id="ir-serv" min="1" max="20" value="${d.serv || 2}"></div></div>
@@ -3583,7 +3617,7 @@ $('#imp-out').addEventListener('click', (e) => {
   const g = guessMeta(ingTxt, stepsTxt, title), time = $('#ir-time').value.trim() || '—';
   const kcal = parseInt($('#ir-kcal').value, 10), prot = parseInt($('#ir-prot').value, 10);
   const pal = [['#f3b49a', '#c8402a'], ['#c9dcae', '#5c9a3c'], ['#f0d58a', '#e0a04c'], ['#a6d4e2', '#2f7fa0'], ['#e8c4d0', '#a8345a']][Math.floor(Math.random() * 5)];
-  const p = { id: 'tk' + Date.now(), user: impDraft.author, mine: true, imported: { url: impDraft.url }, kind: g.kind, course: g.course, title, caption: 'Recette tirée de ma vidéo TikTok.', tags: '#importé #tiktok', likes: 0,
+  const p = { id: 'tk' + Date.now(), user: impDraft.author, mine: true, imported: { url: impDraft.url, videoId: impDraft.videoId || null, thumb: impDraft.thumb || null }, photo: impDraft.thumb || undefined, kind: g.kind, course: g.course, title, caption: 'Recette tirée de ma vidéo TikTok.', tags: '#importé #tiktok', likes: 0,
     time, min: parseInt(time, 10) || 99, veg: !/poulet|boeuf|viande|jambon|lardon|thon|saumon|crevette|guanciale/.test(nrm(ingTxt)), tools: g.tools, level: 'Importée', servings: Math.max(1, +$('#ir-serv').value || 2), unit: 'pers.', no: ticketNo++,
     taste: g.taste, nut: kcal > 0 ? { kcal, p: prot > 0 ? prot : 0, g: null, l: null } : null,
     tint: pal[0], bg: [], plate: '#f2ece2', food: [pal[1], '#f6efe0', '#4f8a3a', '#e9c27a'], seed: Date.now() % 997, media: null, ing,
@@ -3623,12 +3657,13 @@ let sT = null;
 function tileHTML(p) {
   const pend = pending.includes(p.id);
   return `<button class="stile" data-sid="${p.id}" style="--tint:${p.tint}">
-    <span class="sthumb"><canvas aria-hidden="true"></canvas>${p.photo ? `<img class="vid st-img" src="${esc(p.photo)}" alt="" loading="lazy">` : ''}<em>${esc(p.time)}</em>${p.imported ? '<i class="tkb">TikTok</i>' : ''}</span>
+    <span class="sthumb"><canvas aria-hidden="true"></canvas>${p.photo ? `<img class="vid st-img" src="${esc(p.photo)}" alt="" loading="lazy">` : ''}${p.media ? '' : aiThumbHTML(p)}<em>${esc(p.time)}</em>${p.imported ? '<i class="tkb">TikTok</i>' : ''}</span>
     <b>${esc(p.title)}</b>
     <small>${esc(p.user)} · ${eur.format(perServ(p))}${p.nut && p.nut.kcal ? ' · ' + p.nut.kcal + ' kcal' : ''}${pend ? ' · déjà acheté' : ''}</small>
   </button>`;
 }
 function drawTiles(root) {
+  fillThumbs(root);
   $$('.stile', root).forEach(t => { const c = $('canvas', t), p = byId[t.dataset.sid]; if (c && p && !(p.photo && $('img', t))) { sizeCanvas(c); drawDish(c, p, 1500); } else if (c && p) { sizeCanvas(c); drawDish(c, p, 1500); } });
 }
 function renderSearch() {
@@ -3758,7 +3793,7 @@ function rowToPost(r) {
     time: rc.time || '—', min: rc.min || 99, level: rc.level || 'Fait maison', servings: rc.servings || 2, unit: rc.unit || 'pers.',
     veg: !!rc.veg, tools: rc.tools || [], taste: rc.taste || [], nut: rc.nut || null, ing: rc.ing || [], steps: rc.steps || [],
     tint: rc.tint || pal[0], bg: [], plate: '#e9e2d6', food: rc.food || [pal[1], '#f6efe0', '#4f8a3a', '#e9c27a'], seed: rc.seed || 7,
-    media: r.video_url ? { type: r.media_type || 'video', url: r.video_url } : null, imported: rc.imported || null, ad: rc.ad || null, no: ticketNo++,
+    media: r.video_url ? { type: r.media_type || 'video', url: r.video_url } : null, imported: rc.imported || null, photo: (rc.imported && rc.imported.thumb) || undefined, ad: rc.ad || null, no: ticketNo++,
     created: r.created_at };
 }
 let cloudLoading = false;
@@ -3828,6 +3863,250 @@ async function publishPost(p, file, share) {
   }
   if (file && await mediaPut(p.id, file)) { p.localMedia = true; saveMine(p); if (!share) toast('Publié sur ton appareil'); }
 }
+
+/* =====================================================================
+   Visuels réalistes du fil
+   1. Recette importée de TikTok : la vraie vidéo est réintégrée avec le lecteur officiel TikTok
+      (tiktok.com/player/v1), et la vraie miniature sert de couverture.
+   2. Tous les autres plats : trois photos réalistes générées par IA (Pollinations, modèle Flux)
+      d'après le nom du plat et ses ingrédients : le plat fini, les ingrédients, la cuisson.
+      Elles défilent comme les plans d'une vidéo, avec les étapes en sous-titres.
+   Chaque photo générée est rangée dans le stockage Supabase (dossier « videos/ai/ ») :
+   elle n'est générée qu'une fois, puis tout le monde la charge directement.
+   ===================================================================== */
+const AI_KEY_DEFAULT = ''; // clé « publishable » Pollinations (pk_…) : enter.pollinations.ai. Vide = mode gratuit, 1 image toutes les 45 s
+const AI_W = 576, AI_H = 1024, AI_VER = 'v1';
+const aiKey = () => (store.get('aikey', '') || AI_KEY_DEFAULT).trim();
+const AI_ON = /^https?:$/.test(location.protocol);
+const SHOT_N = 3;
+const AI_SKIP = /^(Salt|Black Pepper|Vegetable Oil|Olive Oil|Butter|Sugar|Plain Flour|Baking Powder|Vegetable Stock Cube)$/;
+
+function h32(s) { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); }
+function aiWords(p) {
+  const en = [...new Set((p.ing || []).map(i => ingEn(i.n)).filter(x => x && !AI_SKIP.test(x)))].slice(0, 5).map(x => x.toLowerCase());
+  return en.length ? en.join(', ') : (p.ing || []).slice(0, 4).map(i => i.n).join(', ');
+}
+function aiPrompt(p, shot) {
+  const t = p.title, w = aiWords(p), tail = 'photorealistic, natural light, vertical 9:16 smartphone video frame, no text, no watermark, no logo';
+  const sweet = p.course === 'dessert' || p.course === 'petitdej';
+  return [
+    `Professional food photography of ${t} (${w}), freshly plated in a home kitchen, appetizing, ${sweet ? 'soft morning light' : 'gentle steam'}, shallow depth of field, ${tail}`,
+    `Fresh raw ingredients for ${t}: ${w}, neatly arranged on a wooden kitchen counter, overhead shot, ${tail}`,
+    `Close-up of hands preparing ${t} on a home stove, ${w}, cooking in progress, slight motion blur, TikTok recipe video still, ${tail}`
+  ][shot];
+}
+function aiSeed(p, shot) { return parseInt(h32(p.title + '|' + shot), 36) % 1000000; }
+function aiKeyOf(p, shot) { return h32(aiPrompt(p, shot) + '|' + aiSeed(p, shot) + '|' + AI_W + 'x' + AI_H) + '-' + shot + '-' + AI_VER; }
+function aiCacheUrl(k) { return `${SUPA_URL}/storage/v1/object/public/videos/ai/${k}.jpg`; }
+function aiGenUrl(p, shot) {
+  const k = aiKey(), q = new URLSearchParams({ width: AI_W, height: AI_H, seed: aiSeed(p, shot), model: 'flux', safe: 'true' });
+  if (k) { q.set('nologo', 'true'); q.set('key', k); }
+  return (k ? 'https://gen.pollinations.ai/image/' : 'https://image.pollinations.ai/prompt/') + encodeURIComponent(aiPrompt(p, shot)) + '?' + q;
+}
+
+/* ---------- état des photos ---------- */
+const shotSrc = {};        // clé → adresse affichable (cache Supabase, image générée, ou blob)
+const shotState = {};      // clé → 'cache' | 'queued' | 'gen' | 'ok' | 'fail'
+const aiStats = { cached: 0, generated: 0, failed: 0 };
+function paintKey(k) {
+  $$(`img[data-ai="${k}"]`).forEach(img => { if (img.getAttribute('src') !== shotSrc[k]) img.src = shotSrc[k]; });
+}
+function onShotLoaded(img) {
+  img.classList.add('ok');
+  const post = img.closest('.post');
+  if (post) {
+    post.classList.add('has-photo', 'has-reel');
+    const reel = img.closest('.reel'); if (reel && !$('.shot.on', reel)) img.classList.add('on');
+  }
+  const tile = img.closest('.sthumb, .clip'); if (tile) tile.classList.add('ai-ok');
+}
+document.addEventListener('load', (e) => { const img = e.target; if (img instanceof HTMLImageElement && img.dataset.ai) onShotLoaded(img); }, true);
+document.addEventListener('error', (e) => {
+  const img = e.target; if (!(img instanceof HTMLImageElement) || !img.dataset.ai) return;
+  e.stopImmediatePropagation();
+  const k = img.dataset.ai; img.removeAttribute('src'); img.classList.remove('ok', 'on');
+  if (shotState[k] === 'ok') { shotState[k] = 'fail'; delete shotSrc[k]; aiStats.failed++; syncAiPanel(); }
+}, true);
+
+/* demande une photo : d'abord le cache partagé (test discret), sinon la file de génération */
+function wantShot(p, shot, prio = false) {
+  if (!AI_ON || !p) return;
+  const k = aiKeyOf(p, shot), s = shotState[k];
+  if (shotSrc[k]) { paintKey(k); return; }
+  if (s === 'queued' || s === 'gen') { if (prio) bump(k); return; }
+  if (s === 'fail' || s === 'cache') return;
+  if (s === 'miss') { queueGen(p, shot, k, prio); return; }
+  shotState[k] = 'cache';
+  const probe = new Image();
+  probe.onload = () => { shotState[k] = 'ok'; shotSrc[k] = probe.src; aiStats.cached++; paintKey(k); syncAiPanel(); };
+  probe.onerror = () => { shotState[k] = 'miss'; queueGen(p, shot, k, prio); };
+  probe.src = aiCacheUrl(k);
+}
+
+/* ---------- file de génération (respecte la limite du service) ---------- */
+const genQ = []; let genBusy = false, genNext = 0, genPaused = false;
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+function queueGen(p, shot, k, prio) {
+  shotState[k] = 'queued';
+  const job = { p, shot, k };
+  prio ? genQ.unshift(job) : genQ.push(job);
+  syncAiPanel(); pumpGen();
+}
+function bump(k) { const i = genQ.findIndex(j => j.k === k); if (i > 0) genQ.unshift(genQ.splice(i, 1)[0]); }
+async function pumpGen() {
+  if (genBusy) return; genBusy = true;
+  while (genQ.length && !genPaused) {
+    const wait = genNext - Date.now(); if (wait > 0) { syncAiPanel(); await sleep(wait); }
+    const job = genQ.shift(); if (!job) break;
+    genNext = Date.now() + (aiKey() ? 1500 : 46000);
+    shotState[job.k] = 'gen'; syncAiPanel();
+    await genShot(job);
+    syncAiPanel();
+  }
+  genBusy = false; syncAiPanel();
+}
+async function genShot(job) {
+  const url = aiGenUrl(job.p, job.shot);
+  try {
+    const ctrl = new AbortController(), to = setTimeout(() => ctrl.abort(), 90000);
+    const r = await fetch(url, { signal: ctrl.signal }); clearTimeout(to);
+    if (r.status === 402 || r.status === 429) {
+      const ra = (parseInt(r.headers.get('retry-after'), 10) || 60) * 1000;
+      genNext = Date.now() + ra; shotState[job.k] = 'queued'; genQ.unshift(job); return;
+    }
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const blob = await r.blob(); if (!/^image\//.test(blob.type)) throw new Error('pas une image');
+    shotSrc[job.k] = URL.createObjectURL(blob); shotState[job.k] = 'ok'; aiStats.generated++; paintKey(job.k);
+    saveShotToCloud(job.k, blob);
+  } catch (e) {
+    if (e && e.name === 'TypeError') {
+      // lecture bloquée (CORS, réseau) : on laisse le navigateur afficher l'image directement, sans la mettre en cache
+      shotSrc[job.k] = url; shotState[job.k] = 'ok'; paintKey(job.k);
+    } else { shotState[job.k] = 'fail'; aiStats.failed++; }
+  }
+}
+/* on ne garde dans le cache partagé qu'une image au bon format, générée avec une clé (sans clé, le service peut renvoyer un bandeau « limite atteinte ») */
+async function saveShotToCloud(k, blob) {
+  if (!aiKey() || cloudState !== 'ready' || !sb) return;
+  try {
+    const bm = await createImageBitmap(blob); const okSize = bm.width === AI_W && bm.height === AI_H; bm.close && bm.close();
+    if (!okSize) return;
+    await sb.storage.from('videos').upload(`ai/${k}.jpg`, blob, { contentType: blob.type || 'image/jpeg', upsert: false });
+  } catch {}
+}
+
+/* ---------- le « film » d'un post : 3 plans qui défilent ---------- */
+function reelHTML(p) {
+  if (!AI_ON) return '';
+  return `<div class="reel" aria-hidden="true">${Array.from({ length: SHOT_N }, (_, i) => `<img class="shot s${i}" data-ai="${aiKeyOf(p, i)}" data-pid="${esc(p.id)}" data-shot="${i}" alt="" decoding="async">`).join('')}</div><span class="ai-tag" aria-hidden="true">Visuel IA</span>`;
+}
+function tkHTML(p) {
+  const v = p.imported && p.imported.videoId; if (!v) return '';
+  return `<div class="tkbox" data-vid="${esc(v)}"></div><button class="tk-snd" data-act="tksound" aria-label="Activer le son de la vidéo TikTok"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9l5 6M21 9l-5 6"/></svg></button>`;
+}
+/* une photo de couverture pour les vignettes (recherche, mode cuisine) */
+function aiThumbHTML(p, shot = 0, cls = 'vid st-img') {
+  if (!AI_ON) return '';
+  return `<img class="${cls} ai-th" data-ai="${aiKeyOf(p, shot)}" data-pid="${esc(p.id)}" data-shot="${shot}" alt="" loading="lazy" decoding="async">`;
+}
+function fillThumbs(root) { $$('img.ai-th', root).forEach(img => { const p = byId[img.dataset.pid]; if (p && !p.media) wantShot(p, +img.dataset.shot); }); }
+
+/* charge la couverture des posts proches de l'écran, et tous les plans du post regardé */
+const nearIO = new IntersectionObserver((es) => {
+  es.forEach(e => { if (!e.isIntersecting) return; const p = byId[e.target.dataset.id]; if (p && !p.media) wantShot(p, 0); nearIO.unobserve(e.target); });
+}, { root: feed, rootMargin: '150% 0px' });
+function watchPost(el) { if (AI_ON && $('.reel', el)) nearIO.observe(el); }
+function postActive(el) {
+  const p = byId[el.dataset.id]; if (!p) return;
+  if (!p.media && $('.reel', el)) for (let i = 0; i < SHOT_N; i++) wantShot(p, i, i === 0);
+  tkStart(el);
+}
+function postInactive(el) { tkStop(el); }
+
+/* ---------- vraie vidéo TikTok (lecteur officiel) ---------- */
+const TK_PARAMS = 'autoplay=1&loop=1&controls=0&progress_bar=0&play_button=0&volume_control=0&fullscreen_button=0&timestamp=0&music_info=0&description=0&rel=0&closed_caption=0&native_context_menu=0';
+function tkStart(el) {
+  const box = $('.tkbox', el); if (!box || box.firstChild || !AI_ON) return;
+  const f = document.createElement('iframe');
+  f.src = `https://www.tiktok.com/player/v1/${encodeURIComponent(box.dataset.vid)}?${TK_PARAMS}`;
+  f.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture'; f.title = 'Vidéo TikTok'; f.loading = 'eager';
+  box.appendChild(f); el.classList.add('tk-on');
+}
+function tkStop(el) { const box = $('.tkbox', el); if (box && box.firstChild) { box.innerHTML = ''; el.classList.remove('tk-on', 'tk-play', 'tk-sound'); } }
+function tkSend(el, type) { const f = $('.tkbox iframe', el); if (f && f.contentWindow) f.contentWindow.postMessage({ 'x-tiktok-player': true, type, value: null }, '*'); }
+window.addEventListener('message', (e) => {
+  if (!/^https:\/\/www\.tiktok\.com$/.test(e.origin)) return;
+  let d = e.data; if (typeof d === 'string') { try { d = JSON.parse(d); } catch { return; } }
+  if (!d || !d['x-tiktok-player']) return;
+  const f = $$('.tkbox iframe').find(x => x.contentWindow === e.source); if (!f) return;
+  const post = f.closest('.post');
+  if (d.type === 'onPlayerReady') { tkSend(post, 'mute'); tkSend(post, 'play'); }
+  if (d.type === 'onStateChange') post.classList.toggle('tk-play', d.value === 1);
+  if (d.type === 'onCurrentTime' && d.value && d.value.duration) { const bar = $('.progress i', post); if (bar) bar.style.width = (d.value.currentTime / d.value.duration * 100) + '%'; }
+  if (d.type === 'onPlayerError') { tkStop(post); post.classList.add('tk-err'); }
+});
+feed.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-act="tksound"]'); if (!b) return;
+  const post = b.closest('.post'), on = !post.classList.contains('tk-sound');
+  tkSend(post, on ? 'unMute' : 'mute'); post.classList.toggle('tk-sound', on);
+  b.setAttribute('aria-label', on ? 'Couper le son' : 'Activer le son de la vidéo TikTok');
+});
+
+/* infos d'une vidéo TikTok : légende, auteur, miniature, identifiant (API oEmbed publique) */
+async function tiktokInfo(url) {
+  let vid = (url.match(/\/(?:video|photo)\/(\d{8,})/) || [])[1] || null;
+  const out = { videoId: vid, title: '', author: '', thumb: '' };
+  if (!AI_ON) return out;
+  try {
+    const ctrl = new AbortController(), to = setTimeout(() => ctrl.abort(), 7000);
+    const r = await fetch('https://www.tiktok.com/oembed?url=' + encodeURIComponent(url), { signal: ctrl.signal }); clearTimeout(to);
+    if (r.ok) {
+      const j = await r.json();
+      out.title = j.title || ''; out.thumb = j.thumbnail_url || '';
+      out.author = (String(j.author_url || '').match(/@[\w.]+/) || [])[0] || (j.author_unique_id ? '@' + j.author_unique_id : '');
+      if (!out.videoId) out.videoId = j.embed_product_id || (String(j.html || '').match(/data-video-id="(\d+)"/) || [])[1] || null;
+      out.ok = true;
+    }
+  } catch {}
+  return out;
+}
+
+/* ---------- panneau « Visuels IA » dans le compte ---------- */
+function aiPanelHTML() {
+  const k = aiKey();
+  return `<section class="card" id="ai-card">
+    <div class="card-h"><h3>Visuels IA du fil</h3><span class="pill${k ? ' ok' : ''}">${k ? 'Clé active' : 'Mode gratuit'}</span></div>
+    <p class="fr-note">Chaque plat sans vraie vidéo reçoit 3 photos réalistes générées d’après son nom et ses ingrédients (plat fini, ingrédients, cuisson). Une photo n’est générée qu’une fois : elle est ensuite rangée sur le serveur et chargée directement par tout le monde.</p>
+    <p class="fr-note">${k ? 'Avec ta clé, une photo est générée toutes les 1,5 s.' : 'Sans clé, le service gratuit limite à <b>1 photo toutes les 45 s</b> et les photos ne sont pas enregistrées sur le serveur. Crée une clé gratuite « publishable » (pk_…) sur enter.pollinations.ai et colle-la ici.'}</p>
+    <div class="field"><label for="ai-key">Clé Pollinations</label><div class="fr-add"><input type="text" id="ai-key" placeholder="pk_…" value="${esc(store.get('aikey', ''))}" autocomplete="off" spellcheck="false"><button id="ai-key-save">Enregistrer</button></div></div>
+    <div class="slot-acts"><button class="btn primary" id="ai-all">Générer les photos de tout le fil</button><button class="btn" id="ai-pause" hidden>Pause</button></div>
+    <p class="fr-note" id="ai-status" aria-live="polite"></p>
+  </section>`;
+}
+function syncAiPanel() {
+  const el = $('#ai-status'); if (!el) return;
+  const busy = genQ.length + (Object.values(shotState).includes('gen') ? 1 : 0);
+  const wait = Math.max(0, Math.round((genNext - Date.now()) / 1000));
+  el.textContent = `${aiStats.cached} photo${aiStats.cached > 1 ? 's' : ''} chargée${aiStats.cached > 1 ? 's' : ''} depuis le serveur · ${aiStats.generated} générée${aiStats.generated > 1 ? 's' : ''}` +
+    (busy ? ` · ${busy} en attente${!aiKey() && wait ? ` (prochaine dans ${wait} s)` : ''}` : '') + (aiStats.failed ? ` · ${aiStats.failed} échec${aiStats.failed > 1 ? 's' : ''}` : '') +
+    (cloudState === 'ready' ? '' : ' · serveur non connecté : les photos ne seront pas partagées');
+  const pb = $('#ai-pause'); if (pb) { pb.hidden = !busy; pb.textContent = genPaused ? 'Reprendre' : 'Pause'; }
+}
+setInterval(() => { if ($('#ai-status') && genQ.length) syncAiPanel(); }, 1000);
+$('#acct-body').addEventListener('click', (e) => {
+  if (e.target.closest('#ai-key-save')) {
+    const v = $('#ai-key').value.trim();
+    if (v && !/^pk_[\w-]{8,}$/.test(v)) { toast(v.startsWith('sk_') ? 'Ne mets jamais une clé secrète (sk_) dans un site : utilise une clé pk_' : 'Clé invalide : elle commence par pk_'); return; }
+    store.set('aikey', v); renderAccount(); toast(v ? 'Clé enregistrée sur cet appareil' : 'Clé retirée'); return;
+  }
+  if (e.target.closest('#ai-all')) {
+    if (!AI_ON) { toast('Disponible sur le site en ligne'); return; }
+    const list = Object.values(byId).filter(p => !p.media);
+    list.forEach(p => { for (let i = 0; i < SHOT_N; i++) wantShot(p, i); });
+    genPaused = false; pumpGen(); syncAiPanel(); toast(`${list.length * SHOT_N} photos demandées`); return;
+  }
+  if (e.target.closest('#ai-pause')) { genPaused = !genPaused; if (!genPaused) pumpGen(); syncAiPanel(); }
+});
 
 /* ---------- démarrage ---------- */
 POSTS.forEach(p => mount(p));
